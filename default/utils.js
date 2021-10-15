@@ -25,9 +25,14 @@ function upgradeController(creep) {
     }
 }
 
+function spawn(role, roomname, spawn, isNeeded, extraInfo) {
+    Memory.spawn_queue.push({role: role, roomname: roomname, spawn: spawn, isNeeded: isNeeded, extraInfo: extraInfo});
+}
+
 module.exports = {
     getStructureByFlag,
     getConstructionSite,
     findNearbyStuff,
-    upgradeController
+    upgradeController,
+    spawn
 }

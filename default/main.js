@@ -7,6 +7,13 @@ var distant_worker = require('role.distant_worker');
 var repairer = require('role.repairer');
 var upgrader = require('role.upgrader');
 var Tower = require('tower');
+var distant_harvester = require('role.distant_harvester');
+var distant_transfer = require('role.distant_transfer');
+var extender = require('role.extender');
+var claimer = require('role.claimer');
+var defender = require('role.defender');
+
+var {spawn} = require('utils');
 
 module.exports.loop = function() {
     for (let name in Memory.creeps) {
@@ -22,6 +29,7 @@ module.exports.loop = function() {
 
     // Memory.spawn_queue.push({role: 'worker', roomname: 'W29S52', spawn: 'Spawn1', isNeeded: true, extraInfo: {working_location: '5bbcab5d9099fc012e6335cc'}})
     // Memory.spawn_queue.push({role: 'worker', roomname: 'W29S52', spawn: 'Spawn1', isNeeded: true, extraInfo: {working_location: '5bbcab5d9099fc012e6335cb'}})
+    // spawn('distant_harvester', 'W29S52', 'Spawn1', true, {working_location: '5bbcab699099fc012e633749', working_room: 'W28S52'})
 
     if (Memory.spawn_queue.length != 0) {
         let task = Memory.spawn_queue[0];
@@ -34,6 +42,11 @@ module.exports.loop = function() {
         if (res) {
             Memory.spawn_queue.shift();
         }
+    }
+
+    var towers = _.filter(Game.structures, (s) => (s.structureType == STRUCTURE_TOWER));
+    for (let tower of towers) {
+        Tower.run(tower);
     }
 
     if (Game.cpu.bucket == 10000) {
@@ -49,13 +62,18 @@ module.exports.loop = function() {
         builder: builder,
         repairer: repairer,
         distant_worker: distant_worker,
-        upgrader: upgrader
+        upgrader: upgrader,
+        distant_harvester: distant_harvester,
+        distant_transfer: distant_transfer,
+        extender: extender,
+        claimer: claimer,
+        defender: defender
     };
 
     for (let name in Game.creeps) {
         let creep = Game.creeps[name];
         
-        if (creep.memory.isNeeded && creep.ticksToLive < 60) {
+        if (creep.memory.isNeeded && (creep.ticksToLive < 80 || (creep.memory.role == 'claimer' && creep.ticksToLive < 150))) {
             creep.say("I'm dying");
             let memory = creep.memory;
             Memory.spawn_queue.push({role: memory.role, roomname: memory.roomname, spawn: memory.spawn, isNeeded: memory.isNeeded, extraInfo: memory.extraInfo})
@@ -63,20 +81,5 @@ module.exports.loop = function() {
         }
 
         roleArray[creep.memory.role].run(creep);
-        // if (creep.memory.role == 'worker') {
-        //     worker.run(creep);
-        // } else if (creep.memory.role == 'harvester') {
-        //     harvester.run(creep);
-        // } else if (creep.memory.role == 'transfer') {
-        //     transfer.run(creep);
-        // } else if (creep.memory.role == 'builder') {
-        //     builder.run(creep);
-        // } else if (creep.memory.role == 'repairer') {
-        //     repairer.run(creep);
-        // } else if (creep.memory.role == 'distant_worker') {
-        //     distant_worker.run(creep);
-        // } else if (creep.memory.role == 'upgrader') {
-        //     upgrader.run(creep);
-        // }
     }
 }
