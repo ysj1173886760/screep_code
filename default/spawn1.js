@@ -9,7 +9,7 @@ var spawn1 = {
         let component = {
             worker: [WORK, WORK, MOVE, CARRY, CARRY, MOVE],
             harvester: [WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE],
-            transfer: [MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY],
+            transfer: [MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY],
             builder: [WORK, WORK, MOVE, CARRY, MOVE, CARRY],
             distant_worker: [WORK, WORK, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
             repairer: [WORK, WORK, MOVE, CARRY, CARRY, MOVE],

@@ -73,7 +73,7 @@ module.exports.loop = function() {
     for (let name in Game.creeps) {
         let creep = Game.creeps[name];
         
-        if (creep.memory.isNeeded && (creep.ticksToLive < 80 || (creep.memory.role == 'claimer' && creep.ticksToLive < 150))) {
+        if (creep.memory.isNeeded && (creep.ticksToLive < 100 || (creep.memory.role == 'claimer' && creep.ticksToLive < 100))) {
             creep.say("I'm dying");
             let memory = creep.memory;
             Memory.spawn_queue.push({role: memory.role, roomname: memory.roomname, spawn: memory.spawn, isNeeded: memory.isNeeded, extraInfo: memory.extraInfo})

@@ -13,7 +13,12 @@ var defender = {
             return;
         }
 
-        creep.moveTo(creep.room.controller);
+        let flag = Game.flags[`defender ${creep.room.name}`];
+        if (flag) {
+            creep.moveTo(flag, {reusePath: 50});
+            return;
+        }
+        creep.moveTo(creep.room.controller, {reusePath: 50});
     }
 };
 

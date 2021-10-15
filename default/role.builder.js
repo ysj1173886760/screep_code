@@ -24,13 +24,25 @@ var roleBuilder = {
                 creep.moveTo(creep.room.controller, {visualizePathStyle: {stroke: '#ffffff'}});
             }
         } else {
-            if (creep.room.storage) {
+            if (creep.room.storage && creep.room.storage[RESOURCE_ENERGY] > 1000) {
                 if (creep.withdraw(creep.room.storage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(creep.room.storage, {visualizePathStyle: {stoke: '#ffffff'}});
                 }
                 return;
             }
-            let flag = Game.flags[`container ${creep.memory.extraInfo.work_location} ${creep.room.name}`];
+            
+            if (creep.memory.extraInfo.working_location == 2) {
+                let flag = Game.flags[`upgrade_container ${creep.room.name}`];
+                let target = getStructureByFlag(flag, STRUCTURE_CONTAINER);
+                if (target && target.store[RESOURCE_ENERGY] > 500) {
+                    if (creep.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(target, {visualizePathStyle: {stoke: '#ffffff'}});
+                    }
+                }
+                return;
+            }
+
+            let flag = Game.flags[`container ${creep.memory.extraInfo.working_location} ${creep.room.name}`];
             let target = getStructureByFlag(flag, STRUCTURE_CONTAINER);
             if (target && target.store[RESOURCE_ENERGY] > 500) {
                 if (creep.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {

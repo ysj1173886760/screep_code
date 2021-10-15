@@ -14,7 +14,7 @@ module.exports = {
         }
 
         if (creep.reserveController(target) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(target, {reusePath: 50});
+            creep.moveTo(target);
         }
     }
 };

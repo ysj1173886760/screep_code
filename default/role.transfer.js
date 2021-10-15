@@ -53,7 +53,7 @@ var roleTransfer = {
             }
         } else {
 
-            let target = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 3);
+            let target = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 5);
             if (target.length > 0) {
                 if (creep.pickup(target[0]) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(target[0]);
