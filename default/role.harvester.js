@@ -19,7 +19,15 @@ var roleHarvester = {
                 }
             });
 
-            creep.transfer(target, RESOURCE_ENERGY);
+            if (target) {
+                if (!creep.pos.isEqualTo(target.pos)) {
+                    creep.moveTo(target);
+                    return;
+                }
+
+                creep.transfer(target, RESOURCE_ENERGY);
+            }
+
         }
     }
 };
