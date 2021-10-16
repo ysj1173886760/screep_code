@@ -12,8 +12,9 @@ var distant_transfer = require('role.distant_transfer');
 var extender = require('role.extender');
 var claimer = require('role.claimer');
 var defender = require('role.defender');
+var outputer = require('role.outputer');
 
-var {spawn} = require('utils');
+var {spawn, testGlobalFunction} = require('utils');
 
 module.exports.loop = function() {
     for (let name in Memory.creeps) {
@@ -67,13 +68,14 @@ module.exports.loop = function() {
         distant_transfer: distant_transfer,
         extender: extender,
         claimer: claimer,
-        defender: defender
+        defender: defender,
+        outputer: outputer
     };
 
     for (let name in Game.creeps) {
         let creep = Game.creeps[name];
         
-        if (creep.memory.isNeeded && (creep.ticksToLive < 100 || (creep.memory.role == 'claimer' && creep.ticksToLive < 100))) {
+        if (creep.memory.isNeeded && (creep.ticksToLive < 90 || (creep.memory.role == 'claimer' && creep.ticksToLive < 100))) {
             creep.say("I'm dying");
             let memory = creep.memory;
             Memory.spawn_queue.push({role: memory.role, roomname: memory.roomname, spawn: memory.spawn, isNeeded: memory.isNeeded, extraInfo: memory.extraInfo})
@@ -83,3 +85,5 @@ module.exports.loop = function() {
         roleArray[creep.memory.role].run(creep);
     }
 }
+
+global.G_testGlobalFunction = testGlobalFunction;

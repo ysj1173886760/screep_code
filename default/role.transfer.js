@@ -42,6 +42,14 @@ var roleTransfer = {
                 return;
             }
 
+            target = creep.room.storage;
+            if (target) {
+                if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(target, {visualizePathStyle: { stoke: '#ffffff'}});
+                }
+                return;
+            }
+
             let flag = Game.flags[`upgrade_container ${creep.room.name}`];
             target = getStructureByFlag(flag, STRUCTURE_CONTAINER);
 
@@ -51,9 +59,10 @@ var roleTransfer = {
                 }
                 return;
             }
+
         } else {
 
-            let target = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 5);
+            let target = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 3);
             if (target.length > 0) {
                 if (creep.pickup(target[0]) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(target[0]);

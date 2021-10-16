@@ -37,7 +37,15 @@ var roleRepairer = {
             upgradeController(creep);
 
         } else {
-            let target = creep.room.find(FIND_STRUCTURES, {
+            let target = creep.room.storage;
+            if (target && target.store[RESOURCE_ENERGY] > 5000) {
+                if (creep.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(target);
+                }
+                return;
+            }
+            
+            target = creep.room.find(FIND_STRUCTURES, {
                 filter:(s) => {
                     return (s.structureType == STRUCTURE_CONTAINER) &&
                             s.store[RESOURCE_ENERGY] > 500;
