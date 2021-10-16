@@ -1,3 +1,5 @@
+var {getStructureByFlag} = require('utils');
+
 var distant_harvester = {
     run: function(creep) {
         if (!creep.memory.harvesting && creep.store[RESOURCE_ENERGY] == 0) {

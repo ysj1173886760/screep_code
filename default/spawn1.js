@@ -3,12 +3,12 @@ var spawn1 = {
         
     },
 
-    spawn: function(role, roomname, isNeeded, extraInfo) {
+    spawn: function(role, roomname, isNeeded, respawnTime, extraInfo) {
         let newName = role + Game.time;
         let result;
         let component = {
             worker: [WORK, WORK, MOVE, CARRY, CARRY, MOVE],
-            harvester: [WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE],
+            harvester: [WORK, WORK, WORK, WORK, WORK, WORK, MOVE],
             transfer: [MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY],
             builder: [WORK, WORK, MOVE, CARRY, MOVE, CARRY],
             distant_worker: [WORK, WORK, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
@@ -22,7 +22,7 @@ var spawn1 = {
             outputer: [MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY],
         };
         result = Game.spawns['Spawn1'].spawnCreep(component[role], 
-            newName, {memory: {role: role, roomname: roomname, isNeeded: isNeeded, spawn: 'Spawn1', extraInfo: extraInfo}});
+            newName, {memory: {role: role, roomname: roomname, isNeeded: isNeeded, respawnTime: respawnTime, extraInfo: extraInfo}});
 
         if (result == OK) {
             console.log(`spawn1 spawning ${newName}`);

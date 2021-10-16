@@ -37,9 +37,18 @@ var distant_transfer = {
                 creep.moveTo(new RoomPosition(25, 25, creep.memory.extraInfo.working_room), {reusePath: 50});
                 return;
             }
+
+            // pick up the nearby resources
+            let target = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 3);
+            if (target.length > 0) {
+                if (creep.pickup(target[0]) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(target[0]);
+                }
+                return;
+            }
             
             let flag = Game.flags[`container ${creep.memory.extraInfo.working_location} ${creep.room.name}`];
-            let target = getStructureByFlag(flag, STRUCTURE_CONTAINER);
+            target = getStructureByFlag(flag, STRUCTURE_CONTAINER);
             if (creep.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(target, {visualizePathStyle: {stroke: '#ffaa00'}, reusePath: 50});
             }

@@ -14,14 +14,24 @@ var claimer = require('role.claimer');
 var defender = require('role.defender');
 var outputer = require('role.outputer');
 
-var {spawn, testGlobalFunction} = require('utils');
+var {testGlobalFunction} = require('utils');
 
 module.exports.loop = function() {
+    let spawn_list = {
+        Spawn1: spawn1
+    };
+
     for (let name in Memory.creeps) {
         if (!Game.creeps[name]) {
             let memory = Memory.creeps[name];
+            let room = Game.rooms[memory.roomname];
             if (memory.isNeeded) {
-                Memory.spawn_queue.push({role: memory.role, roomname: memory.roomname, spawn: memory.spawn, isNeeded: memory.isNeeded, extraInfo: memory.extraInfo})
+                room.memory.spawn_queue.push({
+                    role: memory.role, 
+                    roomname: memory.roomname, 
+                    isNeeded: memory.isNeeded, 
+                    respawnTime: memory.respawnTime, 
+                    extraInfo: memory.extraInfo});
             }
             delete Memory.creeps[name];
             console.log('delete creep: ', name);
@@ -32,16 +42,25 @@ module.exports.loop = function() {
     // Memory.spawn_queue.push({role: 'worker', roomname: 'W29S52', spawn: 'Spawn1', isNeeded: true, extraInfo: {working_location: '5bbcab5d9099fc012e6335cb'}})
     // spawn('distant_harvester', 'W29S52', 'Spawn1', true, {working_location: '5bbcab699099fc012e633749', working_room: 'W28S52'})
 
-    if (Memory.spawn_queue.length != 0) {
-        let task = Memory.spawn_queue[0];
-        let res = false;
-        if (task.spawn == 'Spawn1' && Game.spawns['Spawn1'] && !Game.spawns['Spawn1'].spawning) {
-            if (spawn1.spawn(task.role, task.roomname, task.isNeeded, task.extraInfo) == true) {
-                res = true;
-            }
+    for (let spawn_name in Game.spawns) {
+        let spawn = Game.spawns[spawn_name];
+        if (spawn.spawning) {
+            continue;
         }
+
+        let room = spawn.room;
+        if (room.memory.spawn_queue == undefined) {
+            room.memory.spawn_queue = new Array();
+        }
+
+        if (room.memory.spawn_queue.length == 0) {
+            continue;
+        }
+
+        let task = room.memory.spawn_queue[0];
+        let res = spawn_list[spawn_name].spawn(task.role, task.roomname, task.isNeeded, task.respawnTime, task.extraInfo);
         if (res) {
-            Memory.spawn_queue.shift();
+            room.memory.spawn_queue.shift();
         }
     }
 
@@ -75,10 +94,16 @@ module.exports.loop = function() {
     for (let name in Game.creeps) {
         let creep = Game.creeps[name];
         
-        if (creep.memory.isNeeded && (creep.ticksToLive < 90 || (creep.memory.role == 'claimer' && creep.ticksToLive < 100))) {
+        if (creep.memory.isNeeded && creep.ticksToLive < creep.memory.respawnTime) {
             creep.say("I'm dying");
             let memory = creep.memory;
-            Memory.spawn_queue.push({role: memory.role, roomname: memory.roomname, spawn: memory.spawn, isNeeded: memory.isNeeded, extraInfo: memory.extraInfo})
+            let room = Game.rooms[memory.roomname];
+            room.memory.spawn_queue.push({
+                role: memory.role, 
+                roomname: memory.roomname, 
+                isNeeded: memory.isNeeded, 
+                respawnTime: memory.respawnTime, 
+                extraInfo: memory.extraInfo});
             creep.memory.isNeeded = false;
         }
 
