@@ -25,6 +25,18 @@ function upgradeController(creep) {
     }
 }
 
+function roomSpawn(role, roomname, isNeeded, respawnTime, extraInfo) {
+    let room = Game.rooms[roomname];
+    room.memory.spawn_queue.push({
+        role: role, 
+        roomname: roomname, 
+        isNeeded: isNeeded, 
+        respawnTime: respawnTime, 
+        extraInfo: extraInfo
+    });
+    return true;
+}
+
 function testGlobalFunction() {
     console.log("test success");
     return true;
@@ -35,5 +47,6 @@ module.exports = {
     getConstructionSite,
     findNearbyStuff,
     upgradeController,
-    testGlobalFunction
+    testGlobalFunction,
+    roomSpawn
 }

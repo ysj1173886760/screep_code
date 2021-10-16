@@ -13,8 +13,11 @@ var extender = require('role.extender');
 var claimer = require('role.claimer');
 var defender = require('role.defender');
 var outputer = require('role.outputer');
+var controller = require('role.controller');
 
-var {testGlobalFunction} = require('utils');
+var {reserveController} = require('overload');
+
+var {roomSpawn} = require('utils');
 
 module.exports.loop = function() {
     let spawn_list = {
@@ -49,6 +52,7 @@ module.exports.loop = function() {
         }
 
         let room = spawn.room;
+
         if (room.memory.spawn_queue == undefined) {
             room.memory.spawn_queue = new Array();
         }
@@ -61,6 +65,13 @@ module.exports.loop = function() {
         let res = spawn_list[spawn_name].spawn(task.role, task.roomname, task.isNeeded, task.respawnTime, task.extraInfo);
         if (res) {
             room.memory.spawn_queue.shift();
+        }
+    }
+
+    for (let room_name in Game.rooms) {
+        let room = Game.rooms[room_name];
+        if (room.controller.my && room.memory.reserve_rooms) {
+            reserveController(room);
         }
     }
 
@@ -88,7 +99,8 @@ module.exports.loop = function() {
         extender: extender,
         claimer: claimer,
         defender: defender,
-        outputer: outputer
+        outputer: outputer,
+        controller: controller
     };
 
     for (let name in Game.creeps) {
@@ -111,4 +123,4 @@ module.exports.loop = function() {
     }
 }
 
-global.G_testGlobalFunction = testGlobalFunction;
+global.G_roomSpawn = roomSpawn;

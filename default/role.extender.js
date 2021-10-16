@@ -11,15 +11,40 @@ var extender = {
         }
 
         if (creep.room.name != creep.memory.extraInfo.working_room) {
+            if (creep.memory.extraInfo.path) {
+                let pth = creep.memory.extraInfo.path;
+                for (let i = 0; i < pth.length; i++) {
+                    if (pth[i] == creep.room.name) {
+                        let nxt = pth[i + 1];
+                        creep.moveTo(new RoomPosition(25, 25, nxt), {reusePath: 50});
+                        return;
+                    }
+                }
+            }
+
             creep.moveTo(new RoomPosition(25, 25, creep.memory.extraInfo.working_room), {reusePath: 50});
             return;
         }
+
         
-        if (creep.harvesting) {
-            let resource = Game.getObjectById(creep.memory.extraInfo.working_location);
-            if (creep.harvest(resource) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(resource, {visualizePathStyle: {stroke: '#ffaa00'}, reusePath: 50});
+        if (creep.memory.harvesting) {
+            let flag = Game.flags[`container ${creep.memory.extraInfo.working_location} ${creep.room.name}`];
+
+            if (!creep.pos.isEqualTo(flag.pos)) {
+                creep.moveTo(flag);
+                return;
             }
+            
+            if (creep.memory.working_source == undefined) {
+                let target = flag.pos.findClosestByPath(FIND_SOURCES);
+                creep.memory.working_source = target.id;
+            }
+
+            let resource = Game.getObjectById(creep.memory.working_source);
+            if (creep.harvest(resource) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(resource, {visualizePathStyle: {stroke: '#ffaa00'}});
+            }
+
         } else {
             let target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                 filter: (s) => {
@@ -36,7 +61,7 @@ var extender = {
                 return;
             }
 
-            let target = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
+            target = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
             if (target) {
                 if (creep.build(target) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(target);
