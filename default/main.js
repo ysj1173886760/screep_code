@@ -15,15 +15,11 @@ var defender = require('role.defender');
 var outputer = require('role.outputer');
 var controller = require('role.controller');
 
-var {reserveController} = require('overload');
+var {reserveController, buildController} = require('overload');
 
 var {roomSpawn} = require('utils');
 
 module.exports.loop = function() {
-    let spawn_list = {
-        Spawn1: spawn1
-    };
-
     for (let name in Memory.creeps) {
         if (!Game.creeps[name]) {
             let memory = Memory.creeps[name];
@@ -62,7 +58,7 @@ module.exports.loop = function() {
         }
 
         let task = room.memory.spawn_queue[0];
-        let res = spawn_list[spawn_name].spawn(task.role, task.roomname, task.isNeeded, task.respawnTime, task.extraInfo);
+        let res = spawn1.spawn(spawn_name, task.role, task.roomname, task.isNeeded, task.respawnTime, task.extraInfo);
         if (res) {
             room.memory.spawn_queue.shift();
         }
@@ -72,6 +68,9 @@ module.exports.loop = function() {
         let room = Game.rooms[room_name];
         if (room.controller.my && room.memory.reserve_rooms) {
             reserveController(room);
+        }
+        if (room.controller.my) {
+            buildController(room);
         }
     }
 

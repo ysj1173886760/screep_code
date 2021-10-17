@@ -48,6 +48,14 @@ var roleBuilder = {
                 if (creep.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(target, {visualizePathStyle: {stoke: '#ffffff'}});
                 }
+                return;
+            }
+
+            target = flag.pos.findClosestByPath(FIND_SOURCES);
+            if (target) {
+                if (creep.harvest(target) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(target);
+                }
             }
         }
     }

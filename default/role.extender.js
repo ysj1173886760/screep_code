@@ -28,14 +28,14 @@ var extender = {
 
         
         if (creep.memory.harvesting) {
-            let flag = Game.flags[`container ${creep.memory.extraInfo.working_location} ${creep.room.name}`];
-
-            if (!creep.pos.isEqualTo(flag.pos)) {
-                creep.moveTo(flag);
-                return;
-            }
-            
             if (creep.memory.working_source == undefined) {
+                let flag = Game.flags[`container ${creep.memory.extraInfo.working_location} ${creep.room.name}`];
+
+                // if (!creep.pos.isEqualTo(flag.pos)) {
+                //     creep.moveTo(flag);
+                //     return;
+                // }
+
                 let target = flag.pos.findClosestByPath(FIND_SOURCES);
                 creep.memory.working_source = target.id;
             }
