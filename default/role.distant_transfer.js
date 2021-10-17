@@ -16,9 +16,13 @@ var distant_transfer = {
                 return;
             }
 
-            if (creep.room.storage) {
-                if (creep.transfer(creep.room.storage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(creep.room.storage, {visualizePathStyle: {stroke: '#ffaa00'}, reusePath: 50});
+            let target = creep.room.storage;
+            if (target) {
+                for (let resourceType in creep.store) {
+                    if (creep.transfer(target, resourceType) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(target, {visualizePathStyle: { stoke: '#ffffff'}});
+                        break;
+                    }
                 }
                 return;
             }

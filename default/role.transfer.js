@@ -44,8 +44,11 @@ var roleTransfer = {
 
             target = creep.room.storage;
             if (target) {
-                if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target, {visualizePathStyle: { stoke: '#ffffff'}});
+                for (let resourceType in creep.store) {
+                    if (creep.transfer(target, resourceType) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(target, {visualizePathStyle: { stoke: '#ffffff'}});
+                        break;
+                    }
                 }
                 return;
             }

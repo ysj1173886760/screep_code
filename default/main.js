@@ -15,7 +15,7 @@ var defender = require('role.defender');
 var outputer = require('role.outputer');
 var controller = require('role.controller');
 
-var {reserveController, buildController} = require('overload');
+var {reserveController, buildController} = require('overlord');
 
 var {roomSpawn} = require('utils');
 
