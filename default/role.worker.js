@@ -43,7 +43,14 @@ module.exports = {
             }
 
         } else {
-            let resource = Game.getObjectById(creep.memory.extraInfo.working_location);
+            if (creep.memory.working_source == undefined) {
+                let flag = Game.flags[`container ${creep.memory.extraInfo.working_location} ${creep.room.name}`];
+
+                let target = flag.pos.findClosestByPath(FIND_SOURCES);
+                creep.memory.working_source = target.id;
+            }
+
+            let resource = Game.getObjectById(creep.memory.working_source);
             if (creep.harvest(resource) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(resource, {visualizePathStyle: {stroke: '#ffaa00'}});
             }

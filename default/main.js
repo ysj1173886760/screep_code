@@ -17,7 +17,7 @@ var controller = require('role.controller');
 
 var {reserveController, buildController} = require('overlord');
 
-var {roomSpawn} = require('utils');
+var {roomSpawn, getRole, printRoomInfo} = require('utils');
 
 module.exports.loop = function() {
     for (let name in Memory.creeps) {
@@ -123,3 +123,4 @@ module.exports.loop = function() {
 }
 
 global.G_roomSpawn = roomSpawn;
+global.G_printRoomInfo = printRoomInfo;

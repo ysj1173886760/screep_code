@@ -42,11 +42,30 @@ function testGlobalFunction() {
     return true;
 }
 
+function getRole(roomname, role) {
+    return _.filter(Game.creeps, (c) => (c.memory.role == role && c.memory.roomname == roomname));
+}
+
+function printRoomInfo(roomname) {
+    let room = Game.rooms[roomname];
+    let creeps = _.filter(Game.creeps, (c) => (c.memory.roomname == roomname));
+    for (let name in creeps) {
+        let creep = creeps[name];
+        console.log(creep.memory.role, creep.memory.isNeeded);
+        for (let extra in creep.memory.extraInfo) {
+            let info = creep.memory.extraInfo[extra];
+            console.log(extra, info);
+        }
+    }
+}
+
 module.exports = {
     getStructureByFlag,
     getConstructionSite,
     findNearbyStuff,
     upgradeController,
     testGlobalFunction,
-    roomSpawn
+    roomSpawn,
+    getRole,
+    printRoomInfo
 }
