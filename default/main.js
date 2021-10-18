@@ -18,6 +18,8 @@ var rebuilder = require('role.rebuilder');
 
 var {reserveController, buildController} = require('overlord');
 
+require('./mount')();
+
 var {
     roomSpawn,
     getRole,

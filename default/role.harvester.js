@@ -5,9 +5,7 @@ var roleHarvester = {
 
         if (creep.memory.positioned && creep.memory.working_source != undefined) {
             let resource = Game.getObjectById(creep.memory.working_source);
-            if (creep.harvest(resource) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(resource, {visualizePathStyle: {stroke: '#ffaa00'}});
-            }
+            creep.exHarvest(resource);
             return;
         }
 

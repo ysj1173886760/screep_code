@@ -21,17 +21,19 @@ var roleUpgrader = {
                     return;
                 }
             }
-            if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(creep.room.controller, {visualizePathStyle: {stroke: '#ffffff'}});
-            }
+            creep.exUpgradeController();
 
         } else {
-            let flag = Game.flags[`upgrade_container ${creep.room.name}`];
-            let target = getStructureByFlag(flag, STRUCTURE_CONTAINER);
+            if (creep.memory.container == undefined) {
+                let flag = Game.flags[`upgrade_container ${creep.room.name}`];
+                let target = getStructureByFlag(flag, STRUCTURE_CONTAINER);
+                creep.memory.container = target.id;
+            }
+
+            let target = Game.getObjectById(creep.memory.container);
+
             if (target) {
-                if (creep.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target, {visualizePathStyle: {stoke: '#ffffff'}});
-                }
+                creep.exWithdraw(target, RESOURCE_ENERGY);
             }
         }
     }

@@ -23,7 +23,7 @@ var spawn1 = {
                 harvester: [WORK, WORK, WORK, WORK, WORK, MOVE],
                 transfer: [CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
                 repairer: [WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
-                upgrader: [WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE],
+                upgrader: [WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE],
                 builder: [WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE]
             },
             Spawn3: {

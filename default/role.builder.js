@@ -14,20 +14,15 @@ var roleBuilder = {
             let target = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
 
             if (target) {
-                if (creep.build(target) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target, {visualizePathStyle: {stoke: '#ffffff'}});
-                }
+                creep.exBuild(target);
                 return;
             }
 
-            if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(creep.room.controller, {visualizePathStyle: {stroke: '#ffffff'}});
-            }
+            creep.exUpgradeController();
+
         } else {
             if (creep.room.storage && creep.room.storage.store[RESOURCE_ENERGY] > 1000) {
-                if (creep.withdraw(creep.room.storage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(creep.room.storage, {visualizePathStyle: {stoke: '#ffffff'}});
-                }
+                creep.exWithdraw(creep.room.storage, RESOURCE_ENERGY);
                 return;
             }
             
@@ -35,9 +30,7 @@ var roleBuilder = {
                 let flag = Game.flags[`upgrade_container ${creep.room.name}`];
                 let target = getStructureByFlag(flag, STRUCTURE_CONTAINER);
                 if (target && target.store[RESOURCE_ENERGY] > 500) {
-                    if (creep.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(target, {visualizePathStyle: {stoke: '#ffffff'}});
-                    }
+                    creep.exWithdraw(target, RESOURCE_ENERGY);
                 }
                 return;
             }
@@ -45,17 +38,13 @@ var roleBuilder = {
             let flag = Game.flags[`container ${creep.memory.extraInfo.working_location} ${creep.room.name}`];
             let target = getStructureByFlag(flag, STRUCTURE_CONTAINER);
             if (target && target.store[RESOURCE_ENERGY] > 500) {
-                if (creep.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target, {visualizePathStyle: {stoke: '#ffffff'}});
-                }
+                creep.exWithdraw(target, RESOURCE_ENERGY);
                 return;
             }
 
             target = flag.pos.findClosestByPath(FIND_SOURCES);
             if (target) {
-                if (creep.harvest(target) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target);
-                }
+                creep.exHarvest(target);
             }
         }
     }

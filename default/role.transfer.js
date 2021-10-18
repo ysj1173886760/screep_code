@@ -21,9 +21,7 @@ var roleTransfer = {
             });
             
             if (target) {
-                if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target, {visualizePathStyle: { stoke: '#ffffff'}});
-                }
+                creep.exTransfer(target, RESOURCE_ENERGY);
                 return;
             }
 
@@ -36,20 +34,13 @@ var roleTransfer = {
             });
             
             if (target) {
-                if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target, {visualizePathStyle: { stoke: '#ffffff'}});
-                }
+                creep.exTransfer(target, RESOURCE_ENERGY);
                 return;
             }
 
             target = creep.room.storage;
             if (target) {
-                for (let resourceType in creep.store) {
-                    if (creep.transfer(target, resourceType) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(target, {visualizePathStyle: { stoke: '#ffffff'}});
-                        break;
-                    }
-                }
+                creep.exTransferAll(target, RESOURCE_ENERGY);
                 return;
             }
 
@@ -57,9 +48,7 @@ var roleTransfer = {
             target = getStructureByFlag(flag, STRUCTURE_CONTAINER);
 
             if (target) {
-                if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target, {visualizePathStyle: { stoke: '#ffffff'}});
-                }
+                creep.exTransfer(target, RESOURCE_ENERGY);
                 return;
             }
 
@@ -67,19 +56,20 @@ var roleTransfer = {
 
             let target = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 3);
             if (target.length > 0) {
-                if (creep.pickup(target[0]) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target[0]);
-                }
+                creep.exPickup(target[0]);
                 return;
             }
 
-            let flag = Game.flags[`container ${creep.memory.extraInfo.working_location} ${creep.room.name}`];
-            target = getStructureByFlag(flag, STRUCTURE_CONTAINER);
+            if (creep.memory.container == undefined) {
+                let flag = Game.flags[`container ${creep.memory.extraInfo.working_location} ${creep.room.name}`];
+                target = getStructureByFlag(flag, STRUCTURE_CONTAINER);
+                creep.memory.container = target.id;
+            }
+            
+            target = Game.getObjectById(creep.memory.container);
 
             if (target) {
-                if (creep.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target, {visualizePathStyle: { stoke: '#ffffff'}});
-                }
+                creep.exWithdraw(target, RESOURCE_ENERGY);
             }
         }
     }
