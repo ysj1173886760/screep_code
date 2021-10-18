@@ -1,6 +1,7 @@
 var {getStructureByFlag} = require('utils');
 
 var distant_worker = {
+    // @ts-ignore
     run: function(creep) {
         if (!creep.memory.working && creep.store.getFreeCapacity() == 0) {
             creep.memory.working = true;

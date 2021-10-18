@@ -46,6 +46,15 @@ function getRole(roomname, role) {
     return _.filter(Game.creeps, (c) => (c.memory.role == role && c.memory.roomname == roomname));
 }
 
+function removeAll(roomname, role) {
+    let target = getRole(roomname, role);
+    for (let name in target) {
+        let creep = target[name];
+        creep.memory.isNeeded = false;
+    }
+    return true;
+}
+
 function printRoomInfo(roomname) {
     let room = Game.rooms[roomname];
     let creeps = _.filter(Game.creeps, (c) => (c.memory.roomname == roomname));
@@ -67,5 +76,6 @@ module.exports = {
     testGlobalFunction,
     roomSpawn,
     getRole,
-    printRoomInfo
+    printRoomInfo,
+    removeAll
 }

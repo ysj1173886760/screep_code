@@ -1,6 +1,7 @@
 var {upgradeController} = require('utils');
 
 var extender = {
+    // @ts-ignore
     run: function(creep) {
         if (creep.memory.harvesting && creep.store.getFreeCapacity() == 0) {
             creep.memory.harvesting = false;
@@ -37,7 +38,9 @@ var extender = {
                 // }
 
                 let target = flag.pos.findClosestByPath(FIND_SOURCES);
-                creep.memory.working_source = target.id;
+                if (target) {
+                    creep.memory.working_source = target.id;
+                }
             }
 
             let resource = Game.getObjectById(creep.memory.working_source);
@@ -47,6 +50,7 @@ var extender = {
 
         } else {
             let target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                // @ts-ignore
                 filter: (s) => {
                     return (s.structureType == STRUCTURE_SPAWN ||
                             s.structureType == STRUCTURE_EXTENSION) &&

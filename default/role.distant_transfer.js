@@ -2,6 +2,7 @@ const { get } = require('lodash');
 var {getStructureByFlag} = require('utils');
 
 var distant_transfer = {
+    // @ts-ignore
     run: function(creep) {
         if (!creep.memory.transfering && creep.store.getFreeCapacity() == 0) {
             creep.memory.transfering = true;

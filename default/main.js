@@ -14,10 +14,16 @@ var claimer = require('role.claimer');
 var defender = require('role.defender');
 var outputer = require('role.outputer');
 var controller = require('role.controller');
+var rebuilder = require('role.rebuilder');
 
 var {reserveController, buildController} = require('overlord');
 
-var {roomSpawn, getRole, printRoomInfo} = require('utils');
+var {
+    roomSpawn,
+    getRole,
+    printRoomInfo,
+    removeAll
+} = require('utils');
 
 module.exports.loop = function() {
     for (let name in Memory.creeps) {
@@ -64,15 +70,16 @@ module.exports.loop = function() {
         }
     }
 
-    for (let room_name in Game.rooms) {
-        let room = Game.rooms[room_name];
-        if (room.controller.my && room.memory.reserve_rooms) {
-            reserveController(room);
-        }
-        if (room.controller.my) {
-            buildController(room);
-        }
-    }
+    // for (let room_name in Game.rooms) {
+    //     let room = Game.rooms[room_name];
+    //     if (room.controller.my && room.memory.reserve_rooms) {
+    //         reserveController(room);
+    //     }
+    //     if (room.controller.my) {
+    //         buildController(room);
+    //     }
+    // }
+    
 
     var towers = _.filter(Game.structures, (s) => (s.structureType == STRUCTURE_TOWER));
     for (let tower of towers) {
@@ -99,7 +106,8 @@ module.exports.loop = function() {
         claimer: claimer,
         defender: defender,
         outputer: outputer,
-        controller: controller
+        controller: controller,
+        rebuilder: rebuilder
     };
 
     for (let name in Game.creeps) {
@@ -124,3 +132,4 @@ module.exports.loop = function() {
 
 global.G_roomSpawn = roomSpawn;
 global.G_printRoomInfo = printRoomInfo;
+global.G_removeAll = removeAll;

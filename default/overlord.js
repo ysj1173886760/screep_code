@@ -1,4 +1,8 @@
 function reserveController(room) {
+    if (room.memory.reserve_rooms == undefined) {
+        room.memory.reserve_rooms = {};
+    }
+
     for (let room_name in room.memory.reserve_rooms) {
         let reserve_room = Game.rooms[room_name];
         if (reserve_room && room.memory.reserve_rooms[room_name] == 0) {
@@ -44,6 +48,17 @@ function buildController(room) {
                         extraInfo: {}
                     }
                     // two builder
+                    room.memory.spawn_queue.push(task);
+                    room.memory.spawn_queue.push(task);
+                } else if (Game.flags[`upgrade_container ${room.name}`] != undefined) {
+                    // two for 2
+                    let task = {
+                        role: 'builder',
+                        roomname: room.name,
+                        isNeeded: true,
+                        respawnTime: 80,
+                        extraInfo: {working_location: 2}
+                    }
                     room.memory.spawn_queue.push(task);
                     room.memory.spawn_queue.push(task);
                 } else {
