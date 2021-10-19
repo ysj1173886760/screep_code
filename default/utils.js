@@ -68,6 +68,24 @@ function printRoomInfo(roomname) {
     }
 }
 
+function printRoomRoleInfo(roomname, role) {
+    let room = Game.rooms[roomname];
+    let creeps = _.filter(Game.creeps, (c) => (c.memory.roomname == roomname));
+    for (let name in creeps) {
+        let creep = creeps[name];
+        if (creep.memory.role != role) {
+            continue;
+        }
+        console.log(`role: ${creep.memory.role}, isNeeded: ${creep.memory.isNeeded}, respawnTime: ${creep.memory.respawnTime}`);
+        console.log('extra...............')
+        for (let extra in creep.memory.extraInfo) {
+            let info = creep.memory.extraInfo[extra];
+            console.log(extra, info);
+        }
+        console.log('................')
+    }
+}
+
 module.exports = {
     getStructureByFlag,
     getConstructionSite,
@@ -77,5 +95,6 @@ module.exports = {
     roomSpawn,
     getRole,
     printRoomInfo,
-    removeAll
+    removeAll,
+    printRoomRoleInfo
 }

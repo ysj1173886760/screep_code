@@ -12,12 +12,20 @@ var distant_transfer = {
         }
 
         if (creep.memory.transfering) {
-            if (creep.room.name != creep.memory.roomname) {
-                creep.moveTo(new RoomPosition(25, 25, creep.memory.roomname), {reusePath: 50});
+            let target = creep.room.lookForAt(LOOK_STRUCTURES, creep.pos);
+            
+            if (target.length && target[0].structureType == STRUCTURE_ROAD && target[0].hits < target[0].hitsMax) {
+                creep.exRepair(target[0]);
                 return;
             }
 
-            let target = creep.room.storage;
+            if (creep.room.name != creep.memory.roomname) {
+                creep.moveBackHomeRoom();
+                return;
+            }
+
+            target = creep.room.storage;
+
             if (target) {
                 for (let resourceType in creep.store) {
                     if (creep.transfer(target, resourceType) == ERR_NOT_IN_RANGE) {
@@ -39,12 +47,12 @@ var distant_transfer = {
 
         } else {
             if (creep.room.name != creep.memory.extraInfo.working_room) {
-                creep.moveTo(new RoomPosition(25, 25, creep.memory.extraInfo.working_room), {reusePath: 50});
+                creep.moveToWorkingRoom();
                 return;
             }
 
             // pick up the nearby resources
-            let target = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 3);
+            let target = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
             if (target.length > 0) {
                 if (creep.pickup(target[0]) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(target[0]);
@@ -52,10 +60,17 @@ var distant_transfer = {
                 return;
             }
             
-            let flag = Game.flags[`container ${creep.memory.extraInfo.working_location} ${creep.room.name}`];
-            target = getStructureByFlag(flag, STRUCTURE_CONTAINER);
-            if (creep.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(target, {visualizePathStyle: {stroke: '#ffaa00'}, reusePath: 50});
+            if (creep.memory.container == undefined) {
+                let flag = Game.flags[`container ${creep.memory.extraInfo.working_location} ${creep.room.name}`];
+                let target = getStructureByFlag(flag, STRUCTURE_CONTAINER);
+                if (target) {
+                    creep.memory.container = target.id;
+                }
+            }
+
+            target = Game.getObjectById(creep.memory.container);
+            if (target) {
+                creep.exWithdraw(target, RESOURCE_ENERGY);
             }
         }
     }

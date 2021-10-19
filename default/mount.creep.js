@@ -25,7 +25,7 @@ const creepExtension = {
 
     exHarvest(resource) {
         if (this.harvest(resource) == ERR_NOT_IN_RANGE) {
-            this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+            this.moveTo(resource, {visualizePathStyle: {stroke: '#ffffff'}});
         }
     },
 
@@ -76,32 +76,32 @@ const creepExtension = {
 
     moveToWorkingRoom() {
         if (this.memory.extraInfo.path) {
-            let pth = creep.memory.extraInfo.path;
+            let pth = this.memory.extraInfo.path;
             for (let i = 0; i < pth.length; i++) {
                 if (pth[i] == this.room.name) {
                     let nxt = pth[i + 1];
-                    this.moveTo(new RoomPosition(25, 25, nxt), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: 50});
+                    this.moveTo(new RoomPosition(25, 25, nxt), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: 20});
                     return;
                 }
             }
         }
 
-        this.moveTo(new RoomPosition(25, 25, creep.memory.extraInfo.working_room), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: 50});
+        this.moveTo(new RoomPosition(25, 25, this.memory.extraInfo.working_room), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: 20});
     },
 
     moveBackHomeRoom() {
         if (this.memory.extraInfo.path) {
-            let pth = creep.memory.extraInfo.path;
+            let pth = this.memory.extraInfo.path;
             for (let i = pth.length - 1; i >= 0; i--) {
                 if (pth[i] == this.room.name) {
                     let nxt = pth[i - 1];
-                    this.moveTo(new RoomPosition(25, 25, nxt), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: 50});
+                    this.moveTo(new RoomPosition(25, 25, nxt), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: 20});
                     return;
                 }
             }
         }
 
-        this.moveTo(new RoomPosition(25, 25, creep.memory.extraInfo.working_room), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: 50});
+        this.moveTo(new RoomPosition(25, 25, this.memory.roomname), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: 20});
     },
 
     exRepair(target) {

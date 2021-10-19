@@ -10,11 +10,13 @@ var distant_harvester = {
         }
 
         if (!creep.memory.harvesting) {
-            let target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-                filter: (structure) => {
-                    return structure.structureType == STRUCTURE_CONTAINER;
-                }
-            });
+            if (creep.memory.container == undefined) {
+                let flag = Game.flags[`container ${creep.memory.extraInfo.working_location} ${creep.room.name}`];
+                let target = getStructureByFlag(flag, STRUCTURE_CONTAINER);
+                creep.memory.container = target.id;
+            }
+
+            let target = Game.getObjectById(creep.memory.container);
 
             if (target) {
                 if (target.hits < target.hitsMax) {
@@ -37,14 +39,19 @@ var distant_harvester = {
 
         } else {
             if (creep.room.name != creep.memory.extraInfo.working_room) {
-                creep.moveTo(new RoomPosition(25, 25, creep.memory.extraInfo.working_room), {reusePath: 50});
+                creep.moveToWorkingRoom();
                 return;
             }
-            
-            let resource = Game.getObjectById(creep.memory.extraInfo.working_location);
-            if (creep.harvest(resource) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(resource, {visualizePathStyle: {stroke: '#ffaa00'}, reusePath: 50});
+
+            if (creep.memory.working_source == undefined) {
+                let flag = Game.flags[`container ${creep.memory.extraInfo.working_location} ${creep.room.name}`];
+
+                let target = flag.pos.findClosestByPath(FIND_SOURCES);
+                creep.memory.working_source = target.id;
             }
+
+            let resource = Game.getObjectById(creep.memory.working_source);
+            creep.exHarvest(resource);
         }
     }
 };

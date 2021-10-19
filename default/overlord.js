@@ -60,7 +60,6 @@ function buildController(room) {
                         extraInfo: {working_location: 2}
                     }
                     room.memory.spawn_queue.push(task);
-                    room.memory.spawn_queue.push(task);
                 } else {
                     // one for 1, one for 0
                     room.memory.spawn_queue.push({
@@ -101,3 +100,13 @@ module.exports = {
     reserveController,
     buildController
 };
+
+// let task = {
+//     role: 'distant_transfer',
+//     roomname: creep.memory.roomname,
+//     isNeeded: true,
+//     respawnTime: creep.memory.respawnTime,
+//     extraInfo: creep.memory.extraInfo
+// }
+// Game.rooms[creep.memory.roomname].memory.spawn_queue.push(task);
+// console.log(`building mission in ${creep.memory.extraInfo.working_room} is done, calling transfer`);

@@ -24,7 +24,8 @@ var {
     roomSpawn,
     getRole,
     printRoomInfo,
-    removeAll
+    removeAll,
+    printRoomRoleInfo
 } = require('utils');
 
 module.exports.loop = function() {
@@ -44,10 +45,6 @@ module.exports.loop = function() {
             console.log('delete creep: ', name);
         }
     }
-
-    // Memory.spawn_queue.push({role: 'worker', roomname: 'W29S52', spawn: 'Spawn1', isNeeded: true, extraInfo: {working_location: '5bbcab5d9099fc012e6335cc'}})
-    // Memory.spawn_queue.push({role: 'worker', roomname: 'W29S52', spawn: 'Spawn1', isNeeded: true, extraInfo: {working_location: '5bbcab5d9099fc012e6335cb'}})
-    // spawn('distant_harvester', 'W29S52', 'Spawn1', true, {working_location: '5bbcab699099fc012e633749', working_room: 'W28S52'})
 
     for (let spawn_name in Game.spawns) {
         let spawn = Game.spawns[spawn_name];
@@ -72,15 +69,15 @@ module.exports.loop = function() {
         }
     }
 
-    // for (let room_name in Game.rooms) {
-    //     let room = Game.rooms[room_name];
-    //     if (room.controller.my && room.memory.reserve_rooms) {
-    //         reserveController(room);
-    //     }
-    //     if (room.controller.my) {
-    //         buildController(room);
-    //     }
-    // }
+    for (let room_name in Game.rooms) {
+        let room = Game.rooms[room_name];
+        if (room.controller.my) {
+            reserveController(room);
+        }
+        if (room.controller.my) {
+            buildController(room);
+        }
+    }
     
 
     var towers = _.filter(Game.structures, (s) => (s.structureType == STRUCTURE_TOWER));
@@ -135,3 +132,4 @@ module.exports.loop = function() {
 global.G_roomSpawn = roomSpawn;
 global.G_printRoomInfo = printRoomInfo;
 global.G_removeAll = removeAll;
+global.G_printRoomRoleInfo = printRoomRoleInfo;
