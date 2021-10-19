@@ -25,11 +25,12 @@ var spawn1 = {
                 repairer: [WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
                 upgrader: [WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE],
                 builder: [WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
-                outputer: [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
+                outputer: [CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
                 distant_worker: [WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE],
                 distant_harvester: [WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, MOVE, MOVE, MOVE],
-                distant_transfer: [WORK, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE],
-                claimer: [CLAIM, CLAIM, MOVE, MOVE]
+                distant_transfer: [WORK, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
+                claimer: [CLAIM, CLAIM, MOVE, MOVE],
+                defender: [TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, MOVE, MOVE, MOVE, MOVE, ATTACK, MOVE, MOVE, ATTACK, ATTACK],
             },
             Spawn3: {
                 worker: [WORK, WORK, MOVE, CARRY, CARRY, MOVE],
@@ -68,7 +69,7 @@ var spawn1 = {
         }
         
         return false;
-    }
+    },
 };
 
 module.exports = spawn1;

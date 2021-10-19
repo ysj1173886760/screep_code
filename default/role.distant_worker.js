@@ -22,14 +22,14 @@ var distant_worker = {
             });
 
             if (target) {
-                creep.exRepair(target);
+                creep.exRepairCache(target, 10);
                 return;
             }
 
             // build construction site
             target = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
             if (target) {
-                creep.exBuild(target);
+                creep.exBuildCache(target, 20);
                 return;
             } else {
                 // should sending the message to overlord. And request harvester and transfer to continue working
@@ -85,7 +85,9 @@ var distant_worker = {
             }
 
             let resource = Game.getObjectById(creep.memory.working_source);
-            creep.exHarvest(resource);
+            if (resource) {
+                creep.exHarvestCache(resource, 20);
+            }
         }
     }
 };

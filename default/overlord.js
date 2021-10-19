@@ -9,7 +9,7 @@ function reserveController(room) {
             room.memory.reserve_rooms[room_name] = 100;
             if (reserve_room.controller.reservation == undefined || 
                 reserve_room.controller.reservation.username != 'heavensheep' || 
-                reserve_room.controller.reservation.ticksToEnd < 300) {
+                reserve_room.controller.reservation.ticksToEnd < 500) {
                 console.log(`detected ${reserve_room} need reserver, sending mission`);
                 room.memory.spawn_queue.push({
                     role: 'claimer', 
@@ -18,7 +18,7 @@ function reserveController(room) {
                     respawnTime: 100, 
                     extraInfo: {working_room: room_name}
                 });
-                room.memory.reserve_rooms[room_name] += 300;
+                room.memory.reserve_rooms[room_name] += 500;
             }
         }
         room.memory.reserve_rooms[room_name]--;

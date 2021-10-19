@@ -51,7 +51,7 @@ var distant_harvester = {
             }
 
             let resource = Game.getObjectById(creep.memory.working_source);
-            creep.exHarvest(resource);
+            creep.exHarvestCache(resource, 20);
         }
     }
 };

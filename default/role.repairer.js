@@ -20,9 +20,7 @@ var roleRepairer = {
                 }
             });
             if (target) {
-                if (creep.repair(target) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target, {visualizePathStyle: {stoke: '#ffffff'}});
-                }
+                creep.exRepairCache(target, 20);
                 return;
             }
 
@@ -39,9 +37,7 @@ var roleRepairer = {
         } else {
             let target = creep.room.storage;
             if (target && target.store[RESOURCE_ENERGY] > 5000) {
-                if (creep.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target);
-                }
+                creep.exWithdrawCache(target, RESOURCE_ENERGY, 20);
                 return;
             }
             

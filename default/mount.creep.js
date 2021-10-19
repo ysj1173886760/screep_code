@@ -29,9 +29,21 @@ const creepExtension = {
         }
     },
 
+    exHarvestCache(resource, reusePath) {
+        if (this.harvest(resource) == ERR_NOT_IN_RANGE) {
+            this.moveTo(resource, {visualizePathStyle: {stroke: '#ffffff'}, reusePath: reusePath});
+        }
+    },
+
     exTransfer(target, type) {
         if (this.transfer(target, type) == ERR_NOT_IN_RANGE) {
             this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+        }
+    },
+
+    exTransferCache(target, type, reusePath) {
+        if (this.transfer(target, type) == ERR_NOT_IN_RANGE) {
+            this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}, reusePath: reusePath});
         }
     },
 
@@ -50,15 +62,33 @@ const creepExtension = {
         }
     },
 
+    exPickupCache(target, reusePath) {
+        if (this.pickup(target) == ERR_NOT_IN_RANGE) {
+            this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}, reusePath: reusePath});
+        }
+    },
+
     exWithdraw(target, type) {
         if (this.withdraw(target, type) == ERR_NOT_IN_RANGE) {
             this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
         }
     },
 
+    exWithdrawCache(target, type, reusePath) {
+        if (this.withdraw(target, type) == ERR_NOT_IN_RANGE) {
+            this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}, reusePath: reusePath});
+        }
+    },
+
     exBuild(target) {
         if (this.build(target) == ERR_NOT_IN_RANGE) {
             this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+        }
+    },
+
+    exBuildCache(target, reusePath) {
+        if (this.build(target) == ERR_NOT_IN_RANGE) {
+            this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}, reusePath: reusePath});
         }
     },
 
@@ -74,39 +104,57 @@ const creepExtension = {
         }
     },
 
+    exReserveControllerCache(target, reusePath) {
+        if (this.reserveController(target) == ERR_NOT_IN_RANGE) {
+            this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}, reusePath: reusePath});
+        }
+    },
+
     moveToWorkingRoom() {
         if (this.memory.extraInfo.path) {
-            let pth = this.memory.extraInfo.path;
-            for (let i = 0; i < pth.length; i++) {
-                if (pth[i] == this.room.name) {
-                    let nxt = pth[i + 1];
-                    this.moveTo(new RoomPosition(25, 25, nxt), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: 20});
-                    return;
+            if (this.memory.nextRoom == undefined || this.room.name == this.memory.nextRoom) {
+                let pth = this.memory.extraInfo.path;
+                for (let i = 0; i < pth.length; i++) {
+                    if (pth[i] == this.room.name) {
+                        this.memory.nextRoom = pth[i + 1];
+                        break;
+                    }
                 }
             }
+        } else {
+            this.memory.nextRoom = this.memory.extraInfo.working_room;
         }
 
-        this.moveTo(new RoomPosition(25, 25, this.memory.extraInfo.working_room), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: 20});
+        this.moveTo(new RoomPosition(25, 25, this.memory.nextRoom), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: 20});
     },
 
     moveBackHomeRoom() {
         if (this.memory.extraInfo.path) {
-            let pth = this.memory.extraInfo.path;
-            for (let i = pth.length - 1; i >= 0; i--) {
-                if (pth[i] == this.room.name) {
-                    let nxt = pth[i - 1];
-                    this.moveTo(new RoomPosition(25, 25, nxt), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: 20});
-                    return;
+            if (this.memory.nextRoom == undefined || this.room.name == this.memory.nextRoom) {
+                let pth = this.memory.extraInfo.path;
+                for (let i = pth.length - 1; i >= 0; i--) {
+                    if (pth[i] == this.room.name) {
+                        this.memory.nextRoom = pth[i - 1];
+                        break;
+                    }
                 }
             }
+        } else {
+            this.memory.nextRoom = this.memory.roomname;
         }
 
-        this.moveTo(new RoomPosition(25, 25, this.memory.roomname), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: 20});
+        this.moveTo(new RoomPosition(25, 25, this.memory.nextRoom), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: 20});
     },
 
     exRepair(target) {
         if (this.repair(target) == ERR_NOT_IN_RANGE) {
             this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+        }
+    },
+
+    exRepairCache(target, reusePath) {
+        if (this.repair(target) == ERR_NOT_IN_RANGE) {
+            this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}, reusePath: reusePath});
         }
     }
 

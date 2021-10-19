@@ -86,6 +86,12 @@ function printRoomRoleInfo(roomname, role) {
     }
 }
 
+function addReserve(roomname, target_room) {
+    let room = Game.rooms[roomname];
+    room.memory.reserve_rooms[target_room] = 0;
+    console.log('adding reserve room');
+}
+
 module.exports = {
     getStructureByFlag,
     getConstructionSite,
@@ -96,5 +102,6 @@ module.exports = {
     getRole,
     printRoomInfo,
     removeAll,
-    printRoomRoleInfo
+    printRoomRoleInfo,
+    addReserve
 }

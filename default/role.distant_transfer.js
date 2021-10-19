@@ -15,12 +15,14 @@ var distant_transfer = {
             let target = creep.room.lookForAt(LOOK_STRUCTURES, creep.pos);
             
             if (target.length && target[0].structureType == STRUCTURE_ROAD && target[0].hits < target[0].hitsMax) {
-                creep.exRepair(target[0]);
+                creep.exRepairCache(target[0], 20);
                 return;
             }
 
             if (creep.room.name != creep.memory.roomname) {
+                // creep.moveTo(new RoomPosition(25, 25, creep.memory.roomname), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: 20});
                 creep.moveBackHomeRoom();
+
                 return;
             }
 
@@ -29,7 +31,7 @@ var distant_transfer = {
             if (target) {
                 for (let resourceType in creep.store) {
                     if (creep.transfer(target, resourceType) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(target, {visualizePathStyle: { stoke: '#ffffff'}});
+                        creep.moveTo(target, {visualizePathStyle: { stoke: '#ffffff'}, reusePath: 50});
                         break;
                     }
                 }
@@ -47,6 +49,7 @@ var distant_transfer = {
 
         } else {
             if (creep.room.name != creep.memory.extraInfo.working_room) {
+                // creep.moveTo(new RoomPosition(25, 25, creep.memory.extraInfo.working_room), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: 20});
                 creep.moveToWorkingRoom();
                 return;
             }
@@ -54,9 +57,7 @@ var distant_transfer = {
             // pick up the nearby resources
             let target = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
             if (target.length > 0) {
-                if (creep.pickup(target[0]) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target[0]);
-                }
+                creep.exPickupCache(target[0], 20);
                 return;
             }
             
@@ -70,7 +71,7 @@ var distant_transfer = {
 
             target = Game.getObjectById(creep.memory.container);
             if (target) {
-                creep.exWithdraw(target, RESOURCE_ENERGY);
+                creep.exWithdrawCache(target, RESOURCE_ENERGY, 20);
             }
         }
     }

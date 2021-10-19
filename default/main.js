@@ -25,7 +25,8 @@ var {
     getRole,
     printRoomInfo,
     removeAll,
-    printRoomRoleInfo
+    printRoomRoleInfo,
+    addReserve
 } = require('utils');
 
 module.exports.loop = function() {
@@ -133,3 +134,4 @@ global.G_roomSpawn = roomSpawn;
 global.G_printRoomInfo = printRoomInfo;
 global.G_removeAll = removeAll;
 global.G_printRoomRoleInfo = printRoomRoleInfo;
+global.G_addReserve = addReserve;
