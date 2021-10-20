@@ -12,7 +12,7 @@ var distant_worker = {
 
         if (creep.memory.working) {
             // repair structures
-            let target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+            let target = creep.room.find(FIND_STRUCTURES, {
                 filter:(s) => {
                     return (s.structureType == STRUCTURE_ROAD ||
                             s.structureType == STRUCTURE_TOWER || 
@@ -21,19 +21,23 @@ var distant_worker = {
                 }
             });
 
-            if (target) {
-                creep.exRepairCache(target, 10);
+            if (target.length) {
+                creep.exRepairCache(target[0], 10);
                 return;
             }
 
             // build construction site
-            target = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
-            if (target) {
-                creep.exBuildCache(target, 20);
+            target = creep.room.find(FIND_CONSTRUCTION_SITES);
+            if (target.length) {
+                creep.exBuildCache(target[0], 20);
                 return;
             } else {
-                // should sending the message to overlord. And request harvester and transfer to continue working
-                creep.memory.isNeeded = false;
+                if (creep.memory.isNeeded) {
+                    // should sending the message to overlord. And request harvester and transfer to continue working
+                    console.log('can not find constructions, killing my self');
+                    creep.memory.isNeeded = false;
+                }
+
             }
 
             // otherwise, send energy back home

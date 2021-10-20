@@ -15,6 +15,12 @@ var roleUpgrader = {
         }
 
         if (creep.memory.upgrading) {
+            if (creep.memory.extraInfo.range != undefined) {
+                if (!creep.pos.inRangeTo(creep.room.controller, creep.memory.extraInfo.range)) {
+                    creep.moveTo(creep.room.controller);
+                    return;
+                }
+            }
             creep.exUpgradeController();
 
         } else {

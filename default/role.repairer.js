@@ -11,7 +11,7 @@ var roleRepairer = {
         }
 
         if (creep.memory.repairing) {
-            let target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+            let target = creep.room.find(FIND_STRUCTURES, {
                 filter:(s) => {
                     return (s.structureType == STRUCTURE_ROAD ||
                             s.structureType == STRUCTURE_TOWER || 
@@ -19,16 +19,14 @@ var roleRepairer = {
                             s.hits < s.hitsMax;
                 }
             });
-            if (target) {
-                creep.exRepairCache(target, 20);
+            if (target.length) {
+                creep.exRepairCache(target[0], 10);
                 return;
             }
 
-            target = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
-            if (target) {
-                if (creep.build(target) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target);
-                }
+            target = creep.room.find(FIND_CONSTRUCTION_SITES);
+            if (target.length) {
+                creep.exBuild(target[0]);
                 return;
             }
             

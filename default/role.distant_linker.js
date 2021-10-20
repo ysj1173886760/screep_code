@@ -1,6 +1,6 @@
 var {getStructureByFlag} = require('utils');
 
-var distant_transfer = {
+var distant_linker = {
     // @ts-ignore
     run: function(creep) {
         if (!creep.memory.transfering && creep.store.getFreeCapacity() == 0) {
@@ -12,40 +12,20 @@ var distant_transfer = {
 
         if (creep.memory.transfering) {
             if (creep.room.name != creep.memory.roomname) {
-                let target = creep.room.lookForAt(LOOK_STRUCTURES, creep.pos);
-                
-                if (target.length && target[0].structureType == STRUCTURE_ROAD && target[0].hits < target[0].hitsMax) {
-                    creep.exRepair(target[0]);
-                    return;
-                }
-            }
-
-            if (creep.room.name != creep.memory.roomname) {
                 // creep.moveTo(new RoomPosition(25, 25, creep.memory.roomname), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: 20});
                 creep.moveBackHomeRoom();
 
                 return;
             }
 
-            target = creep.room.storage;
-
-            if (target) {
-                for (let resourceType in creep.store) {
-                    if (creep.transfer(target, resourceType) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(target, {visualizePathStyle: { stoke: '#ffffff'}, reusePath: 50});
-                        break;
-                    }
+            let target = creep.pos.findInRange(FIND_STRUCTURES, 5, {
+                filter: (s) => {
+                    return s.structureType == STRUCTURE_LINK &&
+                            s.cooldown == 0;
                 }
-                return;
-            }
-
-            let flag = Game.flags[`upgrade_container ${creep.room.name}`];
-            target = getStructureByFlag(flag, STRUCTURE_CONTAINER);
-            if (target && target.store.getFreeCapacity() > 0) {
-                if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target, {visualizePathStyle: {stroke: '#ffaa00'}, reusePath: 50});
-                }
-                return;
+            });
+            if (target.length) {
+                creep.exTransfer(target[0], RESOURCE_ENERGY);
             }
 
         } else {
@@ -57,11 +37,6 @@ var distant_transfer = {
             }
             
             if (creep.room.name != creep.memory.extraInfo.working_room) {
-                // if we have already picked up a lot resources, and we havn't gone to working room yet. Then we send those energy back directly
-                if (creep.store.getFreeCapacity() < creep.store.getCapacity() / 2) {
-                    creep.memory.transfering = true;
-                    return;
-                }
                 // creep.moveTo(new RoomPosition(25, 25, creep.memory.extraInfo.working_room), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: 20});
                 creep.moveToWorkingRoom();
                 return;
@@ -84,4 +59,4 @@ var distant_transfer = {
     }
 };
 
-module.exports = distant_transfer;
+module.exports = distant_linker;

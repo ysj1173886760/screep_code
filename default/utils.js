@@ -86,6 +86,33 @@ function printRoomRoleInfo(roomname, role) {
     }
 }
 
+function removeRole(roomname, role) {
+    let room = Game.rooms[roomname];
+    let queue = room.memory.spawn_queue;
+    console.log(`before delete..........`);
+    for (let i = 0; i < queue.length; i++) {
+        console.log(queue[i].role);
+    }
+    for (let i = 0; i < queue.length; i++) {
+        if (queue[i].role == role) {
+            room.memory.spawn_queue.splice(i, 1);
+            break;
+        }
+    }
+    console.log(`after delete.........`);
+    for (let i = 0; i < room.memory.spawn_queue.length; i++) {
+        console.log(room.memory.spawn_queue[i].role);
+    }
+}
+
+function printSpawnQueue(roomname) {
+    let room = Game.rooms[roomname];
+    let queue = room.memory.spawn_queue;
+    for (let i = 0; i < queue.length; i++) {
+        console.log(queue[i].role);
+    }
+}
+
 function addReserve(roomname, target_room) {
     let room = Game.rooms[roomname];
     room.memory.reserve_rooms[target_room] = 0;
@@ -103,5 +130,7 @@ module.exports = {
     printRoomInfo,
     removeAll,
     printRoomRoleInfo,
-    addReserve
+    addReserve,
+    removeRole,
+    printSpawnQueue
 }

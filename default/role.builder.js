@@ -11,10 +11,10 @@ var roleBuilder = {
         }
 
         if (creep.memory.building) {
-            let target = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
+            let target = creep.room.find(FIND_CONSTRUCTION_SITES);
 
-            if (target) {
-                creep.exBuild(target);
+            if (target.length) {
+                creep.exBuild(target[0]);
                 return;
             }
 

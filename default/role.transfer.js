@@ -54,7 +54,7 @@ var roleTransfer = {
 
         } else {
 
-            let target = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 3);
+            let target = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 2);
             if (target.length > 0) {
                 creep.exPickup(target[0]);
                 return;

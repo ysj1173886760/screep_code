@@ -111,39 +111,44 @@ const creepExtension = {
     },
 
     moveToWorkingRoom() {
+        if (this.memory.nextRoom && this.room.name != this.memory.nextRoom) {
+            this.moveTo(new RoomPosition(25, 25, this.memory.nextRoom), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: 20});
+            return;
+        }
+        
         if (this.memory.extraInfo.path) {
-            if (this.memory.nextRoom == undefined || this.room.name == this.memory.nextRoom) {
-                let pth = this.memory.extraInfo.path;
-                for (let i = 0; i < pth.length; i++) {
-                    if (pth[i] == this.room.name) {
-                        this.memory.nextRoom = pth[i + 1];
-                        break;
-                    }
+            let pth = this.memory.extraInfo.path;
+            for (let i = 0; i < pth.length; i++) {
+                if (pth[i] == this.room.name) {
+                    this.memory.nextRoom = pth[i + 1];
+                    break;
                 }
             }
         } else {
             this.memory.nextRoom = this.memory.extraInfo.working_room;
         }
 
-        this.moveTo(new RoomPosition(25, 25, this.memory.nextRoom), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: 20});
+        
     },
 
     moveBackHomeRoom() {
+        if (this.memory.nextRoom && this.room.name != this.memory.nextRoom) {
+            this.moveTo(new RoomPosition(25, 25, this.memory.nextRoom), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: 20});
+            return;
+        }
+        
         if (this.memory.extraInfo.path) {
-            if (this.memory.nextRoom == undefined || this.room.name == this.memory.nextRoom) {
-                let pth = this.memory.extraInfo.path;
-                for (let i = pth.length - 1; i >= 0; i--) {
-                    if (pth[i] == this.room.name) {
-                        this.memory.nextRoom = pth[i - 1];
-                        break;
-                    }
+            let pth = this.memory.extraInfo.path;
+            for (let i = pth.length - 1; i >= 0; i--) {
+                if (pth[i] == this.room.name) {
+                    this.memory.nextRoom = pth[i - 1];
+                    break;
                 }
             }
         } else {
             this.memory.nextRoom = this.memory.roomname;
         }
 
-        this.moveTo(new RoomPosition(25, 25, this.memory.nextRoom), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: 20});
     },
 
     exRepair(target) {

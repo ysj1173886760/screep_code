@@ -1,0 +1,10 @@
+{
+    "include": [
+        "default/*"
+    ],
+    "compilerOptions": {
+        "target": "ES2016",
+        "strict": true,
+        "checkJs": true
+    }
+}

@@ -5,17 +5,19 @@ var defender = {
             return;
         }
 
-        let target = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS);
-        if (target) {
-            if (creep.attack(target) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(target);
+        let target = creep.room.find(FIND_HOSTILE_CREEPS);
+        if (target.length) {
+            if (creep.attack(target[0]) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(target[0]);
             }
             return;
         }
 
         let flag = Game.flags[`defender ${creep.room.name}`];
         if (flag) {
-            creep.moveTo(flag, {reusePath: 50});
+            if (!creep.pos.isEqualTo(flag.pos)) {
+                creep.moveTo(flag, {reusePath: 50});
+            }
             return;
         }
         creep.moveTo(creep.room.controller, {reusePath: 50});

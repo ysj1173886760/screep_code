@@ -15,6 +15,10 @@ var defender = require('role.defender');
 var outputer = require('role.outputer');
 var controller = require('role.controller');
 var rebuilder = require('role.rebuilder');
+var distant_linker = require('role.distant_linker');
+var center_transfer = require('role.center_transfer');
+
+var {linkWork} = require('link');
 
 var {reserveController, buildController} = require('overlord');
 
@@ -26,7 +30,9 @@ var {
     printRoomInfo,
     removeAll,
     printRoomRoleInfo,
-    addReserve
+    addReserve,
+    removeRole,
+    printSpawnQueue
 } = require('utils');
 
 module.exports.loop = function() {
@@ -63,6 +69,26 @@ module.exports.loop = function() {
             continue;
         }
 
+        // priority check
+        let check = false;
+        let high_priority = ['harvester', 'transfer', 'outputer'];
+        for (let i = 0; i < room.memory.spawn_queue.length; i++) {
+            if (high_priority.includes(room.memory.spawn_queue[i].role)) {
+                check = true;
+                let task = room.memory.spawn_queue[i];
+                console.log(`spawning high priority role ${task.role}`);
+                let res = spawn1.spawn(spawn_name, task.role, task.roomname, task.isNeeded, task.respawnTime, task.extraInfo);
+                if (res) {
+                    room.memory.spawn_queue.splice(i, 1);
+                }
+                break;
+            }
+        }
+
+        if (check) {
+            continue;
+        }
+
         let task = room.memory.spawn_queue[0];
         let res = spawn1.spawn(spawn_name, task.role, task.roomname, task.isNeeded, task.respawnTime, task.extraInfo);
         if (res) {
@@ -74,9 +100,8 @@ module.exports.loop = function() {
         let room = Game.rooms[room_name];
         if (room.controller.my) {
             reserveController(room);
-        }
-        if (room.controller.my) {
             buildController(room);
+            linkWork(room);
         }
     }
     
@@ -107,7 +132,9 @@ module.exports.loop = function() {
         defender: defender,
         outputer: outputer,
         controller: controller,
-        rebuilder: rebuilder
+        rebuilder: rebuilder,
+        distant_linker: distant_linker,
+        center_transfer: center_transfer
     };
 
     for (let name in Game.creeps) {
@@ -135,3 +162,5 @@ global.G_printRoomInfo = printRoomInfo;
 global.G_removeAll = removeAll;
 global.G_printRoomRoleInfo = printRoomRoleInfo;
 global.G_addReserve = addReserve;
+global.G_removeRole = removeRole;
+global.G_printSpawnQueue = printSpawnQueue;
