@@ -33,6 +33,10 @@ function buildController(room) {
         }
     }
 
+    if (room.controller.level < 3) {
+        return;
+    }
+
     if (room.memory.buildInfo.counter <= 0) {
         room.memory.buildInfo.counter = 200;
         let target = room.find(FIND_CONSTRUCTION_SITES);

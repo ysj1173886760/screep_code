@@ -32,7 +32,7 @@ var distant_transfer = {
             if (target) {
                 for (let resourceType in creep.store) {
                     if (creep.transfer(target, resourceType) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(target, {visualizePathStyle: { stoke: '#ffffff'}, reusePath: 50});
+                        creep.moveTo(target, {visualizePathStyle: { stoke: '#ffffff'}, reusePath: 20});
                         break;
                     }
                 }
@@ -63,7 +63,7 @@ var distant_transfer = {
                     return;
                 }
                 // creep.moveTo(new RoomPosition(25, 25, creep.memory.extraInfo.working_room), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: 20});
-                creep.moveToWorkingRoom();
+                creep.moveToWorkingRoomCache(5);
                 return;
             }
 

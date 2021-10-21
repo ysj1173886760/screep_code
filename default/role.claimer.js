@@ -1,7 +1,7 @@
 module.exports = {
     run: function(creep) {
         if (creep.room.name != creep.memory.extraInfo.working_room) {
-            creep.moveTo(new RoomPosition(25, 25, creep.memory.extraInfo.working_room), {reusePath: 50});
+            creep.moveToWorkingRoom();
             return;
         }
 

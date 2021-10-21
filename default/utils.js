@@ -119,6 +119,12 @@ function addReserve(roomname, target_room) {
     console.log('adding reserve room');
 }
 
+function removeReserve(roomname, target_room) {
+    let room = Game.rooms[roomname];
+    room.memory.reserve_rooms[target_room] = undefined;
+    console.log('removing reserve room');
+}
+
 module.exports = {
     getStructureByFlag,
     getConstructionSite,
@@ -132,5 +138,6 @@ module.exports = {
     printRoomRoleInfo,
     addReserve,
     removeRole,
-    printSpawnQueue
+    printSpawnQueue,
+    removeReserve
 }

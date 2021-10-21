@@ -10,6 +10,9 @@ var roleBuilder = {
             creep.memory.building = true;
         }
 
+        if (creep.room.name != creep.memory.roomname) {
+            creep.moveBackHomeRoom();
+        }
         if (creep.memory.building) {
             let target = creep.room.find(FIND_CONSTRUCTION_SITES);
 

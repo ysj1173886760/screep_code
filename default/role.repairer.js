@@ -10,17 +10,21 @@ var roleRepairer = {
             creep.memory.repairing = false;
         }
 
+        if (creep.room.name != creep.memory.roomname) {
+            creep.moveBackHomeRoom();
+        }
+        
         if (creep.memory.repairing) {
-            let target = creep.room.find(FIND_STRUCTURES, {
+            let target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
                 filter:(s) => {
                     return (s.structureType == STRUCTURE_ROAD ||
                             s.structureType == STRUCTURE_TOWER || 
                             s.structureType == STRUCTURE_CONTAINER) &&
-                            s.hits < s.hitsMax;
+                            s.hits < s.hitsMax - 1000;
                 }
             });
-            if (target.length) {
-                creep.exRepairCache(target[0], 10);
+            if (target) {
+                creep.exRepairCache(target, 10);
                 return;
             }
 

@@ -112,7 +112,7 @@ const creepExtension = {
 
     moveToWorkingRoom() {
         if (this.memory.nextRoom && this.room.name != this.memory.nextRoom) {
-            this.moveTo(new RoomPosition(25, 25, this.memory.nextRoom), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: 20});
+            this.moveTo(new RoomPosition(25, 25, this.memory.nextRoom), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: 15});
             return;
         }
         
@@ -128,12 +128,30 @@ const creepExtension = {
             this.memory.nextRoom = this.memory.extraInfo.working_room;
         }
 
+    },
+
+    moveToWorkingRoomCache(reusePath) {
+        if (this.memory.nextRoom && this.room.name != this.memory.nextRoom) {
+            this.moveTo(new RoomPosition(25, 25, this.memory.nextRoom), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: reusePath});
+            return;
+        }
         
+        if (this.memory.extraInfo.path) {
+            let pth = this.memory.extraInfo.path;
+            for (let i = 0; i < pth.length; i++) {
+                if (pth[i] == this.room.name) {
+                    this.memory.nextRoom = pth[i + 1];
+                    break;
+                }
+            }
+        } else {
+            this.memory.nextRoom = this.memory.extraInfo.working_room;
+        }
     },
 
     moveBackHomeRoom() {
         if (this.memory.nextRoom && this.room.name != this.memory.nextRoom) {
-            this.moveTo(new RoomPosition(25, 25, this.memory.nextRoom), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: 20});
+            this.moveTo(new RoomPosition(25, 25, this.memory.nextRoom), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: 15});
             return;
         }
         

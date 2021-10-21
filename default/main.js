@@ -32,7 +32,8 @@ var {
     printRoomRoleInfo,
     addReserve,
     removeRole,
-    printSpawnQueue
+    printSpawnQueue,
+    removeReserve
 } = require('utils');
 
 module.exports.loop = function() {
@@ -52,6 +53,8 @@ module.exports.loop = function() {
             console.log('delete creep: ', name);
         }
     }
+
+    //['E37S58', 'E37S59', 'E38S59', 'E38S60', 'E39S60', 'E40S60', 'E41S60' ,'E42S60', 'E43S60', 'E44S60', 'E45S60', 'E45S59']
 
     for (let spawn_name in Game.spawns) {
         let spawn = Game.spawns[spawn_name];
@@ -98,7 +101,7 @@ module.exports.loop = function() {
 
     for (let room_name in Game.rooms) {
         let room = Game.rooms[room_name];
-        if (room.controller.my) {
+        if (room.controller && room.controller.my) {
             reserveController(room);
             buildController(room);
             linkWork(room);
@@ -164,3 +167,4 @@ global.G_printRoomRoleInfo = printRoomRoleInfo;
 global.G_addReserve = addReserve;
 global.G_removeRole = removeRole;
 global.G_printSpawnQueue = printSpawnQueue;
+global.G_removeReserve = removeReserve;
