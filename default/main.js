@@ -17,6 +17,7 @@ var controller = require('role.controller');
 var rebuilder = require('role.rebuilder');
 var distant_linker = require('role.distant_linker');
 var center_transfer = require('role.center_transfer');
+var miner = require('role.miner');
 
 var {linkWork} = require('link');
 
@@ -138,7 +139,8 @@ module.exports.loop = function() {
         controller: controller,
         rebuilder: rebuilder,
         distant_linker: distant_linker,
-        center_transfer: center_transfer
+        center_transfer: center_transfer,
+        miner: miner
     };
 
     for (let name in Game.creeps) {
