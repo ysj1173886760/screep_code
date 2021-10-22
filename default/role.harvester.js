@@ -9,6 +9,7 @@ var roleHarvester = {
             return;
         }
 
+        
         let flag = Game.flags[`container ${creep.memory.extraInfo.working_location} ${creep.room.name}`];
 
         if (!creep.pos.isEqualTo(flag.pos)) {

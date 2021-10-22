@@ -40,7 +40,7 @@ var roleTransfer = {
 
             target = creep.room.storage;
             if (target) {
-                creep.exTransferAll(target, RESOURCE_ENERGY);
+                creep.exTransferAll(target);
                 return;
             }
 

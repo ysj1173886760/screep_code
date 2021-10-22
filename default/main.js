@@ -33,7 +33,8 @@ var {
     addReserve,
     removeRole,
     printSpawnQueue,
-    removeReserve
+    removeReserve,
+    createOrder
 } = require('utils');
 
 module.exports.loop = function() {
@@ -168,3 +169,4 @@ global.G_addReserve = addReserve;
 global.G_removeRole = removeRole;
 global.G_printSpawnQueue = printSpawnQueue;
 global.G_removeReserve = removeReserve;
+global.G_createOrder = createOrder;

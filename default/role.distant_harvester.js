@@ -19,7 +19,7 @@ var distant_harvester = {
             let target = Game.getObjectById(creep.memory.container);
 
             if (target) {
-                if (target.hits < target.hitsMax) {
+                if (target.hits < target.hitsMax - 1000) {
                     if (creep.repair(target) == ERR_NOT_IN_RANGE) {
                         creep.moveTo(target);
                     }

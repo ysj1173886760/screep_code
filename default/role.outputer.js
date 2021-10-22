@@ -11,6 +11,11 @@ var outputer = {
         }
 
         if (creep.memory.transfering) {
+            // let terminal = creep.room.terminal;
+            // if (terminal) {
+            //     creep.exTransfer(terminal, RESOURCE_ENERGY);
+            //     return;
+            // }
             if (creep.memory.extraInfo.maintaining) {
                 let target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                     filter: (s) => {

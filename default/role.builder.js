@@ -44,11 +44,14 @@ var roleBuilder = {
                 creep.exWithdraw(target, RESOURCE_ENERGY);
                 return;
             }
-
-            target = flag.pos.findClosestByPath(FIND_SOURCES);
-            if (target) {
-                creep.exHarvest(target);
+            
+            if (creep.memory.working_source == undefined && flag) {
+                let target = flag.pos.findClosestByPath(FIND_SOURCES);
+                creep.memory.working_source = target.id;
             }
+
+            let resource = Game.getObjectById(creep.memory.working_source);
+            creep.exHarvestCache(resource, 10);
         }
     }
 };

@@ -49,7 +49,7 @@ function buildController(room) {
                         roomname: room.name,
                         isNeeded: true,
                         respawnTime: 80,
-                        extraInfo: {}
+                        extraInfo: {workling_location: 2}
                     }
                     // two builder
                     room.memory.spawn_queue.push(task);

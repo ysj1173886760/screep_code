@@ -53,6 +53,20 @@ var extender = {
                 }
                 return;
             }
+            
+            target = creep.room.find(FIND_STRUCTURES, {
+                filter:(s) => {
+                    return (s.structureType == STRUCTURE_ROAD ||
+                            s.structureType == STRUCTURE_CONTAINER) &&
+                            s.hits < s.hitsMax / 2;
+                }
+            });
+
+            if (target.length) {
+                creep.exRepairCache(target[0], 10);
+                return;
+            }
+            
 
             target = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
             if (target) {

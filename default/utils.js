@@ -125,6 +125,18 @@ function removeReserve(roomname, target_room) {
     console.log('removing reserve room');
 }
 
+function createOrder(type, resourceType, price, totalAmount, roomName) {
+    res = Game.market.createOrder({
+        type: type,
+        resourceType: resourceType,
+        price: price,
+        totalAmount: totalAmount,
+        roomName: roomName
+    });
+    console.log(res);
+}
+
+
 module.exports = {
     getStructureByFlag,
     getConstructionSite,
@@ -139,5 +151,6 @@ module.exports = {
     addReserve,
     removeRole,
     printSpawnQueue,
-    removeReserve
+    removeReserve,
+    createOrder
 }
