@@ -14,11 +14,11 @@ function linkWork(room) {
     let from2 = getStructureByFlag(flag2, STRUCTURE_LINK);
 
     if (target) {
-        if (from1 && from1.cooldown == 0 && from1.store[RESOURCE_ENERGY] >= 400) {
+        if (from1 && from1.cooldown == 0 && from1.store[RESOURCE_ENERGY] >= 800 && target.store[RESOURCE_ENERGY] == 0) {
             from1.transferEnergy(target);
         }
 
-        if (from2 && from2.cooldown == 0 && from2.store[RESOURCE_ENERGY] >= 400) {
+        if (from2 && from2.cooldown == 0 && from2.store[RESOURCE_ENERGY] >= 800 && target.store[RESOURCE_ENERGY] == 0) {
             from2.transferEnergy(target);
         }
     }

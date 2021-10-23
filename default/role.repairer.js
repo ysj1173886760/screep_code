@@ -20,7 +20,7 @@ var roleRepairer = {
                     return (s.structureType == STRUCTURE_ROAD ||
                             s.structureType == STRUCTURE_TOWER || 
                             s.structureType == STRUCTURE_CONTAINER) &&
-                            s.hits < s.hitsMax - 1000;
+                            s.hits < s.hitsMax - 500;
                 }
             });
             if (target) {

@@ -19,6 +19,8 @@ var distant_linker = require('role.distant_linker');
 var center_transfer = require('role.center_transfer');
 var miner = require('role.miner');
 var distant_repairer = require('role.distant_repairer');
+var harvest_linker = require('role.harvest_linker');
+var waller = require('role.waller');
 
 var {linkWork} = require('link');
 
@@ -77,7 +79,7 @@ module.exports.loop = function() {
 
         // priority check
         let check = false;
-        let high_priority = ['harvester', 'transfer', 'outputer'];
+        let high_priority = ['harvester', 'transfer', 'outputer', 'harvest_linker'];
         for (let i = 0; i < room.memory.spawn_queue.length; i++) {
             if (high_priority.includes(room.memory.spawn_queue[i].role)) {
                 check = true;
@@ -142,7 +144,9 @@ module.exports.loop = function() {
         distant_linker: distant_linker,
         center_transfer: center_transfer,
         miner: miner,
-        distant_repairer: distant_repairer
+        distant_repairer: distant_repairer,
+        harvest_linker: harvest_linker,
+        waller: waller
     };
 
     for (let name in Game.creeps) {

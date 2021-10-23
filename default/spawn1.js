@@ -78,7 +78,8 @@ var spawn1 = {
                 distant_linker: {carry: 16, move: 8},
                 extender: {work: 5, carry: 5, move: 5}, 
                 controller: {claim: 1, move: 1},
-                miner: {work: 5, carry: 5, move: 5}
+                miner: {work: 5, carry: 5, move: 5},
+                harvest_linker: {work: 7, carry: 1, move: 1}
             },
             Spawn2: {
                 builder: {work: 4, carry: 4, move: 4},
@@ -92,6 +93,8 @@ var spawn1 = {
                 distant_harvester: {work: 6, carry: 2, move: 3},
                 distant_transfer: {carry: 10, move: 5},
                 distant_repairer: {work: 4, carry: 4, move: 4},
+                defender: {tough: 8, attack: 2, move: 5},
+                waller: {work: 2, carry: 6, move: 4}
             }
         };
 
