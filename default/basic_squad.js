@@ -26,10 +26,10 @@ module.exports = {
         }
 
         if (squad.stage == 'teamup') {
-            let creep0 = squad.creeps[0];
-            let creep1 = squad.creeps[1];
-            let creep2 = squad.creeps[2];
-            let creep3 = squad.creeps[3];
+            let creep0 = Game.getObjectById(squad.creeps[0]);
+            let creep1 = Game.getObjectById(squad.creeps[1]);
+            let creep2 = Game.getObjectById(squad.creeps[2]);
+            let creep3 = Game.getObjectById(squad.creeps[3]);
 
             if (creep0.pos.x == creep1.pos.x - 1 && creep0.pos.y == creep1.pos.y &&
                 creep0.pos.x == creep2.pos.x && creep0.pos.y == creep2.pos.y - 1 &&

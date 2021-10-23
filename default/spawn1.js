@@ -95,6 +95,10 @@ var spawn1 = {
                 distant_repairer: {work: 4, carry: 4, move: 4},
                 defender: {tough: 8, attack: 2, move: 5},
                 waller: {work: 2, carry: 6, move: 4}
+            },
+            test: {
+                attacker: {move: 2},
+                healer: {move: 2}
             }
         };
 

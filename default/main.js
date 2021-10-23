@@ -21,6 +21,9 @@ var miner = require('role.miner');
 var distant_repairer = require('role.distant_repairer');
 var harvest_linker = require('role.harvest_linker');
 var waller = require('role.waller');
+var warrior = require('role.warrior');
+
+var basic_squad = require('basic_squad');
 
 var {linkWork} = require('link');
 
@@ -38,7 +41,9 @@ var {
     removeRole,
     printSpawnQueue,
     removeReserve,
-    createOrder
+    createOrder,
+    removeSquad,
+    addSquad
 } = require('utils');
 
 module.exports.loop = function() {
@@ -113,6 +118,12 @@ module.exports.loop = function() {
         }
     }
     
+    if (Memory.squads == undefined) {
+        Memory.squads = new Array();
+    }
+    for (let i = 0; i < Memory.squads.length; i++) {
+        basic_squad.run(Memory.squads[i]);
+    }
 
     var towers = _.filter(Game.structures, (s) => (s.structureType == STRUCTURE_TOWER));
     for (let tower of towers) {
@@ -146,7 +157,11 @@ module.exports.loop = function() {
         miner: miner,
         distant_repairer: distant_repairer,
         harvest_linker: harvest_linker,
-        waller: waller
+        waller: waller,
+
+        // war
+        attacker: warrior,
+        healer: warrior
     };
 
     for (let name in Game.creeps) {
@@ -178,3 +193,5 @@ global.G_removeRole = removeRole;
 global.G_printSpawnQueue = printSpawnQueue;
 global.G_removeReserve = removeReserve;
 global.G_createOrder = createOrder;
+global.G_removeSquad = removeSquad;
+global.G_addSquad = addSquad;

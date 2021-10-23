@@ -1,49 +1,62 @@
 function squadMove(squad, pos) {
-    let creep0 = squad.creeps[0];
-    let creep1 = squad.creeps[1];
-    let creep2 = squad.creeps[2];
-    let creep3 = squad.creeps[3];
+    let creep0 = Game.getObjectById(squad.creeps[0]);
+    let creep1 = Game.getObjectById(squad.creeps[1]);
+    let creep2 = Game.getObjectById(squad.creeps[2]);
+    let creep3 = Game.getObjectById(squad.creeps[3]);
 
     if (squad.moving_position == undefined || 
         squad.moving_position.x != pos.x || 
         squad.moving_position.y != pos.y ||
         squad.moving_position.roomName != pos.roomName) {
         // cache it
-        squad.moving_position.x = pos.x;
-        squad.moving_position.y = pos.y;
-        squad.moving_position.roomName = pos.roomName;
+        squad.moving_position = {
+            x: pos.x,
+            y: pos.y,
+            roomName: pos.roomName
+        }
         
         if (!creep0) {
             return;
         }
 
-        let path = creep0.pos.findPathTo(pos);
+        let path = creep0.pos.findPathTo(pos, {
+            ignoreCreeps: true
+        });
         squad.path = path;
     }
 
     if (squad.path && squad.path.length) {
         let res = true;
-        let next_direction = squad.path[0];
+        let moving = false;
+        let next_direction = squad.path[0].direction;
+        console.log("pre: " + squad.direction, next_direction);
         if (!changeDirection(squad.direction, next_direction, squad)) {
+            moving = true;
             for (let i = 0; i < squad.creeps.length; i++) {
-                if (squad.creeps[i].move(next_direction) != OK) {
+                let creep = Game.getObjectById(squad.creeps[i]);
+                if (creep.move(next_direction) != OK) {
                     res = false;
                 }
             }
         }
-        if (!res) {
+        console.log("after: " + squad.direction);
+
+        if (moving && res) {
+            squad.path.shift();
+        } else if (moving && !res) {
             for (let i = 0; i < squad.creeps.length; i++) {
-                squad.creeps[i].cancelOrder('move');
+                let creep = Game.getObjectById(squad.creeps[i]);
+                creep.cancelOrder('move');
             }
         }
     }
 }
 
 function turnLeft(squad) {
-    let creep0 = squad.creeps[0];
-    let creep1 = squad.creeps[1];
-    let creep2 = squad.creeps[2];
-    let creep3 = squad.creeps[3];
+    let creep0 = Game.getObjectById(squad.creeps[0]);
+    let creep1 = Game.getObjectById(squad.creeps[1]);
+    let creep2 = Game.getObjectById(squad.creeps[2]);
+    let creep3 = Game.getObjectById(squad.creeps[3]);
 
     switch (squad.direction) {
     case TOP:
@@ -51,6 +64,7 @@ function turnLeft(squad) {
         creep1.move(LEFT);
         creep2.move(RIGHT);
         creep3.move(TOP);
+        squad.direction = LEFT;
         break;
 
     case LEFT:
@@ -58,6 +72,7 @@ function turnLeft(squad) {
         creep1.move(BOTTOM);
         creep2.move(TOP);
         creep3.move(LEFT);
+        squad.direction = BOTTOM;
         break;
 
     case BOTTOM:
@@ -65,6 +80,7 @@ function turnLeft(squad) {
         creep1.move(RIGHT);
         creep2.move(LEFT);
         creep3.move(BOTTOM);
+        squad.direction = RIGHT;
         break;
 
     case RIGHT:
@@ -72,14 +88,16 @@ function turnLeft(squad) {
         creep1.move(TOP);
         creep2.move(BOTTOM);
         creep3.move(RIGHT);
+        squad.direction = TOP;
+        break;
     }
 }
 
 function turnRight(squad) {
-    let creep0 = squad.creeps[0];
-    let creep1 = squad.creeps[1];
-    let creep2 = squad.creeps[2];
-    let creep3 = squad.creeps[3];
+    let creep0 = Game.getObjectById(squad.creeps[0]);
+    let creep1 = Game.getObjectById(squad.creeps[1]);
+    let creep2 = Game.getObjectById(squad.creeps[2]);
+    let creep3 = Game.getObjectById(squad.creeps[3]);
 
     switch (squad.direction) {
     case TOP:
@@ -87,6 +105,7 @@ function turnRight(squad) {
         creep1.move(BOTTOM);
         creep2.move(TOP);
         creep3.move(LEFT);
+        squad.direction = RIGHT;
         break;
 
     case LEFT:
@@ -94,6 +113,7 @@ function turnRight(squad) {
         creep1.move(RIGHT);
         creep2.move(LEFT);
         creep3.move(BOTTOM);
+        squad.direction = TOP;
         break;
 
     case BOTTOM:
@@ -101,6 +121,7 @@ function turnRight(squad) {
         creep1.move(TOP);
         creep2.move(BOTTOM);
         creep3.move(RIGHT);
+        squad.direction = LEFT;
         break;
 
     case RIGHT:
@@ -108,14 +129,17 @@ function turnRight(squad) {
         creep1.move(LEFT);
         creep2.move(RIGHT);
         creep3.move(TOP);
+        squad.direction = BOTTOM;
+        break;
     }
+
 }
 
 function turnBack(squad) {
-    let creep0 = squad.creeps[0];
-    let creep1 = squad.creeps[1];
-    let creep2 = squad.creeps[2];
-    let creep3 = squad.creeps[3];
+    let creep0 = Game.getObjectById(squad.creeps[0]);
+    let creep1 = Game.getObjectById(squad.creeps[1]);
+    let creep2 = Game.getObjectById(squad.creeps[2]);
+    let creep3 = Game.getObjectById(squad.creeps[3]);
 
     switch (squad.direction) {
     case TOP:
@@ -123,6 +147,7 @@ function turnBack(squad) {
         creep1.move(BOTTOM_LEFT);
         creep2.move(TOP_RIGHT);
         creep3.move(TOP_LEFT);
+        squad.direction = BOTTOM;
         break;
 
     case LEFT:
@@ -130,6 +155,7 @@ function turnBack(squad) {
         creep1.move(BOTTOM_RIGHT);
         creep2.move(TOP_LEFT);
         creep3.move(BOTTOM_LEFT);
+        squad.direction = RIGHT;
         break;
 
     case BOTTOM:
@@ -137,6 +163,7 @@ function turnBack(squad) {
         creep1.move(TOP_RIGHT);
         creep2.move(BOTTOM_LEFT);
         creep3.move(BOTTOM_RIGHT);
+        squad.direction = TOP;
         break;
 
     case RIGHT:
@@ -144,6 +171,8 @@ function turnBack(squad) {
         creep1.move(TOP_LEFT);
         creep2.move(BOTTOM_RIGHT);
         creep3.move(TOP_RIGHT);
+        squad.direction = LEFT;
+        break;
     }
 }
 
@@ -193,10 +222,7 @@ function changeDirection(cur_direction, next_direction, squad) {
         }
 
     } else if (cur_direction == BOTTOM) {
-        if (next_direction == BOTTOM || next_direction == BOTTOM_LEFT || next_direction == BOTTOM_RIGHT) {
-            return false;
-        }
-        switch (cur_direction) {
+        switch (next_direction) {
         case BOTTOM:
         case BOTTOM_LEFT:
         case BOTTOM_RIGHT:
@@ -218,9 +244,6 @@ function changeDirection(cur_direction, next_direction, squad) {
         }
 
     } else if (cur_direction == RIGHT) {
-        if (next_direction == TOP_RIGHT || next_direction == RIGHT || next_direction == BOTTOM_RIGHT) {
-            
-        }
         switch (next_direction) {
         case TOP_RIGHT:
         case RIGHT:

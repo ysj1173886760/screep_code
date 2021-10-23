@@ -1,7 +1,7 @@
 module.exports = {
-    need: function(creep, squad) {
+    join: function(creep, squad) {
         for (let i = 0; i < squad.creeps.length; i++) {
-            if (creep.memory.extraInfo.position == squad.creeps[i]) {
+            if (creep.memory.role == squad.creeps[i]) {
                 squad.creeps[i] = creep.id;
                 return true;
             }
@@ -26,8 +26,8 @@ module.exports = {
         // then join the squad
         if (creep.memory.stage == 'waiting') {
             if (Memory.squads) {
-                for (let i = 0; i < squads.length; i++) {
-                    if (this.join(creep, squads[i])) {
+                for (let i = 0; i < Memory.squads.length; i++) {
+                    if (this.join(creep, Memory.squads[i])) {
                         creep.memory.stage = 'joined';
                         return;
                     }

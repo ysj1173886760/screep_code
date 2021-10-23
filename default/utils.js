@@ -133,6 +133,7 @@ function removeReserve(roomname, target_room) {
     console.log('removing reserve room');
 }
 
+// G_createOrder(ORDER_SELL, CPU_UNLOCK, 16111111, 1, '')
 function createOrder(type, resourceType, price, totalAmount, roomName) {
     res = Game.market.createOrder({
         type: type,
@@ -154,6 +155,25 @@ function getBodyParts(body) {
     return res;
 }
 
+function removeSquad(id) {
+    for (let i = 0; i < Memory.squads.length; i++) {
+        if (Memory.squads[i].id == id) {
+            Memory.squads.splice(i, 1);
+            return true;
+        }
+    }
+    return false;
+}
+
+function addSquad(id) {
+    for (let i = 0; i < Memory.squads.length; i++) {
+        if (Memory.squads[i].id == id) {
+            return false;
+        }
+    }
+    Memory.squads.push({id: id});
+    return true;
+}
 
 module.exports = {
     getStructureByFlag,
@@ -171,5 +191,7 @@ module.exports = {
     printSpawnQueue,
     removeReserve,
     createOrder,
-    getBodyParts
+    getBodyParts,
+    removeSquad,
+    addSquad
 }
