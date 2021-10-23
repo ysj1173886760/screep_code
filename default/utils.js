@@ -27,6 +27,14 @@ function upgradeController(creep) {
 
 function roomSpawn(role, roomname, isNeeded, respawnTime, extraInfo) {
     let room = Game.rooms[roomname];
+    if (!room) {
+        console.log('can not find the room');
+        return false;
+    }
+    if (typeof respawnTime != 'number') {
+        return false;
+    }
+    
     room.memory.spawn_queue.push({
         role: role, 
         roomname: roomname, 
@@ -136,6 +144,16 @@ function createOrder(type, resourceType, price, totalAmount, roomName) {
     console.log(res);
 }
 
+function getBodyParts(body) {
+    let res = new Array();
+    for (let name in body) {
+        for (let i = 0; i < body[name]; i++) {
+            res.push(name);
+        }
+    }
+    return res;
+}
+
 
 module.exports = {
     getStructureByFlag,
@@ -152,5 +170,6 @@ module.exports = {
     removeRole,
     printSpawnQueue,
     removeReserve,
-    createOrder
+    createOrder,
+    getBodyParts
 }
