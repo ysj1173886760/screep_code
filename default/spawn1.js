@@ -63,7 +63,7 @@ var spawn1 = {
             Spawn1: {
                 rebuilder: {work: 3, carry: 2, move: 2},
                 worker: {work: 3, carry: 2, move: 2},
-                harvester: {work: 5, move: 1},
+                harvester: {work: 6, move: 1},
                 transfer: {carry: 10, move: 5},
                 repairer: {work: 4, carry: 4, move: 4},
                 upgrader: {work: 10, carry: 2, move: 1},
@@ -88,7 +88,10 @@ var spawn1 = {
                 harvester: {work: 5, move: 1},
                 upgrader: {work: 4, carry: 2, move: 1},
                 outputer: {carry: 10, move: 5},
-                distant_worker: {work: 4, carry: 4, move: 4}
+                distant_worker: {work: 4, carry: 4, move: 4},
+                distant_harvester: {work: 6, carry: 2, move: 3},
+                distant_transfer: {carry: 10, move: 5},
+                distant_repairer: {work: 4, carry: 4, move: 4},
             }
         };
 
@@ -101,7 +104,7 @@ var spawn1 = {
             console.log(`${spawn_name} spawning ${newName}`);
             return true;
         } else {
-            console.log(`{result} failed to spawn ${role}`);
+            console.log(`${result} failed to spawn ${role}`);
         }
         
         return false;

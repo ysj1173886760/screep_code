@@ -10,8 +10,12 @@ var distant_transfer = {
             creep.memory.transfering = false;
         }
 
+        if (creep.memory.shouldRepair == undefined) {
+            creep.memory.shouldRepair = (creep.body.indexOf(WORK) != -1);
+        }
+
         if (creep.memory.transfering) {
-            if (creep.room.name != creep.memory.roomname) {
+            if (creep.memory.shouldRepair && creep.room.name != creep.memory.roomname) {
                 let target = creep.room.lookForAt(LOOK_STRUCTURES, creep.pos);
                 
                 if (target.length && target[0].structureType == STRUCTURE_ROAD && target[0].hits < target[0].hitsMax) {
