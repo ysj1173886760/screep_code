@@ -100,9 +100,59 @@ function buildController(room) {
     room.memory.buildInfo.counter--;
 }
 
+function boostUpgradingController(room) {
+    if (room.memory.boostUpgrade == undefined) {
+        room.memory.boostUpgrade = {
+            enable: false,
+            countdown: 0,
+        }
+    }
+
+    if (room.memory.boostUpgrade.enable == false) {
+        return;
+    }
+
+    if (room.memory.boostUpgrade.countdown != 0) {
+        room.memory.boostUpgrade.countdown--;
+        return;
+    }
+    room.memory.boostUpgrade.countdown = 100;
+
+    // should order some energy
+    if (room.storage.store[RESOURCE_ENERGY] <= 300000) {
+        
+        let myorders = Game.market.getAllOrders({type: ORDER_BUY, resourceType: RESOURCE_ENERGY, roomName: room.name});
+        if (myorders.length) {
+            console.log(`${room.name} has already ordered the energy`);
+            return;
+        }
+
+        let orders = Game.market.getAllOrders({type: ORDER_BUY, resourceType: RESOURCE_ENERGY});
+        top5 = orders.sort((a, b) => (b.price - a.price)).slice(0, 5);
+        let sum = 0.0;
+        for (let i = 0; i < top5.length; i++) {
+            sum += top5[i].price;
+        }
+        sum /= top5.length;
+        
+        let amount = 100000;
+        
+        Game.market.createOrder({
+            type: ORDER_BUY,
+            resourceType: RESOURCE_ENERGY,
+            price: sum,
+            totalAmount: amount,
+            roomName: room.name,
+        });
+
+        console.log(`creating order for ${room.name}, buying ${amount} energy for ${price}`)
+    }
+}
+
 module.exports = {
     reserveController,
-    buildController
+    buildController,
+    boostUpgradingController
 };
 
 // let task = {

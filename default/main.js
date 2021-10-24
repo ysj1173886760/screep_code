@@ -22,12 +22,17 @@ var distant_repairer = require('role.distant_repairer');
 var harvest_linker = require('role.harvest_linker');
 var waller = require('role.waller');
 var warrior = require('role.warrior');
+var maintainer = require('role.maintainer');
 
 var basic_squad = require('basic_squad');
 
 var {linkWork} = require('link');
 
-var {reserveController, buildController} = require('overlord');
+var {
+    reserveController,
+    buildController,
+    boostUpgradingController
+} = require('overlord');
 
 require('./mount')();
 
@@ -84,7 +89,7 @@ module.exports.loop = function() {
 
         // priority check
         let check = false;
-        let high_priority = ['harvester', 'transfer', 'outputer', 'harvest_linker'];
+        let high_priority = ['harvester', 'transfer', 'maintainer', 'harvest_linker'];
         for (let i = 0; i < room.memory.spawn_queue.length; i++) {
             if (high_priority.includes(room.memory.spawn_queue[i].role)) {
                 check = true;
@@ -115,6 +120,7 @@ module.exports.loop = function() {
             reserveController(room);
             buildController(room);
             linkWork(room);
+            boostUpgradingController(room);
         }
     }
     
@@ -158,6 +164,7 @@ module.exports.loop = function() {
         distant_repairer: distant_repairer,
         harvest_linker: harvest_linker,
         waller: waller,
+        maintainer: maintainer,
 
         // war
         attacker: warrior,

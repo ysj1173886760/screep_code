@@ -56,7 +56,7 @@ var distant_transfer = {
             // pick up the nearby resources
             let target = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
             if (target.length > 0) {
-                creep.exPickupCache(target[0], 20);
+                creep.exPickupCache(target[0], 10);
                 return;
             }
             

@@ -21,10 +21,11 @@ var waller = {
                 creep.exRepair(target[0]);
                 return;
             } else {
-                if (creep.isNeeded) {
-                    creep.isNeeded = false;
-                    creep.suicide();
-                }
+                
+                // if (creep.isNeeded) {
+                //     creep.isNeeded = false;
+                //     creep.suicide();
+                // }
             }
         } else {
             let storage = creep.room.storage;
