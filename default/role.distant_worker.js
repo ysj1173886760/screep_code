@@ -29,7 +29,7 @@ var distant_worker = {
             // build construction site
             target = creep.room.find(FIND_CONSTRUCTION_SITES);
             if (target.length) {
-                creep.exBuildCache(target[0], 20);
+                creep.exBuildCache(target[0], 10);
                 return;
             } else {
                 if (creep.memory.isNeeded) {

@@ -1,3 +1,5 @@
+const { getStructureByFlag } = require("./utils");
+
 function reserveController(room) {
     if (room.memory.reserve_rooms == undefined) {
         room.memory.reserve_rooms = {};
@@ -145,8 +147,219 @@ function boostUpgradingController(room) {
             roomName: room.name,
         });
 
-        console.log(`creating order for ${room.name}, buying ${amount} energy for ${price}`)
+        console.log(`creating order for ${room.name}, buying ${amount} energy for ${sum}`)
     }
+}
+
+function labReactionController(room) {
+    if (room.memory.task_queue == undefined) {
+        room.memory.task_queue = new Array();
+    }
+
+    if (room.memory.labController == undefined) {
+        let flag1 = Game.flags[`lab 1 ${room.name}`];
+        let flag2 = Game.flags[`lab 2 ${room.name}`];
+        let lab1 = getStructureByFlag(flag1, STRUCTURE_LAB);
+        let lab2 = getStructureByFlag(flag2, STRUCTURE_LAB);
+        let labs = room.find(FIND_STRUCTURES, {
+            filter: (s) => {
+                return s.structureType == STRUCTURE_LAB && 
+                        s.id != lab1.id &&
+                        s.id != lab2.id;
+            }
+        })
+        room.memory.labController = {
+            lab1: lab1.id,
+            lab2: lab2.id,
+            labs: labs,
+            stage: 'check',
+            countdown: 5
+        };
+    }
+
+    room.memory.labController.countdown--;
+    if (room.memory.labController.countdown != 0) {
+        return;
+    }
+
+    room.memory.labController.countdown = 5;
+    let res1 = RESOURCE_LEMERGIUM;
+    let res2 = RESOURCE_UTRIUM;
+
+    if (room.memory.labController.stage == 'check') {
+        let storage = room.storage;
+        if (storage.store[res1] < 1000) {
+            return;
+        }
+
+        if (storage.store[res2] < 1000) {
+            return;
+        }
+
+        if (storage.store[RESOURCE_ENERGY] < 100000) {
+            return;
+        }
+
+        let lab1 = Game.getObjectById(room.memory.labController.lab1.id);
+        let lab2 = Game.getObjectById(room.memory.labController.lab2.id);
+        let task = {
+            from: storage.id,
+            to: lab1.id,
+            type: res1,
+            amount: 1000
+        }
+        room.memory.task_queue.push(task);
+
+        task = {
+            from: storage.id,
+            to: lab2.id,
+            type: res2,
+            amount: 1000
+        }
+        room.memory.task_queue.push(task);
+
+        if (lab1.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
+            task = {
+                from: storage.id,
+                to: lab1.id,
+                type: RESOURCE_ENERGY,
+                amount: lab1.store.getFreeCapacity(RESOURCE_ENERGY)
+            }
+            room.memory.task_queue.push(task);
+        }
+
+        if (lab2.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
+            task = {
+                from: storage.id,
+                to: lab2.id,
+                type: RESOURCE_ENERGY,
+                amount: lab2.store.getFreeCapacity(RESOURCE_ENERGY)
+            }
+            room.memory.task_queue.push(task);
+        }
+
+        for (let i = 0; i < room.memory.labController.labs.length; i++) {
+            let lab = Game.getObjectById(room.memory.labController.labs[i]);
+            if (lab.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
+                task = {
+                    from: storage.id,
+                    to: lab.id,
+                    type: RESOURCE_ENERGY,
+                    amount: lab.store.getFreeCapacity(RESOURCE_ENERGY)
+                }
+                room.memory.task_queue.push(task);
+            }
+        }
+
+        room.memory.labController.stage = 'prepare';
+    }
+
+    if (room.memory.labController.stage == 'prepare') {
+        let lab1 = Game.getObjectById(room.memory.labController.lab1.id);
+        let lab2 = Game.getObjectById(room.memory.labController.lab2.id);
+
+        if (lab1.store[res1] < 1000) {
+            return;
+        }
+        if (lab2.store[res2] < 1000) {
+            return;
+        }
+        if (lab1.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
+            return;
+        }
+        if (lab2.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
+            return;
+        }
+        for (let i = 0; i < room.memory.labController.labs.length; i++) {
+            let lab = Game.getObjectById(room.memory.labController.labs[i]);
+            if (lab.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
+                return;
+            }
+        }
+
+        room.memory.labController.stage = 'work';
+    }
+
+    if (room.memory.labController.stage == 'work') {
+        let res = false;
+        let lab1 = Game.getObjectById(room.memory.labController.lab1.id);
+        let lab2 = Game.getObjectById(room.memory.labController.lab2.id);
+        for (let i = 0; i < room.memory.labController.labs.length; i++) {
+            let lab = Game.getObjectById(room.memory.labController.labs[i]);
+            let ret = lab.runReaction(lab1, lab2);
+
+            if (ret == OK) {
+                res = true;
+            } else if (ret == ERR_TIRED) {
+                return;
+            }
+        }
+        
+        if (!res) {
+            room.memory.labController.stage = 'retrieve';
+        }
+    }
+
+    if (room.memory.labController.stage == 'retrieve') {
+        let lab1 = Game.getObjectById(room.memory.labController.lab1.id);
+        let lab2 = Game.getObjectById(room.memory.labController.lab2.id);
+        let storage = room.storage;
+
+        if (lab1.store[res1] > 0) {
+            room.memory.task_queue.push({
+                from: lab1.id,
+                to: storage.id,
+                type: res1,
+                amount: lab1.store[res1]
+            });
+        }
+
+        if (lab1.store[res2] > 0) {
+            room.memory.task_queue.push({
+                from: lab2.id,
+                to: storage.id,
+                type: res2,
+                amount: lab2.store[res2]
+            });
+        }
+
+        for (let i = 0; i < room.memory.labController.labs.length; i++) {
+            let lab = Game.getObjectById(room.memory.labController.labs[i]);
+            for (let resourceType in lab.store) {
+                if (lab.store[resourceType] > 0 && resourceType != RESOURCE_ENERGY) {
+                    room.memory.task_queue.push({
+                        from: lab.id,
+                        to: storage.id,
+                        type: resourceType,
+                        amount: lab.store[resourceType]
+                    });
+                }
+            }
+        }
+        room.memory.labController.stage = 'finalize';
+    }
+
+    if (room.memory.labController.stage == 'finalize') {
+        if (lab1.store[res1] > 0) {
+            return;
+        }
+
+        if (lab1.store[res2] > 0) {
+            return;
+        }
+
+        for (let i = 0; i < room.memory.labController.labs.length; i++) {
+            let lab = Game.getObjectById(room.memory.labController.labs[i]);
+            for (let resourceType in lab.store) {
+                if (lab.store[resourceType] > 0 && resourceType != RESOURCE_ENERGY) {
+                    return;
+                }
+            }
+        }
+
+        room.memory.labController.stage = 'check';
+    }
+
 }
 
 module.exports = {

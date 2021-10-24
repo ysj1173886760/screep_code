@@ -9,9 +9,16 @@ var distant_transfer = {
         if (creep.memory.transfering && creep.store[RESOURCE_ENERGY] == 0) {
             creep.memory.transfering = false;
         }
-
+        
         if (creep.memory.shouldRepair == undefined) {
-            creep.memory.shouldRepair = (creep.body.indexOf(WORK) != -1);
+            let res = false;
+            for (let i = 0; i < creep.body.length; i++) {
+                if (creep.body[i].type == 'work') {
+                    res = true;
+                    break;
+                }
+            }
+            creep.memory.shouldRepair = res;
         }
 
         if (creep.memory.transfering) {

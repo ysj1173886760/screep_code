@@ -23,6 +23,7 @@ var harvest_linker = require('role.harvest_linker');
 var waller = require('role.waller');
 var warrior = require('role.warrior');
 var maintainer = require('role.maintainer');
+var manager = require('role.manager');
 
 var basic_squad = require('basic_squad');
 
@@ -51,7 +52,11 @@ var {
     addSquad
 } = require('utils');
 
+const profiler = require('screeps-profiler');
+// profiler.enable();
+
 module.exports.loop = function() {
+    profiler.wrap(function() {
     for (let name in Memory.creeps) {
         if (!Game.creeps[name]) {
             let memory = Memory.creeps[name];
@@ -165,13 +170,19 @@ module.exports.loop = function() {
         harvest_linker: harvest_linker,
         waller: waller,
         maintainer: maintainer,
+        manager: manager,
 
         // war
         attacker: warrior,
         healer: warrior
     };
 
+    // console.log('.............................');
     for (let name in Game.creeps) {
+        let startCpu = Game.cpu.getUsed();
+
+    // creep logic goes here
+
         let creep = Game.creeps[name];
         
         if (creep.memory.isNeeded && creep.ticksToLive < creep.memory.respawnTime) {
@@ -188,7 +199,12 @@ module.exports.loop = function() {
         }
 
         roleArray[creep.memory.role].run(creep);
+
+        let elapsed = Game.cpu.getUsed() - startCpu;
+        // console.log('Creep '+ name+' has used '+ elapsed+' CPU time');
     }
+    // console.log(`total used ${Game.cpu.getUsed()}`);
+});
 }
 
 global.G_roomSpawn = roomSpawn;

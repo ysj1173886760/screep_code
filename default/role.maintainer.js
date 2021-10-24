@@ -3,6 +3,34 @@ var {
 } = require('utils');
 
 var maintainer = {
+    getNextTarget(creep) {
+        let target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+            filter: (s) => {
+                return (s.structureType == STRUCTURE_EXTENSION ||
+                        s.structureType == STRUCTURE_SPAWN) && 
+                        s.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
+
+            }
+        });
+        if (target) {
+            creep.memory.target = target.id;
+            return;
+        }
+
+        target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+            filter: (s) => {
+                return (s.structureType == STRUCTURE_TOWER) && 
+                        s.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
+
+            }
+        });
+        if (target) {
+            creep.memory.target = target.id;
+            return;
+        }
+        creep.memory.target = undefined;
+    },
+
     run: function(creep) {
         if (creep.memory.transfering && creep.store[RESOURCE_ENERGY] == 0) {
             creep.memory.transfering = false;
@@ -18,14 +46,21 @@ var maintainer = {
             //     creep.exTransfer(terminal, RESOURCE_ENERGY);
             //     return;
             // }
-            let target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-                filter: (s) => {
-                    return (s.structureType == STRUCTURE_EXTENSION ||
-                            s.structureType == STRUCTURE_SPAWN) && 
-                            s.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
-
+            if (creep.memory.target) {
+                let tmp = Game.getObjectById(creep.memory.target)
+                if (tmp && tmp.store.getFreeCapacity(RESOURCE_ENERGY) == 0) {
+                    this.getNextTarget(creep);
                 }
-            });
+            } else {
+                this.getNextTarget(creep);
+            }
+
+            if (creep.memory.target == undefined) {
+                creep.memory.transfering = false;
+                return;
+            }
+
+            let target = Game.getObjectById(creep.memory.target);
             
             if (target) {
                 creep.exTransfer(target, RESOURCE_ENERGY);
