@@ -24,6 +24,7 @@ var waller = require('role.waller');
 var warrior = require('role.warrior');
 var maintainer = require('role.maintainer');
 var manager = require('role.manager');
+var scout = require('role.scout');
 
 var basic_squad = require('basic_squad');
 
@@ -173,6 +174,7 @@ module.exports.loop = function() {
         waller: waller,
         maintainer: maintainer,
         manager: manager,
+        scout: scout,
 
         // war
         attacker: warrior,
@@ -200,7 +202,9 @@ module.exports.loop = function() {
             creep.memory.isNeeded = false;
         }
 
-        roleArray[creep.memory.role].run(creep);
+        if (!creep.memory.pause) {
+            roleArray[creep.memory.role].run(creep);
+        }
 
         let elapsed = Game.cpu.getUsed() - startCpu;
         // console.log('Creep '+ name+' has used '+ elapsed+' CPU time');

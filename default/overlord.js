@@ -1,5 +1,24 @@
 const { getStructureByFlag } = require("./utils");
 
+function setDistantCreeps(roomname, target_room, value) {
+    for (let name in Game.creeps) {
+        let creep = Game.creeps[name];
+        if (creep.memory.role == 'distant_transfer' || 
+            creep.memory.role == 'distant_harvester' ||
+            creep.memory.role == 'distant_linker' ||
+            creep.memory.role == 'distant_repairer' ||
+            creep.memory.role == 'distant_worker') {
+            if (creep.memory.roomname != roomname) {
+                continue;
+            }
+
+            if (creep.memory.extraInfo && creep.memory.extraInfo.working_room == target_room) {
+                creep.memory.pause = value;
+            }
+        }
+    }
+}
+
 function reserveController(room) {
     if (room.memory.reserve_rooms == undefined) {
         room.memory.reserve_rooms = {};
@@ -7,8 +26,17 @@ function reserveController(room) {
 
     for (let room_name in room.memory.reserve_rooms) {
         let reserve_room = Game.rooms[room_name];
-        if (reserve_room && room.memory.reserve_rooms[room_name] == 0) {
+        if (reserve_room && room.memory.reserve_rooms[room_name] <= 0) {
             room.memory.reserve_rooms[room_name] = 100;
+            if (reserve_room.find(FIND_HOSTILE_CREEPS).length > 0) {
+                setDistantCreeps(room.name, reserve_room.name, true);
+                console.log('detecting invaders, pausing creeps');
+                continue;
+            } else {
+                console.log('restart creeps');
+                setDistantCreeps(room.name, room_name, false);
+            }
+
             if (reserve_room.controller.reservation == undefined || 
                 reserve_room.controller.reservation.username != 'heavensheep' || 
                 reserve_room.controller.reservation.ticksToEnd < 500) {
@@ -195,18 +223,18 @@ function labReactionController(room) {
     }
 
     room.memory.labController.countdown = 5;
-    let res1 = RESOURCE_LEMERGIUM;
-    let res2 = RESOURCE_UTRIUM;
+    let res1 = 'H';
+    let res2 = 'O';
 
     if (room.memory.labController.stage == 'check') {
         console.log('lab checking');
         let storage = room.storage;
-        if (storage.store[res1] < 1000) {
+        if (storage.store[res1] < 2000) {
             room.memory.labController.enabled = false;
             return;
         }
 
-        if (storage.store[res2] < 1000) {
+        if (storage.store[res2] < 2000) {
             room.memory.labController.enabled = false;
             return;
         }
@@ -303,6 +331,22 @@ function labReactionController(room) {
                 }
                 room.memory.task_queue.push(task);
             }
+
+            for (let resourceType in lab.store) {
+                if (resourceType == RESOURCE_ENERGY) {
+                    continue;
+                }
+                // send back to storage
+                if (lab.store[resourceType] > 0) {
+                    let task = {
+                        from: lab.id,
+                        to: storage.id,
+                        type: resourceType,
+                        amount: lab.store[resourceType],
+                    }
+                    room.memory.task_queue.push(task);
+                }
+            }
         }
 
         room.memory.labController.stage = 'prepare';
@@ -313,19 +357,15 @@ function labReactionController(room) {
         let lab2 = Game.getObjectById(room.memory.labController.lab2);
 
         if (lab1.store[res1] < 1000) {
-            console.log('1')
             return;
         }
         if (lab2.store[res2] < 1000) {
-            console.log('2')
             return;
         }
         if (lab1.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
-            console.log('3')
             return;
         }
         if (lab2.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
-            console.log('4')
             return;
         }
         for (let i = 0; i < room.memory.labController.labs.length; i++) {
@@ -400,11 +440,15 @@ function labReactionController(room) {
     }
 
     if (room.memory.labController.stage == 'finalize') {
+        let lab1 = Game.getObjectById(room.memory.labController.lab1);
+        let lab2 = Game.getObjectById(room.memory.labController.lab2);
+        let storage = room.storage;
+        
         if (lab1.store[res1] > 0) {
             return;
         }
 
-        if (lab1.store[res2] > 0) {
+        if (lab2.store[res2] > 0) {
             return;
         }
 

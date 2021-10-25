@@ -55,7 +55,7 @@ var maintainer = {
                 this.getNextTarget(creep);
             }
 
-            if (creep.memory.target == undefined) {
+            if (creep.memory.target == undefined && creep.store.getFreeCapacity() != 0) {
                 creep.memory.transfering = false;
                 return;
             }
@@ -73,6 +73,12 @@ var maintainer = {
                 creep.exTransfer(target, RESOURCE_ENERGY);
             }
         } else {
+            let target = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
+            if (target.length > 0) {
+                creep.exPickupCache(target[0], 10);
+                return;
+            }
+
             if (creep.room.storage) {
                 creep.exWithdraw(creep.room.storage, RESOURCE_ENERGY);
             }

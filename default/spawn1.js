@@ -89,7 +89,7 @@ var spawn1 = {
                 repairer: {work: 4, carry: 4, move: 4},
                 transfer: {carry: 16, move: 8},
                 harvester: {work: 5, move: 1},
-                upgrader: {work: 5, carry: 2, move: 1},
+                upgrader: {work: 7, carry: 2, move: 1},
                 outputer: {carry: 10, move: 5},
                 distant_worker: {work: 4, carry: 4, move: 4},
                 distant_harvester: {work: 6, carry: 2, move: 3},
@@ -99,6 +99,7 @@ var spawn1 = {
                 waller: {work: 2, carry: 6, move: 4},
                 maintainer: {carry: 16, move: 8},
                 claimer: {claim: 2, move: 2},
+                scout: {move: 1},
             },
             test: {
                 attacker: {move: 2},

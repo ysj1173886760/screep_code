@@ -6,17 +6,29 @@ var manager = {
                 room.memory.task_queue = new Array();
             }
 
-            if (room.memory.task_queue.length > 0) {
-                creep.memory.extraInfo.task = room.memory.task_queue[0];
-                room.memory.task_queue.shift();
-                creep.memory.stage = 'withdraw';
-                console.log(`mission acquired, transfer ${creep.memory.extraInfo.task.amount} ${creep.memory.extraInfo.task.type}`);
+            if (creep.ticksToLive < 100) {
+                creep.say('killing myself');
+                creep.suicide();
+                return;
             }
+
+            if (creep.memory.extraInfo.task == undefined) {
+                if (room.memory.task_queue.length > 0) {
+                    creep.memory.extraInfo.task = room.memory.task_queue[0];
+                    room.memory.task_queue.shift();
+                    creep.memory.stage = 'withdraw';
+                    console.log(`mission acquired, transfer ${creep.memory.extraInfo.task.amount} ${creep.memory.extraInfo.task.type}`);
+                }
+            } else {
+                creep.memory.stage = 'withdraw';
+            }
+            return;
         }
 
-        if (creep.memory.stage == 'withdraw' && creep.store.getUsedCapacity() > 0) {
+        if (creep.memory.stage == 'withdraw' && creep.store.getUsedCapacity() != 0) {
             creep.memory.stage = 'transfer';
             creep.memory.amount = creep.store.getUsedCapacity();
+            return;
         }
 
         if (creep.memory.stage == 'withdraw' && creep.store.getUsedCapacity() == 0) {
@@ -24,9 +36,16 @@ var manager = {
 
             let amount = Math.min(creep.store.getFreeCapacity(), creep.memory.extraInfo.task.amount);
             creep.say(amount);
-            if (creep.withdraw(target, creep.memory.extraInfo.task.type, amount) == ERR_NOT_IN_RANGE) {
+            
+            let ret = creep.withdraw(target, creep.memory.extraInfo.task.type, amount);
+            if (ret == ERR_NOT_IN_RANGE) {
                 creep.moveTo(target);
+            } else if (ret == ERR_NOT_ENOUGH_RESOURCES) {
+                creep.memory.extraInfo.task = undefined;
+                creep.memory.stage = 'wait';
+                return;
             }
+            return;
         }
 
         if (creep.memory.stage == 'transfer' && creep.store.getUsedCapacity() == 0) {
@@ -39,6 +58,7 @@ var manager = {
                 creep.memory.stage = 'withdraw';
                 creep.say('continue');
             }
+            return;
         }
 
         if (creep.memory.stage == 'transfer' && creep.store.getUsedCapacity() != 0) {
@@ -46,6 +66,7 @@ var manager = {
             if (creep.transfer(target, creep.memory.extraInfo.task.type) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(target);
             }
+            return;
         }
 
     }
