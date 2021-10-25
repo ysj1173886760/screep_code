@@ -32,7 +32,8 @@ var {linkWork} = require('link');
 var {
     reserveController,
     buildController,
-    boostUpgradingController
+    boostUpgradingController,
+    labReactionController
 } = require('overlord');
 
 require('./mount')();
@@ -126,6 +127,7 @@ module.exports.loop = function() {
             buildController(room);
             linkWork(room);
             boostUpgradingController(room);
+            labReactionController(room);
         }
     }
     

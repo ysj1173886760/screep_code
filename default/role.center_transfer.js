@@ -26,21 +26,34 @@ module.exports = {
         }
 
         if (creep.memory.transfer) {
-            creep.exTransferAll(creep.room.storage);
+            if (creep.memory.transferToTerminal) {
+                creep.exTransferAll(creep.room.terminal);
+            } else {
+                creep.exTransferAll(creep.room.storage);
+            }
+
         } else {
             let target_link = Game.getObjectById(creep.memory.link);
             if (target_link && target_link.store.getUsedCapacity(RESOURCE_ENERGY) != 0) {
+                creep.memory.transferToTerminal = false;
                 creep.withdraw(target_link, RESOURCE_ENERGY);
                 return;
             }
 
+            let storage = creep.room.storage;
             let terminal = creep.room.terminal;
             if (terminal) {
-                if (terminal.store[RESOURCE_ENERGY] > 10000) {
+                if (terminal.store[RESOURCE_ENERGY] > 20000) {
                     creep.withdraw(terminal, RESOURCE_ENERGY);
+                    creep.memory.transferToTerminal = false;
+                    return;
+                } else if (terminal.store[RESOURCE_ENERGY] < 10000) {
+                    creep.withdraw(storage, RESOURCE_ENERGY);
+                    creep.memory.transferToTerminal = true;
                     return;
                 }
-
+                
+                creep.memory.transferToTerminal = false;
                 for (let resourceType in terminal.store) {
                     if (resourceType != 'energy') {
                         creep.withdraw(terminal, resourceType);

@@ -81,7 +81,7 @@ var spawn1 = {
                 miner: {work: 5, carry: 5, move: 5},
                 harvest_linker: {work: 7, carry: 1, move: 1},
                 maintainer: {carry: 28, move: 14},
-                manager: {carry: 12, move: 6},
+                manager: {carry: 10, move: 5},
             },
             Spawn2: {
                 builder: {work: 4, carry: 4, move: 4},
