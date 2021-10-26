@@ -48,6 +48,10 @@ var rebuilder = {
             }
 
             if (creep.memory.working_source == undefined) {
+                if (creep.memory.extraInfo.working_location == undefined) {
+                    creep.suicide();
+                    return;
+                }
                 let flag = Game.flags[`container ${creep.memory.extraInfo.working_location} ${creep.room.name}`];
 
                 let target = flag.pos.findClosestByPath(FIND_SOURCES);

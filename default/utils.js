@@ -175,6 +175,15 @@ function addSquad(id) {
     return true;
 }
 
+function containBodyPart(creep, bodyPart) {
+    for (let i = 0; i < creep.body.length; i++) {
+        if (creep.body[i].type == bodyPart) {
+            return true;
+        }
+    }
+    return false;
+}
+
 module.exports = {
     getStructureByFlag,
     getConstructionSite,
@@ -193,5 +202,6 @@ module.exports = {
     createOrder,
     getBodyParts,
     removeSquad,
-    addSquad
+    addSquad,
+    containBodyPart
 }

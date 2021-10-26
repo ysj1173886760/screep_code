@@ -29,43 +29,12 @@ var spawn1 = {
         let newName = role + Game.time;
         let result;
         let component = {
-            // Spawn1: {
-            //     rebuilder: [WORK, WORK, WORK , CARRY, CARRY, MOVE, MOVE],
-            //     worker: [WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE],
-            //     harvester: [WORK, WORK, WORK, WORK, WORK, MOVE],
-            //     transfer: [CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
-            //     repairer: [WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE],
-            //     upgrader: [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE],
-            //     builder: [WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE],
-            //     outputer: [CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
-            //     distant_worker: [WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE],
-            //     distant_harvester: [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE],
-            //     distant_transfer: [WORK, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
-            //     claimer: [CLAIM, CLAIM, MOVE, MOVE],
-            //     defender: [TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, MOVE, MOVE, MOVE, MOVE, ATTACK, MOVE, MOVE, ATTACK, ATTACK],
-            //     center_transfer: [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE],
-            //     distant_linker: [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE],
-            //     extender: [WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE],
-            //     controller: [CLAIM, MOVE],
-            //     miner: [WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE]
-            // },
-            // Spawn2: {
-            //     builder: [WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE],
-            //     worker: [WORK, CARRY, CARRY, MOVE, MOVE],
-            //     repairer: [WORK, WORK, CARRY, CARRY, MOVE, MOVE],
-            //     transfer: [CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
-            //     harvester: [WORK, WORK, WORK, WORK, WORK, MOVE],
-            //     upgrader: [WORK, WORK, WORK, WORK, CARRY, CARRY, MOVE],
-            //     outputer: [CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE, CARRY, CARRY, MOVE],
-            //     distant_worker: [WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE],
-            // }
-
-            Spawn1: {
+            E37S58: {
                 rebuilder: {work: 3, carry: 2, move: 2},
                 worker: {work: 3, carry: 2, move: 2},
                 harvester: {work: 6, move: 1},
                 transfer: {carry: 10, move: 5},
-                repairer: {work: 4, carry: 4, move: 4},
+                repairer: {work: 5, carry: 5, move: 5},
                 upgrader: {work: 15, carry: 3, move: 1},
                 builder: {work: 5, carry: 5, move: 5},
                 outputer: {carry: 16, move: 8},
@@ -83,7 +52,7 @@ var spawn1 = {
                 maintainer: {carry: 28, move: 14},
                 manager: {carry: 10, move: 5},
             },
-            Spawn2: {
+            E45S59: {
                 builder: {work: 4, carry: 4, move: 4},
                 worker: {work: 1, carry: 2, move: 2},
                 repairer: {work: 4, carry: 4, move: 4},
@@ -100,6 +69,17 @@ var spawn1 = {
                 maintainer: {carry: 16, move: 8},
                 claimer: {claim: 2, move: 2},
                 scout: {move: 1},
+                controller: {claim: 1, move: 1},
+                extender: {work: 5, carry: 5, move: 5}, 
+            },
+            E47S59: {
+                rebuilder: {work: 1, carry: 1, move: 1}, 
+                worker: {work: 1, carry: 1, move: 1},
+                harvester: {work: 5, move: 1},
+                builder: {work: 2, carry: 2, move: 2},
+                repairer: {work: 2, carry: 2, move: 2},
+                transfer: {carry: 6, move: 3},
+                upgrader: {work: 4, carry: 1, move: 2},
             },
             test: {
                 attacker: {move: 2},
@@ -108,7 +88,7 @@ var spawn1 = {
         };
 
         // @ts-ignore
-        let tmp = component[spawn_name];
+        let tmp = component[roomname];
         result = Game.spawns[spawn_name].spawnCreep(getBodyParts(tmp[role]), 
             newName, {memory: {role: role, roomname: roomname, isNeeded: isNeeded, respawnTime: respawnTime, extraInfo: extraInfo}});
 

@@ -42,6 +42,12 @@ var outputer = {
                 }
             }
         } else {
+            // let target = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
+            // if (target.length > 0) {
+            //     creep.exPickupCache(target[0], 10);
+            //     return;
+            // }
+            
             if (creep.room.storage) {
                 if (creep.withdraw(creep.room.storage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(creep.room.storage);

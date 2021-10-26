@@ -74,7 +74,7 @@ var distant_transfer = {
                     return;
                 }
                 // creep.moveTo(new RoomPosition(25, 25, creep.memory.extraInfo.working_room), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: 20});
-                creep.moveToWorkingRoomCache(5);
+                creep.moveToWorkingRoomCache(15);
                 return;
             }
 

@@ -1,4 +1,5 @@
-const { getStructureByFlag } = require("./utils");
+const { getStructureByFlag, containBodyPart } = require("utils");
+const { whiteList } = require("whiteList");
 
 function setDistantCreeps(roomname, target_room, value) {
     for (let name in Game.creeps) {
@@ -405,24 +406,6 @@ function labReactionController(room) {
         let lab2 = Game.getObjectById(room.memory.labController.lab2);
         let storage = room.storage;
 
-        if (lab1.store[res1] > 0) {
-            room.memory.task_queue.push({
-                from: lab1.id,
-                to: storage.id,
-                type: res1,
-                amount: lab1.store[res1]
-            });
-        }
-
-        if (lab1.store[res2] > 0) {
-            room.memory.task_queue.push({
-                from: lab2.id,
-                to: storage.id,
-                type: res2,
-                amount: lab2.store[res2]
-            });
-        }
-
         for (let i = 0; i < room.memory.labController.labs.length; i++) {
             let lab = Game.getObjectById(room.memory.labController.labs[i]);
             for (let resourceType in lab.store) {
@@ -444,14 +427,6 @@ function labReactionController(room) {
         let lab2 = Game.getObjectById(room.memory.labController.lab2);
         let storage = room.storage;
         
-        if (lab1.store[res1] > 0) {
-            return;
-        }
-
-        if (lab2.store[res2] > 0) {
-            return;
-        }
-
         for (let i = 0; i < room.memory.labController.labs.length; i++) {
             let lab = Game.getObjectById(room.memory.labController.labs[i]);
             for (let resourceType in lab.store) {
@@ -467,11 +442,29 @@ function labReactionController(room) {
 
 }
 
+function defendController(room) {
+    let target = room.find(FIND_HOSTILE_CREEPS, {
+        filter: (c) => {
+            // not whiteList player, neither invader
+            return whiteList.indexOf(c.owner.username) == -1 &&
+                    c.owner.username != 'Invader' &&
+                    (containBodyPart(c, 'attack') || containBodyPart(c, 'ranged_attack'));
+        }
+    });
+    if (target.length > 0) {
+        if (room.safeMode == undefined) {
+            room.controller.activateSafeMode();
+            Game.notify(`warning, ${target[0].owner.username} is attacking you, generating safemode`);
+        }
+    }
+}
+
 module.exports = {
     reserveController,
     buildController,
     boostUpgradingController,
-    labReactionController
+    labReactionController,
+    defendController
 };
 
 // let task = {

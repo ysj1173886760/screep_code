@@ -38,18 +38,18 @@ var extender = {
             }
 
         } else {
-            let target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+            let target = creep.room.find(FIND_STRUCTURES, {
                 // @ts-ignore
                 filter: (s) => {
                     return (s.structureType == STRUCTURE_SPAWN ||
                             s.structureType == STRUCTURE_EXTENSION) &&
-                            s.store.getFreeCapacity() > 0;
+                            s.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
                 }
             });
 
-            if (target) {
-                if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target, {visualizePathStyle: { stoke: '#ffffff'}});
+            if (target.length > 0) {
+                if (creep.transfer(target[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(target[0], {visualizePathStyle: { stoke: '#ffffff'}});
                 }
                 return;
             }

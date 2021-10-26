@@ -1,6 +1,22 @@
 var {upgradeController} = require('utils');
 
 var roleRepairer = {
+    getNextTarget(creep) {
+        let target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+            filter:(s) => {
+                return (s.structureType == STRUCTURE_ROAD ||
+                        s.structureType == STRUCTURE_TOWER || 
+                        s.structureType == STRUCTURE_CONTAINER) &&
+                        s.hits < s.hitsMax - 500;
+            }
+        });
+        if (target) {
+            creep.memory.target = target.id;
+        } else {
+            creep.memory.target = undefined;
+        }
+    },
+
     run: function(creep) {
         if (!creep.memory.repairing && creep.store.getFreeCapacity() == 0) {
             creep.memory.repairing = true;
@@ -15,14 +31,16 @@ var roleRepairer = {
         }
         
         if (creep.memory.repairing) {
-            let target = creep.pos.findClosestByRange(FIND_STRUCTURES, {
-                filter:(s) => {
-                    return (s.structureType == STRUCTURE_ROAD ||
-                            s.structureType == STRUCTURE_TOWER || 
-                            s.structureType == STRUCTURE_CONTAINER) &&
-                            s.hits < s.hitsMax - 500;
+            if (creep.memory.target) {
+                let tmp = Game.getObjectById(creep.memory.target)
+                if (tmp && !(tmp.hits < tmp.hitsMax - 500)) {
+                    this.getNextTarget(creep);
                 }
-            });
+            } else {
+                this.getNextTarget(creep);
+            }
+
+            let target = Game.getObjectById(creep.memory.target);
             if (target) {
                 creep.exRepairCache(target, 10);
                 return;
