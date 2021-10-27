@@ -55,7 +55,8 @@ var {
     createOrder,
     removeSquad,
     addSquad,
-    roomSend
+    roomSend,
+    enableLab
 } = require('utils');
 
 const profiler = require('screeps-profiler');
@@ -232,3 +233,4 @@ global.G_createOrder = createOrder;
 global.G_removeSquad = removeSquad;
 global.G_addSquad = addSquad;
 global.G_roomSend = roomSend;
+global.G_enableLab = enableLab;

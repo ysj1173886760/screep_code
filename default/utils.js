@@ -198,6 +198,14 @@ function roomSend(from, to, resourceType, amount) {
     console.log("mission sended");
 }
 
+function enableLab(roomname) {
+    let room = Game.rooms[roomname];
+    if (!room) {
+        return;
+    }
+    room.memory.labController.enabled = true;
+}
+
 module.exports = {
     getStructureByFlag,
     getConstructionSite,
@@ -218,5 +226,6 @@ module.exports = {
     removeSquad,
     addSquad,
     containBodyPart,
-    roomSend
+    roomSend,
+    enableLab
 }
