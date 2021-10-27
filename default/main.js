@@ -101,7 +101,7 @@ module.exports.loop = function() {
 
         // priority check
         let check = false;
-        let high_priority = ['harvester', 'transfer', 'maintainer', 'harvest_linker'];
+        let high_priority = ['harvester', 'transfer', 'maintainer', 'harvest_linker', 'center_transfer'];
         for (let i = 0; i < room.memory.spawn_queue.length; i++) {
             if (high_priority.includes(room.memory.spawn_queue[i].role)) {
                 check = true;

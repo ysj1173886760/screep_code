@@ -51,6 +51,7 @@ var spawn1 = {
                 harvest_linker: {work: 7, carry: 1, move: 1},
                 maintainer: {carry: 30, move: 15},
                 manager: {carry: 10, move: 5},
+                waller: {work: 4, carry: 12, move: 8},
             },
             E45S59: {
                 builder: {work: 5, carry: 5, move: 5},

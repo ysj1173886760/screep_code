@@ -37,6 +37,19 @@ module.exports = {
             return;
         }
 
+        if (creep.memory.stage == 'transfer' && creep.store.getUsedCapacity() == 0) {
+            creep.memory.extraInfo.task.amount -= creep.memory.amount;
+            if (creep.memory.extraInfo.task.amount == 0) {
+                creep.memory.extraInfo.task = undefined;
+                creep.memory.stage = 'wait';
+                creep.say('complete');
+            } else {
+                creep.memory.stage = 'withdraw';
+                creep.say('continue');
+            }
+        }
+
+
         if (creep.memory.stage == undefined || creep.memory.stage == 'wait') {
             let room = Game.rooms[creep.memory.roomname];
             if (room.memory.center_task_queue == undefined) {
@@ -80,19 +93,6 @@ module.exports = {
                 creep.memory.extraInfo.task = undefined;
                 creep.memory.stage = 'wait';
                 return;
-            }
-            return;
-        }
-
-        if (creep.memory.stage == 'transfer' && creep.store.getUsedCapacity() == 0) {
-            creep.memory.extraInfo.task.amount -= creep.memory.amount;
-            if (creep.memory.extraInfo.task.amount == 0) {
-                creep.memory.extraInfo.task = undefined;
-                creep.memory.stage = 'wait';
-                creep.say('complete');
-            } else {
-                creep.memory.stage = 'withdraw';
-                creep.say('continue');
             }
             return;
         }

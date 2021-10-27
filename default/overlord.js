@@ -70,7 +70,12 @@ function buildController(room) {
 
     if (room.memory.buildInfo.counter <= 0) {
         room.memory.buildInfo.counter = 200;
-        let target = room.find(FIND_CONSTRUCTION_SITES);
+        let target = room.find(FIND_CONSTRUCTION_SITES, {
+            filter: (c) => {
+                return c.structureType != STRUCTURE_WALL &&
+                        c.structureType != STRUCTURE_RAMPART;
+            }
+        });
         if (target.length > 0) {
             if (!room.memory.buildInfo.building) {
                 console.log('detected construction sites, sending building mission');
@@ -604,12 +609,12 @@ function terminalController(room) {
         return;
     }
 
-    if (terminal.store[RESOURCE_ENERGY] > 30000) {
+    if (terminal.store[RESOURCE_ENERGY] > 50000) {
         room.memory.center_task_queue.push({
             from: terminal.id,
             to: storage.id,
             type: RESOURCE_ENERGY,
-            amount: terminal.store[RESOURCE_ENERGY] - 30000
+            amount: terminal.store[RESOURCE_ENERGY] - 50000
         });
     } else if (terminal.store[RESOURCE_ENERGY] < 20000) {
         room.memory.center_task_queue.push({
