@@ -35,7 +35,9 @@ var {
     buildController,
     boostUpgradingController,
     labReactionController,
-    defendController
+    defendController,
+    terminalController,
+    interRoomTransmissionController,
 } = require('overlord');
 
 require('./mount')();
@@ -52,7 +54,8 @@ var {
     removeReserve,
     createOrder,
     removeSquad,
-    addSquad
+    addSquad,
+    roomSend
 } = require('utils');
 
 const profiler = require('screeps-profiler');
@@ -131,6 +134,8 @@ module.exports.loop = function() {
             boostUpgradingController(room);
             labReactionController(room);
             defendController(room);
+            terminalController(room);
+            interRoomTransmissionController(room);
         }
     }
     
@@ -226,3 +231,4 @@ global.G_removeReserve = removeReserve;
 global.G_createOrder = createOrder;
 global.G_removeSquad = removeSquad;
 global.G_addSquad = addSquad;
+global.G_roomSend = roomSend;

@@ -25,43 +25,84 @@ module.exports = {
             }
         }
 
-        if (creep.memory.transfer) {
-            if (creep.memory.transferToTerminal) {
-                creep.exTransferAll(creep.room.terminal);
-            } else {
-                creep.exTransferAll(creep.room.storage);
+        let target_link = Game.getObjectById(creep.memory.link);
+        if (target_link && target_link.store.getUsedCapacity(RESOURCE_ENERGY) != 0 && creep.store.getUsedCapacity() == 0) {
+            creep.withdraw(target_link, RESOURCE_ENERGY);
+            creep.memory.transferLink = true;
+            return;
+        }
+        if (creep.memory.transferLink) {
+            creep.transfer(creep.room.storage, RESOURCE_ENERGY);
+            creep.memory.transferLink = false;
+            return;
+        }
+
+        if (creep.memory.stage == undefined || creep.memory.stage == 'wait') {
+            let room = Game.rooms[creep.memory.roomname];
+            if (room.memory.center_task_queue == undefined) {
+                room.memory.center_task_queue = new Array();
             }
 
-        } else {
-            let target_link = Game.getObjectById(creep.memory.link);
-            if (target_link && target_link.store.getUsedCapacity(RESOURCE_ENERGY) != 0) {
-                creep.memory.transferToTerminal = false;
-                creep.withdraw(target_link, RESOURCE_ENERGY);
+            if (creep.ticksToLive < 10) {
+                creep.say('killing myself');
+                creep.suicide();
                 return;
             }
 
-            let storage = creep.room.storage;
-            let terminal = creep.room.terminal;
-            if (terminal) {
-                if (terminal.store[RESOURCE_ENERGY] > 20000) {
-                    creep.withdraw(terminal, RESOURCE_ENERGY);
-                    creep.memory.transferToTerminal = false;
-                    return;
-                } else if (terminal.store[RESOURCE_ENERGY] < 10000) {
-                    creep.withdraw(storage, RESOURCE_ENERGY);
-                    creep.memory.transferToTerminal = true;
-                    return;
+            if (creep.memory.extraInfo.task == undefined) {
+                if (room.memory.center_task_queue.length > 0) {
+                    creep.memory.extraInfo.task = room.memory.center_task_queue[0];
+                    room.memory.center_task_queue.shift();
+                    creep.memory.stage = 'withdraw';
+                    console.log(`mission acquired, transfer ${creep.memory.extraInfo.task.amount} ${creep.memory.extraInfo.task.type}`);
                 }
-                
-                creep.memory.transferToTerminal = false;
-                for (let resourceType in terminal.store) {
-                    if (resourceType != 'energy') {
-                        creep.withdraw(terminal, resourceType);
-                    }
-                }
+            } else {
+                creep.memory.stage = 'withdraw';
             }
+            return;
+        }
 
+        if (creep.memory.stage == 'withdraw' && creep.store.getUsedCapacity() != 0) {
+            creep.memory.stage = 'transfer';
+            creep.memory.amount = creep.store.getUsedCapacity();
+        }
 
+        if (creep.memory.stage == 'withdraw' && creep.store.getUsedCapacity() == 0) {
+            let target = Game.getObjectById(creep.memory.extraInfo.task.from);
+
+            let amount = Math.min(creep.store.getFreeCapacity(), creep.memory.extraInfo.task.amount);
+            creep.say(amount);
+            
+            let ret = creep.withdraw(target, creep.memory.extraInfo.task.type, amount);
+            if (ret == ERR_NOT_IN_RANGE) {
+                creep.moveTo(target);
+            } else if (ret == ERR_NOT_ENOUGH_RESOURCES) {
+                creep.memory.extraInfo.task = undefined;
+                creep.memory.stage = 'wait';
+                return;
+            }
+            return;
+        }
+
+        if (creep.memory.stage == 'transfer' && creep.store.getUsedCapacity() == 0) {
+            creep.memory.extraInfo.task.amount -= creep.memory.amount;
+            if (creep.memory.extraInfo.task.amount == 0) {
+                creep.memory.extraInfo.task = undefined;
+                creep.memory.stage = 'wait';
+                creep.say('complete');
+            } else {
+                creep.memory.stage = 'withdraw';
+                creep.say('continue');
+            }
+            return;
+        }
+
+        if (creep.memory.stage == 'transfer' && creep.store.getUsedCapacity() != 0) {
+            let target = Game.getObjectById(creep.memory.extraInfo.task.to);
+            if (creep.transfer(target, creep.memory.extraInfo.task.type) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(target);
+            }
+            return;
         }
     }
 }

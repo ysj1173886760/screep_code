@@ -184,6 +184,20 @@ function containBodyPart(creep, bodyPart) {
     return false;
 }
 
+function roomSend(from, to, resourceType, amount) {
+    let room = Game.rooms[from];
+    if (!room || !room.terminal) {
+        return;
+    }
+    room.memory.transmission_queue.push({
+        from: from,
+        to: to,
+        type: resourceType,
+        amount: amount
+    });
+    console.log("mission sended");
+}
+
 module.exports = {
     getStructureByFlag,
     getConstructionSite,
@@ -203,5 +217,6 @@ module.exports = {
     getBodyParts,
     removeSquad,
     addSquad,
-    containBodyPart
+    containBodyPart,
+    roomSend
 }

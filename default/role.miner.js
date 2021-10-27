@@ -17,8 +17,14 @@ module.exports = {
             }
 
             let source = Game.getObjectById(creep.memory.working_source);
-            if (source) {
+            if (source && source.mineralAmount) {
                 creep.exHarvest(source);
+            } else {
+                if (creep.memory.isNeeded) {
+                    creep.memory.isNeed = false;
+                    console.log('mineral is exhausted');
+                    creep.suicide();
+                }
             }
         } else {
             let target = creep.room.storage;

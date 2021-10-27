@@ -459,12 +459,136 @@ function defendController(room) {
     }
 }
 
+function interRoomTransmissionController(room) {
+    if (room.memory.transmission_queue == undefined) {
+        room.memory.transmission_queue = new Array();
+    }
+
+    if (room.memory.center_task_queue == undefined) {
+        room.memory.center_task_queue = new Array();
+    }
+
+    if (room.memory.current_transmission_task == undefined) {
+        if (room.memory.transmission_queue.length > 0) {
+            room.memory.current_transmission_task = room.memory.transmission_queue[0];
+            room.memory.current_transmission_task.stage = 'check';
+            room.memory.transmission_queue.shift();
+        } else {
+            return
+        }
+    }
+
+    let terminal = room.terminal;
+    let storage = room.storage;
+    if (!terminal || !storage) {
+        return;
+    }
+
+    let task = room.memory.current_transmission_task;
+    if (task.stage == 'check') {
+        if (terminal.store[task.type] > task.amount) {
+            let ret = terminal.send(task.type, task.amount, task.to);
+            if (ret == OK) {
+                console.log(`send ${task.amount} ${task.type} from ${task.from} to ${task.to} success`);
+                room.memory.current_transmission_task = undefined;
+                return;
+            } else {
+                console.log(`${ret} failed to send ${task.amount} ${task.type} from ${task.from} to ${task.to}`);
+                return;
+            }
+        } else {
+            if (storage.store[task.type] > task.amount) {
+                // send task
+                room.memory.center_task_queue.push({
+                    from: storage.id,
+                    to: terminal.id,
+                    type: task.type,
+                    amount: task.amount
+                });
+                room.memory.current_transmission_task.stage = 'wait';
+                return;
+            } else {
+                console.log(`failed to send ${task.amount} ${task.type} from ${task.from} to ${task.to}, resource not enough`);
+                room.memory.current_transmission_task = undefined;
+                return;
+            }
+        }
+    }
+
+    if (task.stage == 'wait') {
+        if (terminal.store[task.type] > task.amount) {
+            let ret = terminal.send(task.type, task.amount, task.to);
+            if (ret == OK) {
+                console.log(`send ${task.amount} ${task.type} from ${task.from} to ${task.to} success`);
+                room.memory.current_transmission_task = undefined;
+                return;
+            } else {
+                console.log(`${ret} failed to send ${task.amount} ${task.type} from ${task.from} to ${task.to}`);
+                return;
+            }
+        }
+    }
+}
+
+function terminalController(room) {
+    let terminal = room.terminal;
+    let storage = room.storage;
+    if (!terminal || !storage) {
+        return;
+    }
+
+    if (room.memory.current_transmission_task) {
+        return;
+    }
+
+    if (room.memory.center_task_queue == undefined) {
+        room.memory.center_task_queue = new Array();
+    }
+
+    if (room.memory.center_task_queue.length > 0) {
+        return;
+    }
+
+    if (terminal.store[RESOURCE_ENERGY] > 30000) {
+        room.memory.center_task_queue.push({
+            from: terminal.id,
+            to: storage.id,
+            type: RESOURCE_ENERGY,
+            amount: terminal.store[RESOURCE_ENERGY] - 30000
+        });
+    } else if (terminal.store[RESOURCE_ENERGY] < 20000) {
+        room.memory.center_task_queue.push({
+            from: storage.id,
+            to: terminal.id,
+            type: RESOURCE_ENERGY,
+            amount: 20000 - terminal.store[RESOURCE_ENERGY]
+        });
+    }
+
+    for (let resourceType in terminal.store) {
+        if (resourceType == 'energy') {
+            continue;
+        }
+
+        if (terminal.store[resourceType] > 0) {
+            room.memory.center_task_queue.push({
+                from: terminal.id,
+                to: storage.id,
+                type: resourceType,
+                amount: terminal.store[resourceType]
+            });
+        }
+    }
+}
+
 module.exports = {
     reserveController,
     buildController,
     boostUpgradingController,
     labReactionController,
-    defendController
+    defendController,
+    terminalController,
+    interRoomTransmissionController
 };
 
 // let task = {
