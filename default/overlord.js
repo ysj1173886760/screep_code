@@ -235,10 +235,14 @@ function labReactionController(room) {
     if (room.memory.labController.countdown != 0) {
         return;
     }
-
     room.memory.labController.countdown = 5;
-    let res1 = 'H';
-    let res2 = 'O';
+
+    if (room.memory.labController.current_mission == undefined) {
+        return;
+    }
+
+    let res1 = room.memory.labController.current_mission.res1;
+    let res2 = room.memory.labController.current_mission.res2;
     let amountNeeded = 2000;
 
     if (room.memory.labController.stage == 'check') {
@@ -500,6 +504,14 @@ function labReactionController(room) {
         console.log('lab finalized');
     }
 
+}
+
+function boostController(room) {
+    if (room.memory.labController == undefined) {
+        return;
+    }
+
+    
 }
 
 function defendController(room) {

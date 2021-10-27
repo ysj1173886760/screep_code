@@ -56,7 +56,8 @@ var {
     removeSquad,
     addSquad,
     roomSend,
-    enableLab
+    enableLab,
+    setReaction,
 } = require('utils');
 
 const profiler = require('screeps-profiler');
@@ -234,3 +235,4 @@ global.G_removeSquad = removeSquad;
 global.G_addSquad = addSquad;
 global.G_roomSend = roomSend;
 global.G_enableLab = enableLab;
+global.G_setReaction = setReaction;

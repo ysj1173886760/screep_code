@@ -206,6 +206,19 @@ function enableLab(roomname) {
     room.memory.labController.enabled = true;
 }
 
+function setReaction(roomname, res1, res2) {
+    let room = Game.rooms[roomname];
+    if (!room) {
+        return;
+    }
+    room.memory.labController.current_mission = {
+        res1: res1,
+        res2: res2,
+    }
+    room.memory.labController.stage = 'check';
+    room.memory.labController.enabled = false;
+}
+
 module.exports = {
     getStructureByFlag,
     getConstructionSite,
@@ -227,5 +240,6 @@ module.exports = {
     addSquad,
     containBodyPart,
     roomSend,
-    enableLab
+    enableLab,
+    setReaction,
 }
