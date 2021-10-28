@@ -22,6 +22,10 @@ var manager = {
             } else {
                 creep.memory.stage = 'withdraw';
             }
+
+            if (creep.memory.stage == 'wait') {
+                creep.moveTo(room.storage);
+            }
             return;
         }
 

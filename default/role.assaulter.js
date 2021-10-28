@@ -10,13 +10,20 @@ var assaulter = {
             return;
         }
 
-        if (!creep.pos.inRangeTo(flag, 5)) {
+        if (!creep.pos.inRangeTo(flag, 3)) {
             creep.moveTo(flag);
         }
 
         let target = creep.pos.findInRange(FIND_HOSTILE_CREEPS, 5);
         if (creep.attack(target[0]) == ERR_NOT_IN_RANGE) {
             creep.moveTo(target[0]);
+        }
+
+        target = flag.pos.lookFor(LOOK_STRUCTURES);
+        if (target.length) {
+            if (creep.attack(target[0]) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(target[0]);
+            }
         }
     }
 }

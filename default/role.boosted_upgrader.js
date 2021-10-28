@@ -7,7 +7,12 @@ var boosted_upgrader = {
      */
     run: function(creep) {
         if (!creep.memory.boosted && creep.memory.extraInfo.needBoost) {
-            if (creep.memory.boostStage == undefined || creep.memory.boostStage == 'init') {
+            if (creep.memory.boostStage == undefined) {
+                creep.memory.boostStage = 'init';
+                return;
+            } 
+
+            if (creep.memory.boostStage == 'init') {
                 let room = creep.room;
                 if (room.memory.boostController.enabled == false) {
                     creep.memory.boosted = true;

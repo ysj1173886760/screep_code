@@ -66,7 +66,7 @@ var spawn1 = {
                 distant_harvester: {work: 6, carry: 2, move: 3},
                 distant_transfer: {carry: 16, move: 8},
                 distant_repairer: {work: 5, carry: 5, move: 5},
-                defender: {tough: 13, attack: 5, move: 9},
+                defender: {tough: 13, attack: 5, move: 18},
                 waller: {work: 2, carry: 6, move: 4},
                 maintainer: {carry: 28, move: 14},
                 claimer: {claim: 2, move: 2},
