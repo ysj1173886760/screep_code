@@ -48,7 +48,7 @@ var waller = {
 
             if (creep.memory.target != undefined) {
                 let tmp = Game.getObjectById(creep.memory.target);
-                if (tmp && tmp.hits > creep.memory.extraInfo.maxHits) {
+                if (tmp && tmp.hits >= creep.memory.extraInfo.maxHits) {
                     this.getNextTarget(creep);
                 }
             } else {
@@ -61,11 +61,10 @@ var waller = {
                 creep.exRepair(target);
                 return;
             } else {
-                creep.memory.extraInfo.maxHits += 50000;
-                // if (creep.isNeeded) {
-                //     creep.isNeeded = false;
-                //     creep.suicide();
-                // }
+                this.getNextTarget(creep);
+                if (creep.memory.target == undefined) {
+                    creep.memory.extraInfo.maxHits += 50000;
+                }
             }
         } else {
             let storage = creep.room.storage;
