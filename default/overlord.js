@@ -590,7 +590,7 @@ function boostController(room) {
                     room.memory.task_queue.push({
                         from: storage.id,
                         to: lab.id,
-                        type: lab.mineralType.type,
+                        type: lab.mineralType,
                         amount: 1500 - lab.store[lab.mineralType]
                     });
                 }
@@ -906,6 +906,8 @@ function interRoomTransmissionController(room) {
     }
 }
 
+const maxTransferAmount = 5000;
+
 function terminalController(room) {
     let terminal = room.terminal;
     let storage = room.storage;
@@ -926,22 +928,24 @@ function terminalController(room) {
     }
 
     if (terminal.store[RESOURCE_ENERGY] > 50000) {
+        let amount = Math.min(terminal.store[RESOURCE_ENERGY] - 50000, maxTransferAmount);
         room.memory.center_task_queue.push({
             from: terminal.id,
             to: storage.id,
             type: RESOURCE_ENERGY,
-            amount: terminal.store[RESOURCE_ENERGY] - 50000
+            amount: amount
         });
-        console.log('send mission send energy' + terminal.store[RESOURCE_ENERGY] - 50000);
+        console.log(`send mission send energy ${amount}`);
         return;
     } else if (terminal.store[RESOURCE_ENERGY] < 20000) {
+        let amount = Math.min(20000 - terminal.store[RESOURCE_ENERGY], maxTransferAmount);
         room.memory.center_task_queue.push({
             from: storage.id,
             to: terminal.id,
             type: RESOURCE_ENERGY,
-            amount: 20000 - terminal.store[RESOURCE_ENERGY]
+            amount: amount
         });
-        console.log('send mission send energy' + 20000 - terminal.store[RESOURCE_ENERGY]);
+        console.log(`send mission send energy ${amount}`);
         return;
     }
 
@@ -951,13 +955,14 @@ function terminalController(room) {
         }
 
         if (terminal.store[resourceType] > 0) {
+            let amount = Math.min(terminal.store[resourceType], maxTransferAmount);
             room.memory.center_task_queue.push({
                 from: terminal.id,
                 to: storage.id,
                 type: resourceType,
-                amount: terminal.store[resourceType]
+                amount: amount
             });
-            console.log(`send mission ${resourceType} ${terminal.store[resourceType]}`);
+            console.log(`send mission ${resourceType} ${amount}`);
             return;
         }
     }

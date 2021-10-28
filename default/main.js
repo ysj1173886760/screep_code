@@ -26,6 +26,7 @@ var maintainer = require('role.maintainer');
 var manager = require('role.manager');
 var scout = require('role.scout');
 var boosted_upgrader = require('role.boosted_upgrader');
+var assaulter = require('role.assaulter');
 
 var basic_squad = require('basic_squad');
 
@@ -188,6 +189,7 @@ module.exports.loop = function() {
         manager: manager,
         scout: scout,
         boosted_upgrader: boosted_upgrader,
+        assaulter: assaulter,
 
         // war
         attacker: warrior,

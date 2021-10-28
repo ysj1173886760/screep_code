@@ -52,7 +52,7 @@ var spawn1 = {
                 maintainer: {carry: 32, move: 16},
                 manager: {carry: 10, move: 5},
                 waller: {work: 4, carry: 12, move: 8},
-                boosted_upgrader: {work: 20, carry: 5, move: 10},
+                boosted_upgrader: {work: 30, carry: 6, move: 5},
             },
             E45S59: {
                 builder: {work: 5, carry: 5, move: 5},
@@ -77,6 +77,7 @@ var spawn1 = {
                 center_transfer: {carry: 8, move: 1},
                 manager: {carry: 10, move: 5},
                 miner: {work: 5, carry: 5, move: 5},
+                attacker: {move: 10, attack: 10},
             },
             E47S59: {
                 rebuilder: {work: 1, carry: 1, move: 1}, 
