@@ -28,7 +28,7 @@ var spawn1 = {
         // type CLAIM = "claim";
         let newName = role + Game.time;
         let result;
-        let component = {
+        const component = {
             E37S58: {
                 rebuilder: {work: 3, carry: 2, move: 2},
                 worker: {work: 3, carry: 2, move: 2},
@@ -49,9 +49,10 @@ var spawn1 = {
                 controller: {claim: 1, move: 1},
                 miner: {work: 5, carry: 5, move: 5},
                 harvest_linker: {work: 7, carry: 1, move: 1},
-                maintainer: {carry: 30, move: 15},
+                maintainer: {carry: 32, move: 16},
                 manager: {carry: 10, move: 5},
                 waller: {work: 4, carry: 12, move: 8},
+                boosted_upgrader: {work: 20, carry: 5, move: 10},
             },
             E45S59: {
                 builder: {work: 5, carry: 5, move: 5},
@@ -85,6 +86,7 @@ var spawn1 = {
                 repairer: {work: 2, carry: 2, move: 2},
                 transfer: {carry: 8, move: 4},
                 upgrader: {work: 5, carry: 1, move: 2},
+                outputer: {carry: 10, move: 5},
             },
             test: {
                 attacker: {move: 2},

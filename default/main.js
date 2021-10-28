@@ -25,6 +25,7 @@ var warrior = require('role.warrior');
 var maintainer = require('role.maintainer');
 var manager = require('role.manager');
 var scout = require('role.scout');
+var boosted_upgrader = require('role.boosted_upgrader');
 
 var basic_squad = require('basic_squad');
 
@@ -38,6 +39,7 @@ var {
     defendController,
     terminalController,
     interRoomTransmissionController,
+    boostController,
 } = require('overlord');
 
 require('./mount')();
@@ -138,6 +140,7 @@ module.exports.loop = function() {
             defendController(room);
             terminalController(room);
             interRoomTransmissionController(room);
+            boostController(room);
         }
     }
     
@@ -184,6 +187,7 @@ module.exports.loop = function() {
         maintainer: maintainer,
         manager: manager,
         scout: scout,
+        boosted_upgrader: boosted_upgrader,
 
         // war
         attacker: warrior,

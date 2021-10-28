@@ -185,6 +185,11 @@ function boostUpgradingController(room) {
     }
 }
 
+const boostingCountdown = 2000;
+const reloadCountdown = 100;
+const labControllerCountdown = 5;
+const boostControllerCountdown = 5;
+
 function labReactionController(room) {
     if (room.memory.task_queue == undefined) {
         room.memory.task_queue = new Array();
@@ -211,9 +216,24 @@ function labReactionController(room) {
         sendMission[lab2.id] = false;
 
         let outlab = new Array();
+
+        let boosting = {};
+        boosting[lab1.id] = {
+            countdown: boostingCountdown,
+            enabled: false,
+        }
+        boosting[lab2.id] = {
+            countdown: boostingCountdown,
+            enabled: false,
+        }
+
         for (let i = 0; i < labs.length; i++) {
             outlab.push(labs[i].id);
             sendMission[labs[i].id] = false;
+            boosting[labs[i].id] = {
+                countdown: boostingCountdown,
+                enabled: false,
+            }
         }
 
         room.memory.labController = {
@@ -223,7 +243,8 @@ function labReactionController(room) {
             stage: 'check',
             countdown: 5,
             enabled: false,
-            missionControl: sendMission
+            missionControl: sendMission,
+            boostControl: boosting
         };
     }
 
@@ -235,7 +256,7 @@ function labReactionController(room) {
     if (room.memory.labController.countdown != 0) {
         return;
     }
-    room.memory.labController.countdown = 5;
+    room.memory.labController.countdown = labControllerCountdown;
 
     if (room.memory.labController.current_mission == undefined) {
         return;
@@ -340,6 +361,10 @@ function labReactionController(room) {
 
         for (let i = 0; i < room.memory.labController.labs.length; i++) {
             let lab = Game.getObjectById(room.memory.labController.labs[i]);
+            // skip the boost lab
+            if (room.memory.labController.boostControl[lab.id].enabled) {
+                continue;
+            }
             if (lab.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
                 task = {
                     from: storage.id,
@@ -388,6 +413,10 @@ function labReactionController(room) {
         }
         for (let i = 0; i < room.memory.labController.labs.length; i++) {
             let lab = Game.getObjectById(room.memory.labController.labs[i]);
+            // skip the boost lab
+            if (room.memory.labController.boostControl[lab.id].enabled) {
+                continue;
+            }
             if (lab.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
                 return;
             }
@@ -437,7 +466,10 @@ function labReactionController(room) {
         }
         for (let i = 0; i < room.memory.labController.labs.length; i++) {
             let lab = Game.getObjectById(room.memory.labController.labs[i]);
-
+            // skip the boost lab
+            if (room.memory.labController.boostControl[lab.id].enabled) {
+                continue;
+            }
             if (lab.store[lab.mineralType] > 500) {
                 if (room.memory.labController.missionControl[lab.id] == false) {
                     room.memory.task_queue.push({
@@ -472,6 +504,10 @@ function labReactionController(room) {
 
         for (let i = 0; i < room.memory.labController.labs.length; i++) {
             let lab = Game.getObjectById(room.memory.labController.labs[i]);
+            // skip the boost lab
+            if (room.memory.labController.boostControl[lab.id].enabled) {
+                continue;
+            }
             for (let resourceType in lab.store) {
                 if (lab.store[resourceType] > 0 && resourceType != RESOURCE_ENERGY) {
                     room.memory.task_queue.push({
@@ -493,6 +529,10 @@ function labReactionController(room) {
         
         for (let i = 0; i < room.memory.labController.labs.length; i++) {
             let lab = Game.getObjectById(room.memory.labController.labs[i]);
+            // skip the boost lab
+            if (room.memory.labController.boostControl[lab.id].enabled) {
+                continue;
+            }
             for (let resourceType in lab.store) {
                 if (lab.store[resourceType] > 0 && resourceType != RESOURCE_ENERGY) {
                     return;
@@ -511,7 +551,271 @@ function boostController(room) {
         return;
     }
 
-    
+    if (room.memory.boostController == undefined) {
+        room.memory.boostController = {
+            boostQueue: new Array(),
+            currentBoostCreep: {
+                id: '',
+                boostResource: [],
+            },
+            stage: 'wait',
+            enabled: false,
+            countdown: boostControllerCountdown
+        }
+    }
+
+    if (room.memory.boostController.enabled == false) {
+        return;
+    }
+
+    room.memory.boostController.countdown--;
+    if (room.memory.boostController.countdown > 0) {
+        return;
+    }
+
+    room.memory.boostController.countdown = 5;
+
+    if (room.memory.boostController.stage == 'wait') {
+        for (let i = 0; i < room.memory.labController.labs.length; i++) {
+            let id = room.memory.labController.labs[i];
+            if (room.memory.labController.boostControl[id].enabled) {
+                if (Game.time - room.memory.labController.boostControl[id].countdown < reloadCountdown) {
+                    continue;
+                }
+
+                console.log('reloading boost lab');
+                let storage = room.storage;
+                let lab = Game.getObjectById(id);
+                if (lab.store[lab.mineralType] < 1500) {
+                    room.memory.task_queue.push({
+                        from: storage.id,
+                        to: lab.id,
+                        type: lab.mineralType.type,
+                        amount: 1500 - lab.store[lab.mineralType]
+                    });
+                }
+
+                if (lab.store[RESOURCE_ENERGY] < 1000) {
+                    room.memory.task_queue.push({
+                        from: storage.id,
+                        to: lab.id,
+                        type: RESOURCE_ENERGY,
+                        amount: 1000 - lab.store[RESOURCE_ENERGY],
+                    });
+                }
+                room.memory.labController.boostControl[lab.id].countdown = Game.time;
+            }
+        }
+        if (room.memory.boostController.boostQueue.length == 0) {
+            return;
+        }
+        room.memory.boostController.currentBoostCreep = room.memory.boostController.boostQueue[0];
+        console.log(`accept boost mission`);
+        room.memory.boostController.boostQueue.shift();
+        room.memory.boostController.stage = 'check';
+    }
+
+    if (room.memory.boostController.stage == 'check') {
+        room.memory.boostController.boostEntry = new Array();
+        for (let j = 0; j < room.memory.boostController.currentBoostCreep.boostResource.length; j++) {
+            let res = room.memory.boostController.currentBoostCreep.boostResource[j];
+            
+            // check whether the boosting lab have already had this resource
+            let check = false;
+            for (let i = 0; i < room.memory.labController.labs.length; i++) {
+                let id = room.memory.labController.labs[i];
+                if (room.memory.labController.boostControl[id].enabled) {
+                    let lab = Game.getObjectById(id);
+                    if (lab.store[lab.mineralType] > 0 && lab.mineralType == res) {
+                        check = true;
+                        room.memory.boostController.boostEntry.push({
+                            type: res,
+                            id: lab.id,
+                        });
+                        break;
+                    }
+                }
+            }
+            
+            if (check) {
+                continue;
+            }
+
+            // otherwise, we need to find a victim
+            for (let i = 0; i < room.memory.labController.labs.length; i++) {
+                let id = room.memory.labController.labs[i];
+                if (!room.memory.labController.boostControl[id].enabled) {
+                    room.memory.labController.boostControl[id].enabled = true;
+                    room.memory.labController.missionControl[id] = false;
+                    room.memory.boostController.boostEntry.push({
+                        type: res,
+                        id: id
+                    });
+                    console.log(`find victim ${id}`);
+                    check = true;
+                    break;
+                }
+            }
+
+            if (!check) {
+                console.log('failed to boost due to not enough labs');
+                room.memory.boostController.stage = 'failed';
+                break;
+            }
+            
+        }
+
+        if (room.memory.boostController.stage != 'failed') {
+            // sanity check
+            let length = room.memory.boostController.currentBoostCreep.boostResource.length;
+            if (room.memory.boostController.boostEntry.length != length) {
+                console.log(`boost check stage failed due to unknown error, expect ${length}, read ${room.memory.boostController.boostEntry.length}`);
+                room.memory.boostController.stage = 'failed';
+            } else {
+                room.memory.boostController.stage = 'check_resource';
+            }
+        }
+    }
+
+    if (room.memory.boostController.stage == 'check_resource') {
+        let storage = room.storage;
+        if (storage.store[RESOURCE_ENERGY] < 10000) {
+            console.log('boost check_resource stage failed due to lacked energy');
+        }
+
+        for (let i = 0; i < room.memory.boostController.boostEntry.length; i++) {
+            let entry = room.memory.boostController.boostEntry[i];
+            let lab = Game.getObjectById(entry.id);
+            if (!lab) {
+                room.memory.boostController.stage = 'failed';
+                console.log('boost check_resource stage failed due to null lab');
+                return;
+            }
+
+            if (storage.store[entry.type] < 3000) {
+                room.memory.boostController.stage = 'failed';
+                console.log('boost check_resource stage failed due to lacked resources');
+                return;
+            }
+        }
+
+        room.memory.boostController.stage = 'prepare';
+    }
+
+    if (room.memory.boostController.stage == 'prepare') {
+        let storage = room.storage;
+        for (let i = 0; i < room.memory.boostController.boostEntry.length; i++) {
+            let entry = room.memory.boostController.boostEntry[i];
+            let lab = Game.getObjectById(entry.id);
+            // clear lab first
+            if (lab.mineralType != entry.type && lab.store[lab.mineralType] > 0) {
+                room.memory.task_queue.push({
+                    from: lab.id,
+                    to: storage.id,
+                    type: lab.mineralType,
+                    amount: lab.store[lab.mineralType]
+                });
+            }
+
+            if (lab.store[entry.type] < 1500) {
+                room.memory.task_queue.push({
+                    from: storage.id,
+                    to: lab.id,
+                    type: entry.type,
+                    amount: 1500 - lab.store[entry.type]
+                });
+                room.memory.labController.boostControl[lab.id].countdown = Game.time;
+            }
+
+            if (lab.store[RESOURCE_ENERGY] < 1000) {
+                room.memory.task_queue.push({
+                    from: storage.id,
+                    to: lab.id,
+                    type: RESOURCE_ENERGY,
+                    amount: 1000 - lab.store[RESOURCE_ENERGY],
+                });
+                room.memory.labController.boostControl[lab.id].countdown = Game.time;
+            }
+        }
+        console.log('boost: mission sended, waiting resources');
+        room.memory.boostController.stage = 'wait_resource';
+    }
+
+    if (room.memory.boostController.stage == 'wait_resource') {
+        for (let i = 0; i < room.memory.boostController.boostEntry.length; i++) {
+            let entry = room.memory.boostController.boostEntry[i];
+            let lab = Game.getObjectById(entry.id);
+
+            if (lab.store[entry.type] < 1500) {
+                return;
+            }
+
+            if (lab.store[RESOURCE_ENERGY] < 1000) {
+                return;
+            }
+
+        }
+        room.memory.boostController.stage = 'wait_creep';
+    }
+
+    if (room.memory.boostController.stage == 'wait_creep') {
+        let creep = Game.getObjectById(room.memory.boostController.currentBoostCreep.id);
+        if (!creep) {
+            room.memory.boostController.stage = 'failed';
+            console.log('warning, can not find the corresponding creep');
+            return;
+        }
+        let flag = Game.flags[`boost ${room.name}`];
+        if (!flag) {
+            room.memory.boostController.stage = 'failed';
+            console.log('warning, can not find the corresponding flag');
+            return;
+        }
+
+        creep.memory.boostStage = 'prepared';
+        room.memory.boostController.stage = 'boosting';
+    }
+
+    if (room.memory.boostController.stage == 'boosting') {
+        let creep = Game.getObjectById(room.memory.boostController.currentBoostCreep.id);
+        let flag = Game.flags[`boost ${room.name}`];
+        if (!creep.pos.isEqualTo(flag.pos)) {
+            // keep checking
+            room.memory.boostController.countdown = 1;
+            return;
+        }
+
+        let res = true;
+        for (let i = 0; i < room.memory.boostController.boostEntry.length; i++) {
+            let entry = room.memory.boostController.boostEntry[i];
+            let lab = Game.getObjectById(entry.id);
+
+            let ret = lab.boostCreep(creep);
+            if (ret != OK) {
+                console.log(`failed to boost creep ${ret}`);
+                res = false;
+            }
+        }
+
+        if (res) {
+            creep.memory.boostStage = 'ok';
+        } else {
+            creep.memory.boostStage = 'failed';
+        }
+
+        room.memory.boostController.stage = 'wait'
+    }
+
+    if (room.memory.boostController.stage == 'failed') {
+        // not enough resources or labs
+        // we can simply drop this mission
+        let creep = Game.getObjectById(room.memory.boostController.currentBoostCreep.id);
+        if (creep) {
+            creep.memory.boostStage = "failed";
+        }
+        room.memory.boostController.stage = 'wait';
+        return;
+    }
 }
 
 function defendController(room) {
@@ -628,6 +932,8 @@ function terminalController(room) {
             type: RESOURCE_ENERGY,
             amount: terminal.store[RESOURCE_ENERGY] - 50000
         });
+        console.log('send mission send energy' + terminal.store[RESOURCE_ENERGY] - 50000);
+        return;
     } else if (terminal.store[RESOURCE_ENERGY] < 20000) {
         room.memory.center_task_queue.push({
             from: storage.id,
@@ -635,10 +941,12 @@ function terminalController(room) {
             type: RESOURCE_ENERGY,
             amount: 20000 - terminal.store[RESOURCE_ENERGY]
         });
+        console.log('send mission send energy' + 20000 - terminal.store[RESOURCE_ENERGY]);
+        return;
     }
 
     for (let resourceType in terminal.store) {
-        if (resourceType == 'energy') {
+        if (resourceType == RESOURCE_ENERGY) {
             continue;
         }
 
@@ -649,6 +957,8 @@ function terminalController(room) {
                 type: resourceType,
                 amount: terminal.store[resourceType]
             });
+            console.log(`send mission ${resourceType} ${terminal.store[resourceType]}`);
+            return;
         }
     }
 }
@@ -660,7 +970,8 @@ module.exports = {
     labReactionController,
     defendController,
     terminalController,
-    interRoomTransmissionController
+    interRoomTransmissionController,
+    boostController,
 };
 
 // let task = {

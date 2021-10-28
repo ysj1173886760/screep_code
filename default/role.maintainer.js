@@ -37,6 +37,7 @@ var maintainer = {
         }
 
         if (!creep.memory.transfering && creep.store.getFreeCapacity() == 0) {
+            creep.memory.target = undefined;
             creep.memory.transfering = true;
         }
 
@@ -76,6 +77,11 @@ var maintainer = {
             let target = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
             if (target.length > 0) {
                 creep.exPickupCache(target[0], 10);
+                return;
+            }
+            
+            if (creep.store[RESOURCE_ENERGY] == 0 && creep.store.getUsedCapacity() != 0) {
+                creep.exTransferAll(creep.room.storage);
                 return;
             }
 

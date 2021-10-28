@@ -17,7 +17,7 @@ var manager = {
                     creep.memory.extraInfo.task = room.memory.task_queue[0];
                     room.memory.task_queue.shift();
                     creep.memory.stage = 'withdraw';
-                    console.log(`mission acquired, transfer ${creep.memory.extraInfo.task.amount} ${creep.memory.extraInfo.task.type}`);
+                    console.log(`${creep.name} mission acquired, transfer ${creep.memory.extraInfo.task.amount} ${creep.memory.extraInfo.task.type}`);
                 }
             } else {
                 creep.memory.stage = 'withdraw';
@@ -32,6 +32,12 @@ var manager = {
         }
 
         if (creep.memory.stage == 'withdraw' && creep.store.getUsedCapacity() == 0) {
+            // don't do any mission when the creep is going to die
+            if (creep.ticksToLive < 100) {
+                creep.suicide();
+                return;
+            }
+
             let target = Game.getObjectById(creep.memory.extraInfo.task.from);
 
             let amount = Math.min(creep.store.getFreeCapacity(), creep.memory.extraInfo.task.amount);
@@ -44,6 +50,9 @@ var manager = {
                 creep.memory.extraInfo.task = undefined;
                 creep.memory.stage = 'wait';
                 return;
+            } else if (ret == ERR_INVALID_ARGS){
+                creep.memory.extraInfo.task = undefined;
+                creep.memory.stage = 'wait';
             }
             return;
         }

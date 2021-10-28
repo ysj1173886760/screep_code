@@ -21,9 +21,10 @@ module.exports = {
                 creep.exHarvest(source);
             } else {
                 if (creep.memory.isNeeded) {
-                    creep.memory.isNeed = false;
+                    creep.memory.isNeeded = false;
                     console.log('mineral is exhausted');
                     creep.suicide();
+                    return;
                 }
             }
         } else {
