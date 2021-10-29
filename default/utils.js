@@ -219,6 +219,28 @@ function setReaction(roomname, res1, res2) {
     room.memory.labController.enabled = false;
 }
 
+function setBoost(roomname, value) {
+    let room = Game.rooms[roomname];
+    if (!room) {
+        return;
+    }
+
+    if (value) {
+        room.memory.boostController.enabled = true;
+        room.memory.boostController.stage = 'wait';
+    } else {
+        for (let id in room.memory.labController.boostControl) {
+            if (room.memory.labController.boostControl[id].enabled) {
+                room.memory.labController.boostControl[id].enabled = false;
+                console.log(`disable lab boost ${id}`);
+            }
+        }
+        room.memory.boostController.enabled = false;
+        room.memory.boostController.stage = 'wait';
+    }
+    return true;
+}
+
 module.exports = {
     getStructureByFlag,
     getConstructionSite,
@@ -242,4 +264,5 @@ module.exports = {
     roomSend,
     enableLab,
     setReaction,
+    setBoost
 }

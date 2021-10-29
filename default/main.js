@@ -61,6 +61,7 @@ var {
     roomSend,
     enableLab,
     setReaction,
+    setBoost
 } = require('utils');
 
 const profiler = require('screeps-profiler');
@@ -242,3 +243,4 @@ global.G_addSquad = addSquad;
 global.G_roomSend = roomSend;
 global.G_enableLab = enableLab;
 global.G_setReaction = setReaction;
+global.G_setBoost = setBoost;
