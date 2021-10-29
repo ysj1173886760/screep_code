@@ -779,6 +779,10 @@ function boostController(room) {
     if (room.memory.boostController.stage == 'boosting') {
         let creep = Game.getObjectById(room.memory.boostController.currentBoostCreep.id);
         let flag = Game.flags[`boost ${room.name}`];
+        if (!creep) {
+            room.memory.boostController.stage = 'failed';
+            return;
+        }
         if (!creep.pos.isEqualTo(flag.pos)) {
             // keep checking
             room.memory.boostController.countdown = 1;

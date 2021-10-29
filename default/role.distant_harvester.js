@@ -13,7 +13,15 @@ var distant_harvester = {
             if (creep.memory.container == undefined) {
                 let flag = Game.flags[`container ${creep.memory.extraInfo.working_location} ${creep.room.name}`];
                 let target = getStructureByFlag(flag, STRUCTURE_CONTAINER);
-                creep.memory.container = target.id;
+                if (!target) {
+                    let c = flag.pos.lookFor(LOOK_CONSTRUCTION_SITES);
+                    if (c.length) {
+                        creep.build(c[0])
+                        return;
+                    }
+                } else {
+                    creep.memory.container = target.id;
+                }
             }
 
             let target = Game.getObjectById(creep.memory.container);

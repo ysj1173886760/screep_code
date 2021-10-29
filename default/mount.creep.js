@@ -179,6 +179,40 @@ const creepExtension = {
         if (this.repair(target) == ERR_NOT_IN_RANGE) {
             this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}, reusePath: reusePath});
         }
+    },
+
+    renewMe() {
+        if (this.memory.renewSpawn == undefined) {
+            let spawn = this.room.find(FIND_MY_SPAWNS, {
+                filter: (s) => {
+                    return !s.spawning;
+                }
+            });
+            if (spawn.length == 0) {
+                return;
+            }
+
+            this.memory.renewSpawn = spawn[0].id;
+        }
+
+        let target = Game.getObjectById(this.memory.renewSpawn);
+        if (!target) {
+            return;
+        }
+
+        if (!this.pos.inRangeTo(target, 1)) {
+            this.moveTo(target);
+            return;
+        }
+
+        if (!target.spawning) {
+            let ret = target.renewCreep(this);
+            if (ret == OK) {
+                console.log(`renewing ${this.name}`);
+            } else {
+                console.log(`${ret} failed to renew`);
+            }
+        }
     }
 
 }

@@ -3,6 +3,33 @@ var {
 } = require('utils');
 
 var maintainer = {
+    getNextTargetAhead(creep) {
+        let target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+            filter: (s) => {
+                return (s.structureType == STRUCTURE_EXTENSION ||
+                        s.structureType == STRUCTURE_SPAWN) && 
+                        s.store.getFreeCapacity(RESOURCE_ENERGY) > 0 &&
+                        s.id != creep.memory.target;
+
+            }
+        });
+        if (target) {
+            return target.id;
+        }
+
+        target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+            filter: (s) => {
+                return (s.structureType == STRUCTURE_TOWER) && 
+                        s.store.getFreeCapacity(RESOURCE_ENERGY) > 0 &&
+                        s.id != creep.memory.target;
+
+            }
+        });
+        if (target) {
+            return target.id;
+        }
+        return null;
+    },
     getNextTarget(creep) {
         let target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
             filter: (s) => {
@@ -64,7 +91,16 @@ var maintainer = {
             let target = Game.getObjectById(creep.memory.target);
             
             if (target) {
-                creep.exTransfer(target, RESOURCE_ENERGY);
+                let ret = creep.transfer(target, RESOURCE_ENERGY);
+                if (ret == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(target);
+                } else if (ret == OK) {
+                    let nxt = Game.getObjectById(this.getNextTargetAhead(creep));
+                    if (nxt && nxt.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
+                        creep.moveTo(nxt);
+                    }
+                    creep.memory.target = creep.memory.next;
+                }
                 return;
             }
 

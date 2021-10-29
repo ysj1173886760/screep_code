@@ -77,7 +77,8 @@ var spawn1 = {
                 center_transfer: {carry: 8, move: 1},
                 manager: {carry: 10, move: 5},
                 miner: {work: 5, carry: 5, move: 5},
-                attacker: {move: 10, attack: 10},
+                assaulter: {move: 10, attack: 10},
+                rebuilder: {carry: 2, move: 1},
             },
             E47S59: {
                 rebuilder: {work: 1, carry: 1, move: 1}, 
@@ -85,9 +86,11 @@ var spawn1 = {
                 harvester: {work: 5, move: 1},
                 builder: {work: 4, carry: 4, move: 4},
                 repairer: {work: 2, carry: 2, move: 2},
-                transfer: {carry: 8, move: 4},
-                upgrader: {work: 5, carry: 1, move: 2},
+                transfer: {carry: 10, move: 5},
+                upgrader: {work: 6, carry: 3, move: 3},
                 outputer: {carry: 10, move: 5},
+                rebuilder: {carry: 2, move: 1},
+                assaulter: {move: 10, attack: 10},
             },
             test: {
                 attacker: {move: 2},

@@ -34,11 +34,21 @@ var outputer = {
                 }
             }
 
-            let flag = Game.flags[`upgrade_container ${creep.room.name}`];
-            let target = getStructureByFlag(flag, STRUCTURE_CONTAINER);
-            if (target) {
-                if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target);
+            if (creep.memory.container == undefined) {
+                let flag = Game.flags[`upgrade_container ${creep.room.name}`];
+                let target = getStructureByFlag(flag, STRUCTURE_CONTAINER);
+                if (target) {
+                    creep.memory.container = target.id;
+                }
+            }
+
+            let container = Game.getObjectById(creep.memory.container);
+            if (container) {
+                let ret = creep.transfer(container, RESOURCE_ENERGY);
+                if (ret == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(container);
+                } else if (ret == OK) {
+                    creep.moveTo(creep.room.storage);
                 }
             }
         } else {
@@ -49,8 +59,16 @@ var outputer = {
             // }
             
             if (creep.room.storage) {
-                if (creep.withdraw(creep.room.storage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                let ret = creep.withdraw(creep.room.storage, RESOURCE_ENERGY);
+                if (ret == ERR_NOT_IN_RANGE) {
                     creep.moveTo(creep.room.storage);
+                } else if (ret == OK) {
+                    if (creep.memory.container) {
+                        let container = Game.getObjectById(creep.memory.container);
+                        if (container) {
+                            creep.moveTo(container);
+                        }
+                    }
                 }
             }
         }

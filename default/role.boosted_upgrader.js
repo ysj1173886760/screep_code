@@ -8,22 +8,26 @@ var boosted_upgrader = {
     run: function(creep) {
         if (!creep.memory.boosted && creep.memory.extraInfo.needBoost) {
             if (creep.memory.boostStage == undefined) {
+                let room = creep.room;
+                if (room.memory.boostController.enabled == false) {
+                    creep.memory.boosted = true;
+                    return;
+                }
                 creep.memory.boostStage = 'init';
                 return;
             } 
 
             if (creep.memory.boostStage == 'init') {
-                let room = creep.room;
-                if (room.memory.boostController.enabled == false) {
-                    creep.memory.boosted = true;
-                } else {
-                    room.memory.boostController.boostQueue.push({
-                        id: creep.id,
-                        boostResource: creep.memory.extraInfo.boostResource
-                    });
-                    creep.memory.boostStage = 'wait';
-                }
+                let task = {
+                    boostResource: creep.memory.extraInfo.boostResource,
+                    id: creep.id,
+                };
+                let room = creep.room
+                
+                room.memory.boostController.boostQueue.push(task);
+                creep.memory.boostStage = 'wait';
             }
+            
 
             if (creep.memory.boostStage == 'wait') {
                 return;
