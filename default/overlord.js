@@ -423,6 +423,7 @@ function labReactionController(room) {
             if (lab.store[lab.mineralType] > 0) {
                 return;
             }
+            room.memory.labController.missionControl[lab.id] = false;
         }
 
         console.log('lab prepare done');
@@ -931,6 +932,19 @@ function terminalController(room) {
         return;
     }
 
+    let flag = Game.flags[`center ${room.name}`];
+    if (!flag) {
+        return;
+    }
+    let creeps = flag.pos.lookFor(LOOK_CREEPS);
+    if (creeps.length == 0) {
+        return;
+    }
+
+    if (creeps[0].memory.stage != undefined && creeps[0].memory.stage != 'wait') {
+        return;
+    }
+
     if (terminal.store[RESOURCE_ENERGY] > 50000) {
         let amount = Math.min(terminal.store[RESOURCE_ENERGY] - 50000, maxTransferAmount);
         room.memory.center_task_queue.push({
@@ -972,6 +986,46 @@ function terminalController(room) {
     }
 }
 
+function mineralController(room) {
+    if (room.controller.level < 6) {
+        return;
+    }
+
+    if (room.memory.mineralControl == undefined) {
+        room.memory.mineralControl = {
+            working: false,
+            countdown: 0,
+        }
+    }
+
+    room.memory.mineralControl.countdown--;
+    if (room.memory.mineralControl.countdown > 0) {
+        return;
+    }
+    // 100 tick cooldown
+    room.memory.mineralControl.countdown = 100;
+
+    let mineral = room.find(FIND_MINERALS);
+    if (mineral.length == 0) {
+        return;
+    }
+
+    let extractor = mineral[0].pos.lookFor(LOOK_STRUCTURES).find(s => s.structureType == STRUCTURE_EXTRACTOR);
+    if (!extractor) {
+        return;
+    }
+
+    if (mineral[0].mineralAmount > 0) {
+        if (!room.memory.mineralControl.working) {
+            G_roomSpawn('miner', room.name, true, 150, {});
+            console.log('detect mineral, sending miner');
+            room.memory.mineralControl.working = true;
+        }
+    } else {
+        room.memory.mineralControl.working = false;
+    }
+}
+
 module.exports = {
     reserveController,
     buildController,
@@ -981,6 +1035,7 @@ module.exports = {
     terminalController,
     interRoomTransmissionController,
     boostController,
+    mineralController
 };
 
 // let task = {

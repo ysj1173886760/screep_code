@@ -41,6 +41,7 @@ var {
     terminalController,
     interRoomTransmissionController,
     boostController,
+    mineralController
 } = require('overlord');
 
 require('./mount')();
@@ -61,7 +62,8 @@ var {
     roomSend,
     enableLab,
     setReaction,
-    setBoost
+    setBoost,
+
 } = require('utils');
 
 const profiler = require('screeps-profiler');
@@ -143,6 +145,7 @@ module.exports.loop = function() {
             terminalController(room);
             interRoomTransmissionController(room);
             boostController(room);
+            mineralController(room);
         }
     }
     

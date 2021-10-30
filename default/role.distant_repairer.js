@@ -9,6 +9,7 @@ module.exports = {
         });
         if (target) {
             creep.memory.target = target.id;
+            return;
         }
 
         creep.memory.target = undefined;
@@ -22,8 +23,9 @@ module.exports = {
             creep.memory.repairing = false;
         }
 
-        if (creep.room.name != creep.working_room) {
+        if (creep.room.name != creep.memory.extraInfo.working_room) {
             creep.moveToWorkingRoom();
+            return;
         }
         
         if (creep.memory.repairing) {

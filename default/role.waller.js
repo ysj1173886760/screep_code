@@ -3,6 +3,17 @@ var waller = {
         let target = creep.room.find(FIND_STRUCTURES, {
             filter: (s) => {
                 return s.structureType == STRUCTURE_RAMPART &&
+                        s.hits <= 10000;
+            }
+        });
+        if (target.length) {
+            creep.memory.target = target[0].id;
+            return;
+        }
+        
+        target = creep.room.find(FIND_STRUCTURES, {
+            filter: (s) => {
+                return s.structureType == STRUCTURE_RAMPART &&
                         s.hits <= creep.memory.extraInfo.maxHits;
             }
         });

@@ -1,3 +1,5 @@
+const { getOppositeDirection } = require("./utils");
+
 module.exports = function() {
     _.assign(Creep.prototype, creepExtension);
 }
@@ -213,6 +215,275 @@ const creepExtension = {
                 console.log(`${ret} failed to renew`);
             }
         }
+    },
+
+    /**
+     * 
+     * @param {RoomPosition} pos 
+     */
+    standardizePos(pos) {
+        return `${pos.roomName}/${pos.x}/${pos.y}/${Game.shard.name}`;
+    },
+
+    getStandedPos() {
+        var standedCreep = this.room.find(FIND_MY_CREEPS, {
+            filter: (c) => {
+                return (c.memory.standed == true) ||
+                        (c.memory.crossLevel && this.memory.crossLevel && c.memory.crossLevel > this.memory.crossLevel);
+            }
+        });
+
+        if (standedCreep.length > 0) {
+            var posList = [];
+            for (var i of standedCreep) {
+                posList.push(i.pos);
+            }
+            return posList;
+        }
+        return [];
+    },
+
+    /**
+     * 
+     * @param {RoomPosition} target 
+     * @param {number} range 
+     */
+    findPath(target, range) {
+        if (!global.routeCache) {
+            global.routeCache = {};
+        }
+
+        if (!this.memory.moveData) {
+            this.memory.moveData = {};
+        }
+
+        this.memory.moveData.index = 0;
+        const routeKey = `${this.standardizePos(this.pos)} ${this.standardizePos(target)}`;
+        var route = global.routeCache[routeKey];
+        if (route && this.room.name != target.roomName) {
+            return route;
+        }
+
+        const result = PathFinder.search(this.pos, {pos: target, range: range}, {
+            plainCost: 2,
+            swampCost: 10,
+            maxOps: 8000,
+            roomCallback: roomName => {
+                // bypass room
+                if (Memory.bypassRooms && Memory.bypassRooms.includes(roomName)) {
+                    return false;
+                }
+
+                // creep only bypass
+                if (this.memory.bypassRooms && this.memory.bypassRooms.includes(roomName)) {
+                    return false;
+                }
+
+                const room = Game.rooms[roomName];
+
+                if (!room) {
+                    return;
+                }
+
+                let costs = new PathFinder.CostMatrix;
+                room.find(FIND_STRUCTURES).forEach(
+                    s => {
+                        if (s.structureType == STRUCTURE_ROAD) {
+                            costs.set(s.pos.x, s.pos.y, 1);
+                        } else if (s.structureType !== STRUCTURE_CONTAINER && 
+                                    (s.structureType !== STRUCTURE_RAMPART || !s.my)) {
+                            costs.set(s.pos.x, s.pos.y, 0xff);
+                        }
+                    }
+                );
+                room.find(FIND_MY_CONSTRUCTION_SITES).forEach(
+                    cons => {
+                        if (cons.structureType != STRUCTURE_ROAD && 
+                            cons.structureType != STRUCTURE_RAMPART &&
+                            cons.structureType != STRUCTURE_CONTAINER) {
+                            costs.set(cons.pos.x, cons.pos.y, 0xff);
+                        }
+                    }
+                );
+                room.find(FIND_HOSTILE_CREEPS).forEach(
+                    c => {
+                        costs.set(c.pos.x, c.pos.y, 255);
+                    }
+                );
+
+                const restrictedPos = this.getStandedPos();
+                for (const pos of restrictedPos) {
+                    costs.set(pos.x, pos.y, 0xff);
+                }
+                return costs;
+            }
+        });
+
+        if (result.path.length <= 0) {
+            return null;
+        }
+
+        route = this.serializeFarPath(result.path);
+        if (!result.incomplete) {
+            global.routeCache[routeKey] = route;
+        }
+        return route;
+    },
+
+    
+    /**
+     * 
+     * @param {RoomPosition[]} path 
+     */
+    serializeFarPath(path) {
+        if (path.length == 0) {
+            return '';
+        }
+
+        if (!path[0].isEqualTo(this.pos)) {
+            path.splice(0, 0, this.pos);
+        }
+
+        return path.map((pos, index) => {
+            if (index >= path.length - 1) {
+                return null;
+            }
+
+            if (pos.roomName != path[index + 1].roomName) {
+                return null;
+            }
+
+            return pos.getDirectionTo(path[index + 1]);
+        }).join('');
+    },
+
+    goByPath() {
+        if (!this.memory.moveData) {
+            return ERR_NO_PATH;
+        }
+
+        const index =  this.memory.moveData.index;
+        if (index >= this.memory.moveData.path.length) {
+            delete this.memory.moveData.path;
+            return OK;
+        }
+
+        const direction = Number(this.memory.moveData.path[index]);
+        const goResult = this.go(direction);
+        if (goResult == OK) {
+            this.memory.moveData.index++;
+        }
+        return goResult;
+    },
+
+    /**
+     * 
+     * @param {RoomPosition} target 
+     * @param {Number} range 
+     */
+    goTo(target, range = 1) {
+        if (this.memory.moveData == undefined) {
+            this.memory.moveData = {};
+        }
+
+        const targetPosTag = this.standardizePos(target);
+        if (targetPosTag !== this.memory.moveData.targetPos) {
+            this.memory.moveData.targetPos = targetPosTag;
+            this.memory.moveData.path = this.findPath(target, range);
+        }
+
+        if (!this.memory.moveData.path) {
+            this.memory.moveData.path = this.findPath(target, path);
+        }
+
+        if (!this.memory.moveData.path) {
+            delete this.memory.moveData.path;
+            return OK;
+        }
+
+        const goResult = this.goByPath();
+        if (goResult == ERR_INVALID_TARGET) {
+            delete this.memory.moveData;
+        } else if (goResult != OK && goResult != ERR_TIRED) {
+            this.say(`error ${goResult}`);
+        }
+
+        return goResult;
+    },
+
+    /**
+     * 
+     * @param {DirectionConstant} direction 
+     */
+    requestCross(direction) {
+        if (!this.memory.crossLevel) {
+            this.memory.crossLevel = 10;
+        }
+
+        const frontPos = this.pos.directionToPos(direction);
+        if (!frontPos) {
+            return ERR_NOT_FOUND;
+        }
+
+        const frontCreep = (frontPos.lookFor(LOOK_CREEPS)[0] || frontPos.lookFor(LOOK_POWER_CREEPS)[0]);
+        if (!frontCreep) {
+            return ERR_NOT_FOUND;
+        }
+
+        if (frontCreep.owner.username != this.owner.username) {
+            return;
+        }
+
+        this.say("👉");
+        if (frontCreep.manageCross(getOppositeDirection(direction), this.memory.crossLevel)) {
+            this.move(direction);
+        }
+        return OK;
+    },
+
+    /**
+     * 
+     * @param {DirectionConstant} direction 
+     * @param {number} crossLevel 
+     */
+    manageCross(direction, crossLevel) {
+        if (!this.memory.crossLevel) {
+            this.memory.crossLevel = 10;
+        }
+
+        if (!this.memory) {
+            return true;
+        }
+
+        if (this.memory.standed || this.memory.crossLevel > crossLevel) {
+            return false;
+        }
+
+        this.say('👌');
+        this.move(direction);
+        return true;
+    },
+
+    /**
+     * 
+     * @param {DirectionConstant} direction 
+     */
+    go(direction) {
+        const moveResult = this.move(direction);
+        if (moveResult != OK) {
+            return moveResult;
+        }
+
+        const currentPos = `${this.pos.x}/${this.pos.y}`;
+        if (this.memory.prePos && currentPos == this.memory.prePos) {
+            const crossResult = this.memory.disableCross ? ERR_BUSY : this.requestCross(direction);
+            if (crossResult != OK) {
+                delete this.memory.moveData;
+                return ERR_INVALID_TARGET;
+            }
+        }
+        this.memory.prePos = currentPos;
+        return OK;
     }
 
 }

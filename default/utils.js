@@ -241,6 +241,10 @@ function setBoost(roomname, value) {
     return true;
 }
 
+function getOppositeDirection(direction) {
+    return (direction + 3) % 8 + 1;
+}
+
 module.exports = {
     getStructureByFlag,
     getConstructionSite,
@@ -264,5 +268,6 @@ module.exports = {
     roomSend,
     enableLab,
     setReaction,
-    setBoost
+    setBoost,
+    getOppositeDirection
 }

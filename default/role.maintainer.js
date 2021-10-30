@@ -6,6 +6,18 @@ var maintainer = {
     getNextTargetAhead(creep) {
         let target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
             filter: (s) => {
+                return (s.structureType == STRUCTURE_TOWER) && 
+                        s.store.getFreeCapacity(RESOURCE_ENERGY) > 300 &&
+                        s.id != creep.memory.target;
+
+            }
+        });
+        if (target) {
+            return target.id;
+        }
+        
+        target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+            filter: (s) => {
                 return (s.structureType == STRUCTURE_EXTENSION ||
                         s.structureType == STRUCTURE_SPAWN) && 
                         s.store.getFreeCapacity(RESOURCE_ENERGY) > 0 &&
@@ -17,22 +29,23 @@ var maintainer = {
             return target.id;
         }
 
-        target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-            filter: (s) => {
-                return (s.structureType == STRUCTURE_TOWER) && 
-                        s.store.getFreeCapacity(RESOURCE_ENERGY) > 0 &&
-                        s.id != creep.memory.target;
-
-            }
-        });
-        if (target) {
-            return target.id;
-        }
         return null;
     },
     getNextTarget(creep) {
         let target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
             filter: (s) => {
+                return (s.structureType == STRUCTURE_TOWER) && 
+                        s.store.getFreeCapacity(RESOURCE_ENERGY) > 300;
+
+            }
+        });
+        if (target) {
+            creep.memory.target = target.id;
+            return;
+        }
+
+        target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+            filter: (s) => {
                 return (s.structureType == STRUCTURE_EXTENSION ||
                         s.structureType == STRUCTURE_SPAWN) && 
                         s.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
@@ -44,17 +57,6 @@ var maintainer = {
             return;
         }
 
-        target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-            filter: (s) => {
-                return (s.structureType == STRUCTURE_TOWER) && 
-                        s.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
-
-            }
-        });
-        if (target) {
-            creep.memory.target = target.id;
-            return;
-        }
         creep.memory.target = undefined;
     },
 
