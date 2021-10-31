@@ -56,10 +56,10 @@ const creepExtension = {
     },
 
     exTransfer(target, type) {
-        // if (!this.pos.inRangeTo(target, 1)) {
-        //     this.goTo(target.pos, 1);
-        //     return;
-        // }
+        if (!this.pos.inRangeTo(target, 1)) {
+            this.goTo(target.pos, 1);
+            return;
+        }
 
         if (this.transfer(target, type) == ERR_NOT_IN_RANGE) {
             // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
@@ -308,7 +308,7 @@ const creepExtension = {
         }
 
         if (!this.pos.inRangeTo(target, 1)) {
-            this.goTo(target, 1);
+            this.goTo(target.pos, 1);
             return;
         }
 
@@ -319,6 +319,16 @@ const creepExtension = {
             } else {
                 console.log(`${ret} failed to renew`);
             }
+        } else {
+            let spawn = this.room.find(FIND_MY_SPAWNS, {
+                filter: (s) => {
+                    return !s.spawning;
+                }
+            });
+            if (spawn.length == 0) {
+                return;
+            }
+            this.memory.renewSpawn = spawn[0].id;
         }
     },
 

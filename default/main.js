@@ -27,6 +27,7 @@ var manager = require('role.manager');
 var scout = require('role.scout');
 var boosted_upgrader = require('role.boosted_upgrader');
 var assaulter = require('role.assaulter');
+var superWarrior = require('role.superWarrior');
 
 var basic_squad = require('basic_squad');
 
@@ -41,7 +42,8 @@ var {
     terminalController,
     interRoomTransmissionController,
     boostController,
-    mineralController
+    mineralController,
+    warController,
 } = require('overlord');
 
 require('./mount')();
@@ -63,11 +65,11 @@ var {
     enableLab,
     setReaction,
     setBoost,
-
+    setWar,
 } = require('utils');
 
 const profiler = require('screeps-profiler');
-profiler.enable();
+// profiler.enable();
 
 module.exports.loop = function() {
     profiler.wrap(function() {
@@ -146,6 +148,7 @@ module.exports.loop = function() {
             interRoomTransmissionController(room);
             boostController(room);
             mineralController(room);
+            warController(room);
         }
     }
     
@@ -161,10 +164,10 @@ module.exports.loop = function() {
         Tower.run(tower);
     }
 
-    if (Game.cpu.bucket == 10000) {
-        console.log('generating pixel');
-        Game.cpu.generatePixel();
-    }
+    // if (Game.cpu.bucket == 10000) {
+    //     console.log('generating pixel');
+    //     Game.cpu.generatePixel();
+    // }
 
 
     let roleArray = {
@@ -194,6 +197,7 @@ module.exports.loop = function() {
         scout: scout,
         boosted_upgrader: boosted_upgrader,
         assaulter: assaulter,
+        superWarrior: superWarrior,
 
         // war
         attacker: warrior,
@@ -247,3 +251,4 @@ global.G_roomSend = roomSend;
 global.G_enableLab = enableLab;
 global.G_setReaction = setReaction;
 global.G_setBoost = setBoost;
+global.G_setWar = setWar;

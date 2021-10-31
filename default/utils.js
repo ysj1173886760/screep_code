@@ -1,3 +1,4 @@
+
 function getStructureByFlag(flag, STRUCTURE_TYPE) {
     if (!flag) { 
         return;
@@ -241,6 +242,18 @@ function setBoost(roomname, value) {
     return true;
 }
 
+function setWar(roomname, value) {
+    let room = Game.rooms[roomname];
+    if (!room) {
+        return;
+    }
+
+    setBoost(roomname, value);
+
+    room.memory.warController.stage = 'init';
+    room.memory.warController.enabled = value;
+}
+
 function getOppositeDirection(direction) {
     return (direction + 3) % 8 + 1;
 }
@@ -269,5 +282,6 @@ module.exports = {
     enableLab,
     setReaction,
     setBoost,
-    getOppositeDirection
+    getOppositeDirection,
+    setWar,
 }

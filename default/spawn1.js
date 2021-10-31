@@ -53,6 +53,9 @@ var spawn1 = {
                 manager: {carry: 10, move: 5},
                 waller: {work: 4, carry: 12, move: 8},
                 boosted_upgrader: {work: 30, carry: 6, move: 5},
+                superWarrior: {tough: 12, ranged_attack: 5, move: 10, heal: 23},
+                healer: {tough: 12, move: 10, heal: 28},
+                attacker: {tough: 12, move: 10, attack: 28},
             },
             E45S59: {
                 builder: {work: 5, carry: 5, move: 5},

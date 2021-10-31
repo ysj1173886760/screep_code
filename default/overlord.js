@@ -766,7 +766,13 @@ function boostController(room) {
             console.log('warning, can not find the corresponding creep');
             return;
         }
-        let flag = Game.flags[`boost ${room.name}`];
+        let flag = Game.flags[`boost 1 ${room.name}`];
+        if (!flag) {
+            room.memory.boostController.stage = 'failed';
+            console.log('warning, can not find the corresponding flag');
+            return;
+        }
+        flag = Game.flags[`boost 2 ${room.name}`];
         if (!flag) {
             room.memory.boostController.stage = 'failed';
             console.log('warning, can not find the corresponding flag');
@@ -779,13 +785,14 @@ function boostController(room) {
 
     if (room.memory.boostController.stage == 'boosting') {
         let creep = Game.getObjectById(room.memory.boostController.currentBoostCreep.id);
-        let flag = Game.flags[`boost ${room.name}`];
+        let flag = Game.flags[`boost 1 ${room.name}`];
         if (!creep) {
             room.memory.boostController.stage = 'failed';
             return;
         }
         if (!creep.pos.isEqualTo(flag.pos)) {
             // keep checking
+            creep.goTo(flag.pos, 0);
             room.memory.boostController.countdown = 1;
             return;
         }
@@ -804,11 +811,44 @@ function boostController(room) {
 
         if (res) {
             creep.memory.boostStage = 'ok';
+            room.memory.boostController.stage = 'wait'
         } else {
-            creep.memory.boostStage = 'failed';
+            room.memory.boostController.stage = 'boosting2';
+        }
+    }
+    
+    if (room.memory.boostController.stage == 'boosting2') {
+        let creep = Game.getObjectById(room.memory.boostController.currentBoostCreep.id);
+        let flag = Game.flags[`boost 2 ${room.name}`];
+        if (!creep) {
+            room.memory.boostController.stage = 'failed';
+            return;
+        }
+        if (!creep.pos.isEqualTo(flag.pos)) {
+            // keep checking
+            creep.goTo(flag.pos, 0);
+            room.memory.boostController.countdown = 1;
+            return;
         }
 
-        room.memory.boostController.stage = 'wait'
+        let res = true;
+        for (let i = 0; i < room.memory.boostController.boostEntry.length; i++) {
+            let entry = room.memory.boostController.boostEntry[i];
+            let lab = Game.getObjectById(entry.id);
+
+            let ret = lab.boostCreep(creep);
+            if (ret != OK && ret != ERR_NOT_IN_RANGE) {
+                console.log(`failed to boost creep ${ret}`);
+                res = false;
+            }
+        }
+
+        if (res) {
+            creep.memory.boostStage = 'ok';
+            room.memory.boostController.stage = 'wait'
+        } else {
+            room.memory.boostStage = 'failed';
+        }
     }
 
     if (room.memory.boostController.stage == 'failed') {
@@ -819,6 +859,186 @@ function boostController(room) {
             creep.memory.boostStage = "failed";
         }
         room.memory.boostController.stage = 'wait';
+        return;
+    }
+}
+
+function warController(room) {
+    if (room.memory.labController == undefined) {
+        return;
+    }
+
+    if (room.memory.boostController == undefined) {
+        return;
+    }
+
+    if (room.memory.warController == undefined) {
+        room.memory.warController = {
+            stage: 'init',
+            enabled: false,
+        }
+    }
+
+    if (room.memory.warController.enabled == false) {
+        return;
+    }
+
+    room.memory.labController.enabled = false;
+    room.memory.boostController.enabled = false;
+    const warReloadCountdown = 50;
+
+    const boostResource = ['XZHO2', 'XKHO2', 'XUH2O', 'XLHO2', 'XGHO2'];
+    if (room.memory.warController.stage == 'init') {
+        for (let i = 0; i < room.memory.labController.labs.length; i++) {
+            let id = room.memory.labController.labs[i];
+            room.memory.labController.boostControl[id].enabled = false;
+        }
+
+        room.memory.boostController.boostEntry = new Array();
+        for (let res of boostResource) {
+            // check whether the boosting lab have already had this resource
+            let check = false;
+            for (let i = 0; i < room.memory.labController.labs.length; i++) {
+                let id = room.memory.labController.labs[i];
+                let lab = Game.getObjectById(id);
+                if (!room.memory.labController.boostControl[id].enabled) {
+                    if (lab.store[lab.mineralType] > 0 && lab.mineralType == res) {
+                        check = true;
+                        room.memory.boostController.boostEntry.push({
+                            type: res,
+                            id: lab.id,
+                        });
+                        room.memory.labController.boostControl[id].enabled = true;
+                        break;
+                    }
+                }
+            }
+            
+            if (check) {
+                continue;
+            }
+
+            // otherwise, we need to find a victim
+            for (let i = 0; i < room.memory.labController.labs.length; i++) {
+                let id = room.memory.labController.labs[i];
+                if (!room.memory.labController.boostControl[id].enabled) {
+                    room.memory.labController.boostControl[id].enabled = true;
+                    room.memory.labController.missionControl[id] = false;
+                    room.memory.boostController.boostEntry.push({
+                        type: res,
+                        id: id
+                    });
+                    console.log(`find victim ${id}`);
+                    check = true;
+                    break;
+                }
+            }
+
+            if (!check) {
+                console.log('failed to boost due to not enough labs');
+                room.memory.warController.stage = 'failed';
+                break;
+            }
+            
+        }
+
+        if (room.memory.warController.stage != 'failed') {
+            // sanity check
+            room.memory.warController.stage = 'send_mission';
+        }
+    }
+
+    if (room.memory.warController.stage == 'send_mission') {
+        let storage = room.storage;
+        for (let i = 0; i < room.memory.boostController.boostEntry.length; i++) {
+            let entry = room.memory.boostController.boostEntry[i];
+            let lab = Game.getObjectById(entry.id);
+            // clear lab first
+            if (lab.mineralType != entry.type && lab.store[lab.mineralType] > 0) {
+                room.memory.task_queue.push({
+                    from: lab.id,
+                    to: storage.id,
+                    type: lab.mineralType,
+                    amount: lab.store[lab.mineralType]
+                });
+            }
+
+            if (lab.store[entry.type] < 3000) {
+                room.memory.task_queue.push({
+                    from: storage.id,
+                    to: lab.id,
+                    type: entry.type,
+                    amount: 3000 - lab.store[entry.type]
+                });
+                room.memory.labController.boostControl[lab.id].countdown = Game.time;
+            }
+
+            if (lab.store[RESOURCE_ENERGY] < 2000) {
+                room.memory.task_queue.push({
+                    from: storage.id,
+                    to: lab.id,
+                    type: RESOURCE_ENERGY,
+                    amount: 2000 - lab.store[RESOURCE_ENERGY],
+                });
+                room.memory.labController.boostControl[lab.id].countdown = Game.time;
+            }
+        }
+        console.log('boost: mission sended, waiting resources');
+        room.memory.warController.stage = 'wait_resource';
+    }
+
+    if (room.memory.warController.stage == 'wait_resource') {
+        for (let i = 0; i < room.memory.boostController.boostEntry.length; i++) {
+            let entry = room.memory.boostController.boostEntry[i];
+            let lab = Game.getObjectById(entry.id);
+
+            if (lab.store[entry.type] < 3000) {
+                return;
+            }
+
+            if (lab.store[RESOURCE_ENERGY] < 2000) {
+                return;
+            }
+
+        }
+        room.memory.warController.stage = 'war';
+    }
+
+    if (room.memory.warController.stage == 'war') {
+        room.memory.boostController.enabled = true;
+        for (let i = 0; i < room.memory.labController.labs.length; i++) {
+            let id = room.memory.labController.labs[i];
+            if (room.memory.labController.boostControl[id].enabled) {
+                if (Game.time - room.memory.labController.boostControl[id].countdown < warReloadCountdown) {
+                    continue;
+                }
+
+                let storage = room.storage;
+                let lab = Game.getObjectById(id);
+                if (lab.store[lab.mineralType] < 3000) {
+                    room.memory.task_queue.push({
+                        from: storage.id,
+                        to: lab.id,
+                        type: lab.mineralType,
+                        amount: 3000 - lab.store[lab.mineralType]
+                    });
+                }
+
+                if (lab.store[RESOURCE_ENERGY] < 2000) {
+                    room.memory.task_queue.push({
+                        from: storage.id,
+                        to: lab.id,
+                        type: RESOURCE_ENERGY,
+                        amount: 2000 - lab.store[RESOURCE_ENERGY],
+                    });
+                }
+                room.memory.labController.boostControl[lab.id].countdown = Game.time;
+            }
+        }
+    }
+
+    if (room.memory.warController.stage == 'failed') {
+        room.memory.warController.enabled = false;
         return;
     }
 }
@@ -875,7 +1095,6 @@ function interRoomTransmissionController(room) {
                 return;
             } else {
                 console.log(`${ret} failed to send ${task.amount} ${task.type} from ${task.from} to ${task.to}`);
-                room.memory.current_transmission_task = undefined;
                 return;
             }
         } else {
@@ -888,7 +1107,6 @@ function interRoomTransmissionController(room) {
                     amount: task.amount
                 });
                 room.memory.current_transmission_task.stage = 'wait';
-                
                 return;
             } else {
                 console.log(`failed to send ${task.amount} ${task.type} from ${task.from} to ${task.to}, resource not enough`);
@@ -1037,7 +1255,8 @@ module.exports = {
     terminalController,
     interRoomTransmissionController,
     boostController,
-    mineralController
+    mineralController,
+    warController
 };
 
 // let task = {
