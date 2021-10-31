@@ -102,8 +102,14 @@ module.exports = {
 
         if (creep.memory.stage == 'transfer' && creep.store.getUsedCapacity() != 0) {
             let target = Game.getObjectById(creep.memory.extraInfo.task.to);
-            if (creep.transfer(target, creep.memory.extraInfo.task.type) == ERR_NOT_IN_RANGE) {
+            let ret = creep.transfer(target, creep.memory.extraInfo.task.type);
+            if (ret == ERR_NOT_IN_RANGE) {
+                // creep.moveTo(target);
                 creep.goTo(target.pos, 1);
+            } else if (ret == ERR_FULL) {
+                console.log(`${creep.name} abort the mission due to the lack of space`);
+                creep.memory.extraInfo.task = undefined;
+                creep.memory.stage = 'wait';
             }
             return;
         }
