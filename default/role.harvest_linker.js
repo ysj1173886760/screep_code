@@ -11,7 +11,7 @@ module.exports = {
             creep.memory.harvesting = true;
         }
 
-        creep.memory.stand = true;
+        creep.memory.standed = true;
         if (creep.memory.harvesting) {
             if (creep.memory.positioned && creep.memory.working_source != undefined) {
                 let container = Game.getObjectById(creep.memory.container);

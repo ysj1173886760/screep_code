@@ -67,7 +67,7 @@ var {
 } = require('utils');
 
 const profiler = require('screeps-profiler');
-// profiler.enable();
+profiler.enable();
 
 module.exports.loop = function() {
     profiler.wrap(function() {

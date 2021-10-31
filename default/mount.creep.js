@@ -20,6 +20,11 @@ const creepExtension = {
 
     exUpgradeController() {
         let target = this.room.controller;
+        if (!this.pos.inRangeTo(target, 3)) {
+            this.goTo(target.pos, 2);
+            return;
+        }
+
         if (this.upgradeController(target) == ERR_NOT_IN_RANGE) {
             // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
             this.goTo(target.pos, 2);
@@ -27,6 +32,11 @@ const creepExtension = {
     },
 
     exHarvest(resource) {
+        if (!this.pos.inRangeTo(resource, 1)) {
+            this.goTo(resource.pos, 1);
+            return;
+        }
+
         if (this.harvest(resource) == ERR_NOT_IN_RANGE) {
             // this.moveTo(resource, {visualizePathStyle: {stroke: '#ffffff'}});
             this.goTo(resource.pos, 1);
@@ -34,6 +44,11 @@ const creepExtension = {
     },
 
     exHarvestCache(resource, reusePath) {
+        if (!this.pos.inRangeTo(resource, 1)) {
+            this.goTo(resource.pos, 1);
+            return;
+        }
+
         if (this.harvest(resource) == ERR_NOT_IN_RANGE) {
             // this.moveTo(resource, {visualizePathStyle: {stroke: '#ffffff'}, reusePath: reusePath});
             this.goTo(resource.pos, 1);
@@ -41,6 +56,11 @@ const creepExtension = {
     },
 
     exTransfer(target, type) {
+        // if (!this.pos.inRangeTo(target, 1)) {
+        //     this.goTo(target.pos, 1);
+        //     return;
+        // }
+
         if (this.transfer(target, type) == ERR_NOT_IN_RANGE) {
             // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
             this.goTo(target.pos, 1);
@@ -48,6 +68,11 @@ const creepExtension = {
     },
 
     exTransferCache(target, type, reusePath) {
+        if (!this.pos.inRangeTo(target, 1)) {
+            this.goTo(target.pos, 1);
+            return;
+        }
+
         if (this.transfer(target, type) == ERR_NOT_IN_RANGE) {
             // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}, reusePath: reusePath});
             this.goTo(target.pos, 1);
@@ -55,6 +80,11 @@ const creepExtension = {
     },
 
     exTransferAll(target) {
+        if (!this.pos.inRangeTo(target, 1)) {
+            this.goTo(target.pos, 1);
+            return;
+        }
+
         for (let resourceType in this.store) {
             if (this.transfer(target, resourceType) == ERR_NOT_IN_RANGE) {
                 // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
@@ -65,6 +95,11 @@ const creepExtension = {
     },
 
     exPickup(target) {
+        if (!this.pos.inRangeTo(target, 1)) {
+            this.goTo(target.pos, 1);
+            return;
+        }
+
         if (this.pickup(target) == ERR_NOT_IN_RANGE) {
             // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
             this.goTo(target.pos, 1);
@@ -72,6 +107,11 @@ const creepExtension = {
     },
 
     exPickupCache(target, reusePath) {
+        if (!this.pos.inRangeTo(target, 1)) {
+            this.goTo(target.pos, 1);
+            return;
+        }
+
         if (this.pickup(target) == ERR_NOT_IN_RANGE) {
             // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}, reusePath: reusePath});
             this.goTo(target.pos, 1);
@@ -79,6 +119,11 @@ const creepExtension = {
     },
 
     exWithdraw(target, type) {
+        if (!this.pos.inRangeTo(target, 1)) {
+            this.goTo(target.pos, 1);
+            return;
+        }
+
         if (this.withdraw(target, type) == ERR_NOT_IN_RANGE) {
             // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
             this.goTo(target.pos, 1);
@@ -86,6 +131,11 @@ const creepExtension = {
     },
 
     exWithdrawCache(target, type, reusePath) {
+        if (!this.pos.inRangeTo(target, 1)) {
+            this.goTo(target.pos, 1);
+            return;
+        }
+
         if (this.withdraw(target, type) == ERR_NOT_IN_RANGE) {
             // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}, reusePath: reusePath});
             this.goTo(target.pos, 1);
@@ -93,6 +143,11 @@ const creepExtension = {
     },
 
     exBuild(target) {
+        if (!this.pos.inRangeTo(target, 1)) {
+            this.goTo(target.pos, 1);
+            return;
+        }
+
         if (this.build(target) == ERR_NOT_IN_RANGE) {
             // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
             this.goTo(target.pos, 1);
@@ -100,6 +155,11 @@ const creepExtension = {
     },
 
     exBuildCache(target, reusePath) {
+        if (!this.pos.inRangeTo(target, 1)) {
+            this.goTo(target.pos, 1);
+            return;
+        }
+
         if (this.build(target) == ERR_NOT_IN_RANGE) {
             // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}, reusePath: reusePath});
             this.goTo(target.pos, 1);
@@ -107,6 +167,11 @@ const creepExtension = {
     },
 
     exClaimController(target) {
+        if (!this.pos.inRangeTo(target, 1)) {
+            this.goTo(target.pos, 1);
+            return;
+        }
+
         if (this.claimController(target) == ERR_NOT_IN_RANGE) {
             // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
             this.goTo(target.pos, 1);
@@ -114,6 +179,11 @@ const creepExtension = {
     },
 
     exReserveController(target) {
+        if (!this.pos.inRangeTo(target, 1)) {
+            this.goTo(target.pos, 1);
+            return;
+        }
+
         if (this.reserveController(target) == ERR_NOT_IN_RANGE) {
             // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
             this.goTo(target.pos, 1);
@@ -121,6 +191,11 @@ const creepExtension = {
     },
 
     exReserveControllerCache(target, reusePath) {
+        if (!this.pos.inRangeTo(target, 1)) {
+            this.goTo(target.pos, 1);
+            return;
+        }
+
         if (this.reserveController(target) == ERR_NOT_IN_RANGE) {
             // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}, reusePath: reusePath});
             this.goTo(target.pos, 1);
@@ -190,6 +265,11 @@ const creepExtension = {
     },
 
     exRepair(target) {
+        if (!this.pos.inRangeTo(target, 1)) {
+            this.goTo(target.pos, 1);
+            return;
+        }
+
         if (this.repair(target) == ERR_NOT_IN_RANGE) {
             // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
             this.goTo(target.pos, 1);
@@ -197,6 +277,11 @@ const creepExtension = {
     },
 
     exRepairCache(target, reusePath) {
+        if (!this.pos.inRangeTo(target, 1)) {
+            this.goTo(target.pos, 1);
+            return;
+        }
+
         if (this.repair(target) == ERR_NOT_IN_RANGE) {
             this.goTo(target.pos, 1);
             // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}, reusePath: reusePath});
@@ -223,7 +308,7 @@ const creepExtension = {
         }
 
         if (!this.pos.inRangeTo(target, 1)) {
-            this.moveTo(target);
+            this.goTo(target, 1);
             return;
         }
 

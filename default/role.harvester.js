@@ -9,11 +9,11 @@ var roleHarvester = {
             return;
         }
 
-        creep.memory.stand = true;
+        creep.memory.standed = true;
         let flag = Game.flags[`container ${creep.memory.extraInfo.working_location} ${creep.room.name}`];
 
         if (!creep.pos.isEqualTo(flag.pos)) {
-            creep.goTo(flag.pos, 1);
+            creep.goTo(flag.pos, 0);
             return;
         }
 

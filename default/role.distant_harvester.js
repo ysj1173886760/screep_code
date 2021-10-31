@@ -9,6 +9,7 @@ var distant_harvester = {
             creep.memory.harvesting = false;
         }
 
+        creep.memory.standed = true;
         if (!creep.memory.harvesting) {
             if (creep.memory.container == undefined) {
                 let flag = Game.flags[`container ${creep.memory.extraInfo.working_location} ${creep.room.name}`];
@@ -33,11 +34,11 @@ var distant_harvester = {
                 }
 
                 if (!creep.pos.isEqualTo(target.pos)) {
-                    creep.goTo(target.pos, 1);
+                    creep.goTo(target.pos, 0);
                     return;
                 }
 
-                creep.exTransfer(target);
+                creep.exTransfer(target, RESOURCE_ENERGY);
                 return;
             }
 

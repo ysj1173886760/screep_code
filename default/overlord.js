@@ -875,6 +875,7 @@ function interRoomTransmissionController(room) {
                 return;
             } else {
                 console.log(`${ret} failed to send ${task.amount} ${task.type} from ${task.from} to ${task.to}`);
+                room.memory.current_transmission_task = undefined;
                 return;
             }
         } else {
@@ -887,6 +888,7 @@ function interRoomTransmissionController(room) {
                     amount: task.amount
                 });
                 room.memory.current_transmission_task.stage = 'wait';
+                
                 return;
             } else {
                 console.log(`failed to send ${task.amount} ${task.type} from ${task.from} to ${task.to}, resource not enough`);

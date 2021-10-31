@@ -69,7 +69,7 @@ var roleRepairer = {
             });
 
             if (target.length > 0) {
-                creep.exWithdraw(target[0]);
+                creep.exWithdraw(target[0], RESOURCE_ENERGY);
             }
         }
     }

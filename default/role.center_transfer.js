@@ -15,7 +15,7 @@ module.exports = {
         // initialize part
         let flag = Game.flags[`center ${creep.room.name}`];
         if (!creep.pos.isEqualTo(flag.pos)) {
-            creep.goTo(flag.pos, 1);
+            creep.goTo(flag.pos, 0);
             // clear the previous task
             creep.memory.extraInfo.task = undefined;
             return;
