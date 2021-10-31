@@ -61,9 +61,7 @@ module.exports = {
             });
 
             if (target.length > 0) {
-                if (creep.withdraw(target[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target[0]);
-                }
+                creep.exWithdraw(target[0], RESOURCE_ENERGY);
             }
         }
     }

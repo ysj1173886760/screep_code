@@ -42,7 +42,7 @@ var roleRepairer = {
 
             let target = Game.getObjectById(creep.memory.target);
             if (target) {
-                creep.exRepairCache(target, 10);
+                creep.exRepair(target);
                 return;
             }
 
@@ -57,7 +57,7 @@ var roleRepairer = {
         } else {
             let target = creep.room.storage;
             if (target && target.store[RESOURCE_ENERGY] > 5000) {
-                creep.exWithdrawCache(target, RESOURCE_ENERGY, 20);
+                creep.exWithdraw(target, RESOURCE_ENERGY);
                 return;
             }
             
@@ -69,9 +69,7 @@ var roleRepairer = {
             });
 
             if (target.length > 0) {
-                if (creep.withdraw(target[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target[0]);
-                }
+                creep.exWithdraw(target[0]);
             }
         }
     }

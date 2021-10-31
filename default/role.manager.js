@@ -24,7 +24,8 @@ var manager = {
             }
 
             if (creep.memory.stage == 'wait') {
-                creep.moveTo(room.storage);
+                // creep.moveTo(room.storage);
+                creep.goTo(room.storage.pos, 1);
             }
             return;
         }
@@ -81,7 +82,8 @@ var manager = {
             
             let ret = creep.withdraw(target, creep.memory.extraInfo.task.type, amount);
             if (ret == ERR_NOT_IN_RANGE) {
-                creep.moveTo(target);
+                // creep.moveTo(target);
+                creep.goTo(target.pos, 1);
             } else if (ret == ERR_NOT_ENOUGH_RESOURCES) {
                 creep.memory.extraInfo.task = undefined;
                 creep.memory.stage = 'wait';
@@ -110,7 +112,8 @@ var manager = {
             let target = Game.getObjectById(creep.memory.extraInfo.task.to);
             let ret = creep.transfer(target, creep.memory.extraInfo.task.type);
             if (ret == ERR_NOT_IN_RANGE) {
-                creep.moveTo(target);
+                // creep.moveTo(target);
+                creep.goTo(target.pos, 1);
             } else if (ret == ERR_FULL) {
                 console.log(`${creep.name} abort the mission due to the lack of space`);
                 creep.memory.extraInfo.task = undefined;

@@ -33,9 +33,7 @@ var extender = {
             }
 
             let resource = Game.getObjectById(creep.memory.working_source);
-            if (creep.harvest(resource) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(resource, {visualizePathStyle: {stroke: '#ffaa00'}});
-            }
+            creep.exHarvest(resource);
 
         } else {
             let target = creep.room.find(FIND_STRUCTURES, {
@@ -48,9 +46,7 @@ var extender = {
             });
 
             if (target.length > 0) {
-                if (creep.transfer(target[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target[0], {visualizePathStyle: { stoke: '#ffffff'}});
-                }
+                creep.exTransfer(target[0], RESOURCE_ENERGY);
                 return;
             }
             
@@ -71,7 +67,7 @@ var extender = {
             target = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
             if (target) {
                 if (creep.build(target) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target);
+                    creep.goTo(target, 1);
                 }
                 return;
             }

@@ -8,7 +8,7 @@ module.exports = {
         let target = creep.room.controller;
 
         if (creep.reserveController(target) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(target);
+            creep.goTo(target.pos, 1);
         }
     }
 };

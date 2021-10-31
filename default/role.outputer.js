@@ -27,9 +27,7 @@ var outputer = {
                 });
                 
                 if (target) {
-                    if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(target, {visualizePathStyle: { stoke: '#ffffff'}});
-                    }
+                    creep.exTransfer(target, RESOURCE_ENERGY);
                     return;
                 }
             }
@@ -46,9 +44,9 @@ var outputer = {
             if (container) {
                 let ret = creep.transfer(container, RESOURCE_ENERGY);
                 if (ret == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(container);
+                    creep.goTo(container.pos);
                 } else if (ret == OK) {
-                    creep.moveTo(creep.room.storage);
+                    creep.goTo(creep.room.storage.pos);
                 }
             }
         } else {
@@ -61,12 +59,14 @@ var outputer = {
             if (creep.room.storage) {
                 let ret = creep.withdraw(creep.room.storage, RESOURCE_ENERGY);
                 if (ret == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(creep.room.storage);
+                    // creep.moveTo(creep.room.storage);
+                    creep.goTo(creep.room.storage.pos);
                 } else if (ret == OK) {
                     if (creep.memory.container) {
                         let container = Game.getObjectById(creep.memory.container);
                         if (container) {
-                            creep.moveTo(container);
+                            // creep.moveTo(container);
+                            creep.goTo(container.pos);
                         }
                     }
                 }

@@ -5,7 +5,7 @@ var scout = {
             return;
         }
 
-        creep.moveTo(flag);
+        creep.goTo(flag.pos, 1);
     }
 };
 

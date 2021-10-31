@@ -12,9 +12,7 @@ module.exports = {
                 let target = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
 
                 if (target) {
-                    if (creep.build(target) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(target, {visualizePathStyle: {stoke: '#ffffff'}});
-                    }
+                    creep.exBuild(target);
                     return;
                 }
 
@@ -29,18 +27,14 @@ module.exports = {
                 });
 
                 if (target.length > 0) {
-                    if(creep.transfer(target[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(target[0]);
-                    }
+                    creep.exTransfer(target[0]);
                     return;
                 }
 
             }
 
             // try to upgrade controller
-            if (creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(creep.room.controller, {visualizePathStyle: {stroke: '#ffffff'}});
-            }
+            creep.exUpgradeController(creep.room.controller);
 
         } else {
             if (creep.memory.working_source == undefined) {
@@ -51,9 +45,7 @@ module.exports = {
             }
 
             let resource = Game.getObjectById(creep.memory.working_source);
-            if (creep.harvest(resource) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(resource, {visualizePathStyle: {stroke: '#ffaa00'}});
-            }
+            creep.exHarvest(resource);
         }
     }
 };

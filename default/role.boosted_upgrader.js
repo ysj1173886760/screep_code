@@ -36,7 +36,8 @@ var boosted_upgrader = {
             if (creep.memory.boostStage == 'prepared') {
                 let flag = Game.flags[`boost ${creep.room.name}`];
                 if (!creep.pos.isEqualTo(flag.pos)) {
-                    creep.moveTo(flag);
+                    // creep.moveTo(flag);
+                    creep.goTo(flag.pos, 0);
                 }
             }
 
@@ -59,10 +60,12 @@ var boosted_upgrader = {
             creep.memory.upgrading = true;
         }
         
+        creep.memory.standed = true;
         if (creep.memory.upgrading) {
             if (creep.memory.extraInfo.range != undefined) {
                 if (!creep.pos.inRangeTo(creep.room.controller, creep.memory.extraInfo.range)) {
-                    creep.moveTo(creep.room.controller);
+                    // creep.moveTo(creep.room.controller);
+                    creep.goTo(creep.room.controller, 1);
                     return;
                 }
             }

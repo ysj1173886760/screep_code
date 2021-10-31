@@ -70,6 +70,7 @@ var maintainer = {
             creep.memory.transfering = true;
         }
 
+        creep.memory.crossLevel = 12;
         if (creep.memory.transfering) {
             // let terminal = creep.room.terminal;
             // if (terminal) {
@@ -95,13 +96,17 @@ var maintainer = {
             if (target) {
                 let ret = creep.transfer(target, RESOURCE_ENERGY);
                 if (ret == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target);
+                    creep.goTo(target.pos, 1);
+                    // creep.moveTo(target);
                 } else if (ret == OK) {
                     let nxt = Game.getObjectById(this.getNextTargetAhead(creep));
                     if (nxt && nxt.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
-                        creep.moveTo(nxt);
+                        // creep.moveTo(nxt);
+                        creep.goTo(nxt.pos, 1);
+                        creep.memory.target = nxt.id;
+                    } else {
+                        creep.memory.target = null;
                     }
-                    creep.memory.target = creep.memory.next;
                 }
                 return;
             }

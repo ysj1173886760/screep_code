@@ -28,20 +28,16 @@ var distant_harvester = {
 
             if (target) {
                 if (target.hits < target.hitsMax - 1000) {
-                    if (creep.repair(target) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(target);
-                    }
+                    creep.exRepair(target);
                     return;
                 }
 
                 if (!creep.pos.isEqualTo(target.pos)) {
-                    creep.moveTo(target);
+                    creep.goTo(target.pos, 1);
                     return;
                 }
 
-                if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target, {reusePath: 50});
-                }
+                creep.exTransfer(target);
                 return;
             }
 
@@ -59,7 +55,7 @@ var distant_harvester = {
             }
 
             let resource = Game.getObjectById(creep.memory.working_source);
-            creep.exHarvestCache(resource, 10);
+            creep.exHarvest(resource);
         }
     }
 };

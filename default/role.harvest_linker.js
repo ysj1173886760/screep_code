@@ -11,6 +11,7 @@ module.exports = {
             creep.memory.harvesting = true;
         }
 
+        creep.memory.stand = true;
         if (creep.memory.harvesting) {
             if (creep.memory.positioned && creep.memory.working_source != undefined) {
                 let container = Game.getObjectById(creep.memory.container);
@@ -28,7 +29,7 @@ module.exports = {
             let flag = Game.flags[`container ${creep.memory.extraInfo.working_location} ${creep.room.name}`];
 
             if (!creep.pos.isEqualTo(flag.pos)) {
-                creep.moveTo(flag);
+                creep.goTo(flag.pos, 0);
                 return;
             }
 

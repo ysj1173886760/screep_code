@@ -11,10 +11,11 @@ module.exports = {
             creep.memory.transfer = true;
         }
 
+        creep.memory.standed = true;
         // initialize part
         let flag = Game.flags[`center ${creep.room.name}`];
         if (!creep.pos.isEqualTo(flag.pos)) {
-            creep.moveTo(flag);
+            creep.goTo(flag.pos, 1);
             // clear the previous task
             creep.memory.extraInfo.task = undefined;
             return;
@@ -90,7 +91,7 @@ module.exports = {
             
             let ret = creep.withdraw(target, creep.memory.extraInfo.task.type, amount);
             if (ret == ERR_NOT_IN_RANGE) {
-                creep.moveTo(target);
+                creep.goTo(target.pos, 1);
             } else if (ret == ERR_NOT_ENOUGH_RESOURCES) {
                 creep.memory.extraInfo.task = undefined;
                 creep.memory.stage = 'wait';
@@ -102,7 +103,7 @@ module.exports = {
         if (creep.memory.stage == 'transfer' && creep.store.getUsedCapacity() != 0) {
             let target = Game.getObjectById(creep.memory.extraInfo.task.to);
             if (creep.transfer(target, creep.memory.extraInfo.task.type) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(target);
+                creep.goTo(target.pos, 1);
             }
             return;
         }

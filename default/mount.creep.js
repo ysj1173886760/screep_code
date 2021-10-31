@@ -21,38 +21,44 @@ const creepExtension = {
     exUpgradeController() {
         let target = this.room.controller;
         if (this.upgradeController(target) == ERR_NOT_IN_RANGE) {
-            this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+            // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+            this.goTo(target.pos, 2);
         }
     },
 
     exHarvest(resource) {
         if (this.harvest(resource) == ERR_NOT_IN_RANGE) {
-            this.moveTo(resource, {visualizePathStyle: {stroke: '#ffffff'}});
+            // this.moveTo(resource, {visualizePathStyle: {stroke: '#ffffff'}});
+            this.goTo(resource.pos, 1);
         }
     },
 
     exHarvestCache(resource, reusePath) {
         if (this.harvest(resource) == ERR_NOT_IN_RANGE) {
-            this.moveTo(resource, {visualizePathStyle: {stroke: '#ffffff'}, reusePath: reusePath});
+            // this.moveTo(resource, {visualizePathStyle: {stroke: '#ffffff'}, reusePath: reusePath});
+            this.goTo(resource.pos, 1);
         }
     },
 
     exTransfer(target, type) {
         if (this.transfer(target, type) == ERR_NOT_IN_RANGE) {
-            this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+            // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+            this.goTo(target.pos, 1);
         }
     },
 
     exTransferCache(target, type, reusePath) {
         if (this.transfer(target, type) == ERR_NOT_IN_RANGE) {
-            this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}, reusePath: reusePath});
+            // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}, reusePath: reusePath});
+            this.goTo(target.pos, 1);
         }
     },
 
     exTransferAll(target) {
         for (let resourceType in this.store) {
             if (this.transfer(target, resourceType) == ERR_NOT_IN_RANGE) {
-                this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+                // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+                this.goTo(target.pos, 1);
                 break;
             }
         }
@@ -60,61 +66,71 @@ const creepExtension = {
 
     exPickup(target) {
         if (this.pickup(target) == ERR_NOT_IN_RANGE) {
-            this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+            // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+            this.goTo(target.pos, 1);
         }
     },
 
     exPickupCache(target, reusePath) {
         if (this.pickup(target) == ERR_NOT_IN_RANGE) {
-            this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}, reusePath: reusePath});
+            // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}, reusePath: reusePath});
+            this.goTo(target.pos, 1);
         }
     },
 
     exWithdraw(target, type) {
         if (this.withdraw(target, type) == ERR_NOT_IN_RANGE) {
-            this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+            // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+            this.goTo(target.pos, 1);
         }
     },
 
     exWithdrawCache(target, type, reusePath) {
         if (this.withdraw(target, type) == ERR_NOT_IN_RANGE) {
-            this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}, reusePath: reusePath});
+            // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}, reusePath: reusePath});
+            this.goTo(target.pos, 1);
         }
     },
 
     exBuild(target) {
         if (this.build(target) == ERR_NOT_IN_RANGE) {
-            this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+            // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+            this.goTo(target.pos, 1);
         }
     },
 
     exBuildCache(target, reusePath) {
         if (this.build(target) == ERR_NOT_IN_RANGE) {
-            this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}, reusePath: reusePath});
+            // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}, reusePath: reusePath});
+            this.goTo(target.pos, 1);
         }
     },
 
     exClaimController(target) {
         if (this.claimController(target) == ERR_NOT_IN_RANGE) {
-            this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+            // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+            this.goTo(target.pos, 1);
         }
     },
 
     exReserveController(target) {
         if (this.reserveController(target) == ERR_NOT_IN_RANGE) {
-            this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+            // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+            this.goTo(target.pos, 1);
         }
     },
 
     exReserveControllerCache(target, reusePath) {
         if (this.reserveController(target) == ERR_NOT_IN_RANGE) {
-            this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}, reusePath: reusePath});
+            // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}, reusePath: reusePath});
+            this.goTo(target.pos, 1);
         }
     },
 
     moveToWorkingRoom() {
         if (this.memory.nextRoom && this.room.name != this.memory.nextRoom) {
-            this.moveTo(new RoomPosition(25, 25, this.memory.nextRoom), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: 15});
+            // this.moveTo(new RoomPosition(25, 25, this.memory.nextRoom), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: 15});
+            this.goTo(new RoomPosition(25, 25, this.memory.nextRoom), 20);
             return;
         }
         
@@ -134,7 +150,8 @@ const creepExtension = {
 
     moveToWorkingRoomCache(reusePath) {
         if (this.memory.nextRoom && this.room.name != this.memory.nextRoom) {
-            this.moveTo(new RoomPosition(25, 25, this.memory.nextRoom), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: reusePath});
+            // this.moveTo(new RoomPosition(25, 25, this.memory.nextRoom), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: reusePath});
+            this.goTo(new RoomPosition(25, 25, this.memory.nextRoom), 20);
             return;
         }
         
@@ -153,7 +170,8 @@ const creepExtension = {
 
     moveBackHomeRoom() {
         if (this.memory.nextRoom && this.room.name != this.memory.nextRoom) {
-            this.moveTo(new RoomPosition(25, 25, this.memory.nextRoom), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: 15});
+            // this.moveTo(new RoomPosition(25, 25, this.memory.nextRoom), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: 15});
+            this.goTo(new RoomPosition(25, 25, this.memory.nextRoom), 20);
             return;
         }
         
@@ -173,13 +191,15 @@ const creepExtension = {
 
     exRepair(target) {
         if (this.repair(target) == ERR_NOT_IN_RANGE) {
-            this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+            // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+            this.goTo(target.pos, 1);
         }
     },
 
     exRepairCache(target, reusePath) {
         if (this.repair(target) == ERR_NOT_IN_RANGE) {
-            this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}, reusePath: reusePath});
+            this.goTo(target.pos, 1);
+            // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}, reusePath: reusePath});
         }
     },
 
@@ -393,7 +413,7 @@ const creepExtension = {
         }
 
         if (!this.memory.moveData.path) {
-            this.memory.moveData.path = this.findPath(target, path);
+            this.memory.moveData.path = this.findPath(target, range);
         }
 
         if (!this.memory.moveData.path) {
