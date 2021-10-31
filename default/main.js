@@ -28,6 +28,7 @@ var scout = require('role.scout');
 var boosted_upgrader = require('role.boosted_upgrader');
 var assaulter = require('role.assaulter');
 var superWarrior = require('role.superWarrior');
+var deposit_harvester = require('role.deposit_harvester');
 
 var basic_squad = require('basic_squad');
 
@@ -170,7 +171,7 @@ module.exports.loop = function() {
     // }
 
 
-    let roleArray = {
+    const roleArray = {
         worker: worker,
         harvester: harvester,
         transfer: transfer,
@@ -198,6 +199,7 @@ module.exports.loop = function() {
         boosted_upgrader: boosted_upgrader,
         assaulter: assaulter,
         superWarrior: superWarrior,
+        deposit_harvester: deposit_harvester,
 
         // war
         attacker: warrior,

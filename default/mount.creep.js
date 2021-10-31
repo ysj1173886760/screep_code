@@ -143,26 +143,26 @@ const creepExtension = {
     },
 
     exBuild(target) {
-        if (!this.pos.inRangeTo(target, 1)) {
-            this.goTo(target.pos, 1);
+        if (!this.pos.inRangeTo(target, 3)) {
+            this.goTo(target.pos, 3);
             return;
         }
 
         if (this.build(target) == ERR_NOT_IN_RANGE) {
             // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
-            this.goTo(target.pos, 1);
+            this.goTo(target.pos, 3);
         }
     },
 
     exBuildCache(target, reusePath) {
-        if (!this.pos.inRangeTo(target, 1)) {
-            this.goTo(target.pos, 1);
+        if (!this.pos.inRangeTo(target, 3)) {
+            this.goTo(target.pos, 3);
             return;
         }
 
         if (this.build(target) == ERR_NOT_IN_RANGE) {
             // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}, reusePath: reusePath});
-            this.goTo(target.pos, 1);
+            this.goTo(target.pos, 3);
         }
     },
 
@@ -265,25 +265,25 @@ const creepExtension = {
     },
 
     exRepair(target) {
-        if (!this.pos.inRangeTo(target, 1)) {
-            this.goTo(target.pos, 1);
+        if (!this.pos.inRangeTo(target, 3)) {
+            this.goTo(target.pos, 3);
             return;
         }
 
         if (this.repair(target) == ERR_NOT_IN_RANGE) {
             // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
-            this.goTo(target.pos, 1);
+            this.goTo(target.pos, 3);
         }
     },
 
     exRepairCache(target, reusePath) {
-        if (!this.pos.inRangeTo(target, 1)) {
-            this.goTo(target.pos, 1);
+        if (!this.pos.inRangeTo(target, 3)) {
+            this.goTo(target.pos, 3);
             return;
         }
 
         if (this.repair(target) == ERR_NOT_IN_RANGE) {
-            this.goTo(target.pos, 1);
+            this.goTo(target.pos, 3);
             // this.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}, reusePath: reusePath});
         }
     },

@@ -1087,7 +1087,7 @@ function interRoomTransmissionController(room) {
 
     let task = room.memory.current_transmission_task;
     if (task.stage == 'check') {
-        if (terminal.store[task.type] > task.amount) {
+        if (terminal.store[task.type] > task.amount && terminal.store[RESOURCE_ENERGY] > task.amount) {
             let ret = terminal.send(task.type, task.amount, task.to);
             if (ret == OK) {
                 console.log(`send ${task.amount} ${task.type} from ${task.from} to ${task.to} success`);
@@ -1095,6 +1095,7 @@ function interRoomTransmissionController(room) {
                 return;
             } else {
                 console.log(`${ret} failed to send ${task.amount} ${task.type} from ${task.from} to ${task.to}`);
+                room.memory.current_transmission_task = undefined;
                 return;
             }
         } else {
@@ -1105,6 +1106,12 @@ function interRoomTransmissionController(room) {
                     to: terminal.id,
                     type: task.type,
                     amount: task.amount
+                });
+                room.memory.center_task_queue.push({
+                    from: storage.id,
+                    to: terminal.id,
+                    type: RESOURCE_ENERGY,
+                    amount: task.amount - terminal.store[RESOURCE_ENERGY]
                 });
                 room.memory.current_transmission_task.stage = 'wait';
                 return;
@@ -1117,7 +1124,7 @@ function interRoomTransmissionController(room) {
     }
 
     if (task.stage == 'wait') {
-        if (terminal.store[task.type] >= task.amount) {
+        if (terminal.store[task.type] >= task.amount && terminal.store[RESOURCE_ENERGY] >= task.amount) {
             let ret = terminal.send(task.type, task.amount, task.to);
             if (ret == OK) {
                 console.log(`send ${task.amount} ${task.type} from ${task.from} to ${task.to} success`);
@@ -1125,6 +1132,7 @@ function interRoomTransmissionController(room) {
                 return;
             } else {
                 console.log(`${ret} failed to send ${task.amount} ${task.type} from ${task.from} to ${task.to}`);
+                room.memory.current_transmission_task = undefined;
                 return;
             }
         }

@@ -64,7 +64,7 @@ var spawn1 = {
                 transfer: {carry: 16, move: 8},
                 harvester: {work: 5, move: 1},
                 upgrader: {work: 20, carry: 4, move: 5},
-                outputer: {carry: 20, move: 10},
+                outputer: {carry: 26, move: 13},
                 distant_worker: {work: 4, carry: 4, move: 4},
                 distant_harvester: {work: 6, carry: 2, move: 3},
                 distant_transfer: {carry: 16, move: 8},
@@ -83,7 +83,7 @@ var spawn1 = {
                 assaulter: {move: 10, attack: 10},
                 rebuilder: {carry: 2, move: 1},
                 boosted_upgrader: {work: 30, carry: 6, move: 5},
-
+                deposit_harvester: {work: 15, carry: 10, move: 25},
             },
             E47S59: {
                 rebuilder: {work: 1, carry: 1, move: 1}, 

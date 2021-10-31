@@ -34,11 +34,7 @@ var boosted_upgrader = {
             }
 
             if (creep.memory.boostStage == 'prepared') {
-                let flag = Game.flags[`boost ${creep.room.name}`];
-                if (!creep.pos.isEqualTo(flag.pos)) {
-                    // creep.moveTo(flag);
-                    creep.goTo(flag.pos, 0);
-                }
+                return;
             }
 
             if (creep.memory.boostStage == 'failed') {
