@@ -1,5 +1,6 @@
 var superWarrior = {
     run: function(creep) {
+        // G_roomSpawn('superWarrior', 'E37S58', false, 100, {needBoost: true, boostResource: ['XGHO2', 'XLHO2', 'XKHO2', 'XZHO2']})
         if (!creep.memory.boosted && creep.memory.extraInfo.needBoost) {
             if ((creep.memory.boostStage == 'init' || creep.memory.boostStage == 'wait') && creep.ticksToLive < 1450) {
                 creep.renewMe();
@@ -52,6 +53,33 @@ var superWarrior = {
 
         let flag = Game.flags['attack'];
         if (!flag) {
+            let target = creep.room.find(FIND_HOSTILE_CREEPS);
+            if (target.length) {
+                creep.say('creep');
+                if (!creep.pos.inRangeTo(target[0], 3)) {
+                    creep.goTo(target[0].pos, 3);
+                } else {
+                    creep.rangedAttack(target[0]);
+                }
+                return;
+            }
+
+            target = creep.room.find(FIND_HOSTILE_STRUCTURES, {
+                filter: (s) => {
+                    return s.structureType != STRUCTURE_ROAD &&
+                            s.structureType != STRUCTURE_RAMPART &&
+                            s.structureType != STRUCTURE_WALL;
+                }
+            });
+            if (target.length) {
+                creep.say('structure');
+                if (!creep.pos.inRangeTo(target[0], 3)) {
+                    creep.goTo(target[0].pos, 3);
+                } else {
+                    creep.rangedAttack(target[0]);
+                }
+                return;
+            }
             return;
         }
         if (creep.room.name != flag.pos.roomName) {
@@ -59,14 +87,14 @@ var superWarrior = {
             return;
         }
 
-        if (!creep.pos.inRangeTo(flag, 3)) {
-            creep.goTo(flag.pos, 0);
-        }
-
         let target = creep.pos.findInRange(FIND_HOSTILE_CREEPS, 3);
         if (target.length) {
             creep.rangedAttack(target[0]);
             return;
+        }
+
+        if (!creep.pos.inRangeTo(flag, 3)) {
+            creep.goTo(flag.pos, 0);
         }
 
         target = flag.pos.lookFor(LOOK_STRUCTURES);

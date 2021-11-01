@@ -1101,18 +1101,22 @@ function interRoomTransmissionController(room) {
         } else {
             if (storage.store[task.type] > task.amount) {
                 // send task
-                room.memory.center_task_queue.push({
-                    from: storage.id,
-                    to: terminal.id,
-                    type: task.type,
-                    amount: task.amount
-                });
-                room.memory.center_task_queue.push({
-                    from: storage.id,
-                    to: terminal.id,
-                    type: RESOURCE_ENERGY,
-                    amount: task.amount - terminal.store[RESOURCE_ENERGY]
-                });
+                if (terminal.store[task.type] < task.amount) {
+                    room.memory.center_task_queue.push({
+                        from: storage.id,
+                        to: terminal.id,
+                        type: task.type,
+                        amount: task.amount - terminal.store[task.type]
+                    });
+                }
+                if (terminal.store[RESOURCE_ENERGY] < task.amount) {
+                    room.memory.center_task_queue.push({
+                        from: storage.id,
+                        to: terminal.id,
+                        type: RESOURCE_ENERGY,
+                        amount: task.amount - terminal.store[RESOURCE_ENERGY]
+                    });
+                }
                 room.memory.current_transmission_task.stage = 'wait';
                 return;
             } else {

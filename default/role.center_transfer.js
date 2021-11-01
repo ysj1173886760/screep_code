@@ -88,6 +88,11 @@ module.exports = {
 
             let amount = Math.min(creep.store.getFreeCapacity(), creep.memory.extraInfo.task.amount);
             creep.say(amount);
+            if (amount < 0) {
+                creep.memory.extraInfo.task = undefined;
+                creep.memory.stage = 'wait';
+                return;
+            }
             
             let ret = creep.withdraw(target, creep.memory.extraInfo.task.type, amount);
             if (ret == ERR_NOT_IN_RANGE) {

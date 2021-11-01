@@ -1,6 +1,6 @@
 var deposit_harvester = {
     run: function(creep) {
-        if (creep.memory.spawning) {
+        if (creep.spawning) {
             return;
         }
         if (creep.memory.harvesting && creep.store.getFreeCapacity() == 0) {
@@ -16,12 +16,12 @@ var deposit_harvester = {
         }
 
 
-        if (creep.memory.time && creep.ticksToLive < creep.memory.time + 50) {
+        if (creep.memory.time && creep.ticksToLive < creep.memory.time + 30) {
             creep.memory.harvesting = false;
         }
 
         if (creep.memory.harvesting) {
-            let flag = Game.flags['deposit'];
+            let flag = Game.flags[`deposit ${creep.memory.roomname}`];
             if (!flag) {
                 return;
             }

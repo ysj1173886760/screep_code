@@ -382,7 +382,7 @@ const creepExtension = {
         const result = PathFinder.search(this.pos, {pos: target, range: range}, {
             plainCost: 2,
             swampCost: 10,
-            maxOps: 8000,
+            maxOps: 4000,
             roomCallback: roomName => {
                 // bypass room
                 if (Memory.bypassRooms && Memory.bypassRooms.includes(roomName)) {
