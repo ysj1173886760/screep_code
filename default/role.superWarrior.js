@@ -53,9 +53,9 @@ var superWarrior = {
 
         let flag = Game.flags['attack'];
         if (!flag) {
+            creep.say('destroy');
             let target = creep.room.find(FIND_HOSTILE_CREEPS);
             if (target.length) {
-                creep.say('creep');
                 if (!creep.pos.inRangeTo(target[0], 3)) {
                     creep.goTo(target[0].pos, 3);
                 } else {
@@ -66,13 +66,12 @@ var superWarrior = {
 
             target = creep.room.find(FIND_HOSTILE_STRUCTURES, {
                 filter: (s) => {
-                    return s.structureType != STRUCTURE_ROAD &&
-                            s.structureType != STRUCTURE_RAMPART &&
-                            s.structureType != STRUCTURE_WALL;
+                    return s.structureType == STRUCTURE_EXTENSION ||
+                            s.structureType == STRUCTURE_SPAWN || 
+                            s.structureType == STRUCTURE_TOWER;
                 }
             });
             if (target.length) {
-                creep.say('structure');
                 if (!creep.pos.inRangeTo(target[0], 3)) {
                     creep.goTo(target[0].pos, 3);
                 } else {

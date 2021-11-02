@@ -111,6 +111,17 @@ var maintainer = {
                 return;
             }
 
+            target = creep.room.find(FIND_STRUCTURES, {
+                filter: (s) => {
+                    return s.structureType == STRUCTURE_NUKER &&
+                            s.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
+                }
+            });
+            if (target.length) {
+                creep.exTransfer(target[0], RESOURCE_ENERGY);
+                return;
+            }
+
             let flag = Game.flags[`upgrade_container ${creep.room.name}`];
             target = getStructureByFlag(flag, STRUCTURE_CONTAINER);
             if (target) {

@@ -26,9 +26,15 @@ var roleUpgrader = {
 
         } else {
             if (creep.memory.container == undefined) {
-                let flag = Game.flags[`upgrade_container ${creep.room.name}`];
-                let target = getStructureByFlag(flag, STRUCTURE_CONTAINER);
-                creep.memory.container = target.id;
+                let flag = Game.flags[`upgrade_link ${creep.room.name}`];
+                if (flag) {
+                    let target = getStructureByFlag(flag, STRUCTURE_LINK);
+                    creep.memory.container = target.id;
+                } else {
+                    flag = Game.flags[`upgrade_container ${creep.room.name}`];
+                    let target = getStructureByFlag(flag, STRUCTURE_CONTAINER);
+                    creep.memory.container = target.id;
+                }
             }
 
             let target = Game.getObjectById(creep.memory.container);

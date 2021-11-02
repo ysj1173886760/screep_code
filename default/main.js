@@ -29,6 +29,7 @@ var boosted_upgrader = require('role.boosted_upgrader');
 var assaulter = require('role.assaulter');
 var superWarrior = require('role.superWarrior');
 var deposit_harvester = require('role.deposit_harvester');
+var ruin_transfer = require('role.ruin_transfer');
 
 var basic_squad = require('basic_squad');
 
@@ -67,6 +68,7 @@ var {
     setReaction,
     setBoost,
     setWar,
+    setBoostUpgrade,
 } = require('utils');
 
 const profiler = require('screeps-profiler');
@@ -200,6 +202,7 @@ module.exports.loop = function() {
         assaulter: assaulter,
         superWarrior: superWarrior,
         deposit_harvester: deposit_harvester,
+        ruin_transfer: ruin_transfer,
 
         // war
         attacker: warrior,
@@ -254,3 +257,4 @@ global.G_enableLab = enableLab;
 global.G_setReaction = setReaction;
 global.G_setBoost = setBoost;
 global.G_setWar = setWar;
+global.G_setBoostUpgrade = setBoostUpgrade;

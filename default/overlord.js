@@ -1087,57 +1087,96 @@ function interRoomTransmissionController(room) {
 
     let task = room.memory.current_transmission_task;
     if (task.stage == 'check') {
-        if (terminal.store[task.type] > task.amount && terminal.store[RESOURCE_ENERGY] > task.amount) {
-            let ret = terminal.send(task.type, task.amount, task.to);
-            if (ret == OK) {
-                console.log(`send ${task.amount} ${task.type} from ${task.from} to ${task.to} success`);
-                room.memory.current_transmission_task = undefined;
-                return;
+        if (task.type == 'energy') {
+            if (terminal.store[task.type] > task.amount * 2) {
+                let ret = terminal.send(task.type, task.amount, task.to);
+                if (ret == OK) {
+                    console.log(`send ${task.amount} ${task.type} from ${task.from} to ${task.to} success`);
+                    room.memory.current_transmission_task = undefined;
+                    return;
+                } else {
+                    console.log(`${ret} failed to send ${task.amount} ${task.type} from ${task.from} to ${task.to}`);
+                    room.memory.current_transmission_task = undefined;
+                    return;
+                }
             } else {
-                console.log(`${ret} failed to send ${task.amount} ${task.type} from ${task.from} to ${task.to}`);
-                room.memory.current_transmission_task = undefined;
+                room.memory.center_task_queue.push({
+                    from: storage.id,
+                    to: terminal.id,
+                    type: task.type,
+                    amount: task.amount * 2 - terminal.store[task.type]
+                });
+                room.memory.current_transmission_task.stage = 'wait';
                 return;
             }
         } else {
-            if (storage.store[task.type] > task.amount) {
-                // send task
-                if (terminal.store[task.type] < task.amount) {
-                    room.memory.center_task_queue.push({
-                        from: storage.id,
-                        to: terminal.id,
-                        type: task.type,
-                        amount: task.amount - terminal.store[task.type]
-                    });
+            if (terminal.store[task.type] > task.amount && terminal.store[RESOURCE_ENERGY] > task.amount) {
+                let ret = terminal.send(task.type, task.amount, task.to);
+                if (ret == OK) {
+                    console.log(`send ${task.amount} ${task.type} from ${task.from} to ${task.to} success`);
+                    room.memory.current_transmission_task = undefined;
+                    return;
+                } else {
+                    console.log(`${ret} failed to send ${task.amount} ${task.type} from ${task.from} to ${task.to}`);
+                    room.memory.current_transmission_task = undefined;
+                    return;
                 }
-                if (terminal.store[RESOURCE_ENERGY] < task.amount) {
-                    room.memory.center_task_queue.push({
-                        from: storage.id,
-                        to: terminal.id,
-                        type: RESOURCE_ENERGY,
-                        amount: task.amount - terminal.store[RESOURCE_ENERGY]
-                    });
-                }
-                room.memory.current_transmission_task.stage = 'wait';
-                return;
             } else {
-                console.log(`failed to send ${task.amount} ${task.type} from ${task.from} to ${task.to}, resource not enough`);
-                room.memory.current_transmission_task = undefined;
-                return;
+                if (storage.store[task.type] > task.amount) {
+                    // send task
+                    if (terminal.store[task.type] < task.amount) {
+                        room.memory.center_task_queue.push({
+                            from: storage.id,
+                            to: terminal.id,
+                            type: task.type,
+                            amount: task.amount - terminal.store[task.type]
+                        });
+                    }
+                    if (terminal.store[RESOURCE_ENERGY] < task.amount) {
+                        room.memory.center_task_queue.push({
+                            from: storage.id,
+                            to: terminal.id,
+                            type: RESOURCE_ENERGY,
+                            amount: task.amount - terminal.store[RESOURCE_ENERGY]
+                        });
+                    }
+                    room.memory.current_transmission_task.stage = 'wait';
+                    return;
+                } else {
+                    console.log(`failed to send ${task.amount} ${task.type} from ${task.from} to ${task.to}, resource not enough`);
+                    room.memory.current_transmission_task = undefined;
+                    return;
+                }
             }
         }
     }
 
     if (task.stage == 'wait') {
-        if (terminal.store[task.type] >= task.amount && terminal.store[RESOURCE_ENERGY] >= task.amount) {
-            let ret = terminal.send(task.type, task.amount, task.to);
-            if (ret == OK) {
-                console.log(`send ${task.amount} ${task.type} from ${task.from} to ${task.to} success`);
-                room.memory.current_transmission_task = undefined;
-                return;
-            } else {
-                console.log(`${ret} failed to send ${task.amount} ${task.type} from ${task.from} to ${task.to}`);
-                room.memory.current_transmission_task = undefined;
-                return;
+        if (task.type == 'energy') {
+            if (terminal.store[task.type] >= task.amount * 2) {
+                let ret = terminal.send(task.type, task.amount, task.to);
+                if (ret == OK) {
+                    console.log(`send ${task.amount} ${task.type} from ${task.from} to ${task.to} success`);
+                    room.memory.current_transmission_task = undefined;
+                    return;
+                } else {
+                    console.log(`${ret} failed to send ${task.amount} ${task.type} from ${task.from} to ${task.to}`);
+                    room.memory.current_transmission_task = undefined;
+                    return;
+                }
+            }
+        } else {
+            if (terminal.store[task.type] >= task.amount && terminal.store[RESOURCE_ENERGY] >= task.amount) {
+                let ret = terminal.send(task.type, task.amount, task.to);
+                if (ret == OK) {
+                    console.log(`send ${task.amount} ${task.type} from ${task.from} to ${task.to} success`);
+                    room.memory.current_transmission_task = undefined;
+                    return;
+                } else {
+                    console.log(`${ret} failed to send ${task.amount} ${task.type} from ${task.from} to ${task.to}`);
+                    room.memory.current_transmission_task = undefined;
+                    return;
+                }
             }
         }
     }

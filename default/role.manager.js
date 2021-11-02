@@ -1,5 +1,11 @@
 var manager = {
     run: function(creep) {
+        if (creep.store.getUsedCapacity() != 0 && creep.memory.extraInfo.task == undefined) {
+            creep.exTransferAll(creep.room.storage);
+            creep.say('transfer');
+            return;
+        }
+
         if (creep.memory.stage == undefined || creep.memory.stage == 'wait') {
             let room = Game.rooms[creep.memory.roomname];
             if (room.memory.task_queue == undefined) {

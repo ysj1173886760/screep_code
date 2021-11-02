@@ -40,6 +40,18 @@ module.exports = {
             return;
         }
 
+        if (creep.store.getUsedCapacity() != 0 && creep.memory.extraInfo.task == undefined) {
+            creep.exTransferAll(creep.room.storage);
+            creep.say('transfer');
+            return;
+        }
+
+        if (creep.store.getUsedCapacity() != 0 && creep.memory.extraInfo.task && creep.store[creep.memory.extraInfo.task.type] == 0) {
+            creep.exTransferAll(creep.room.storage);
+            creep.say('transfer');
+            return;
+        }
+
         if (creep.memory.stage == 'transfer' && creep.store.getUsedCapacity() == 0) {
             creep.memory.extraInfo.task.amount -= creep.memory.amount;
             if (creep.memory.extraInfo.task.amount <= 0) {

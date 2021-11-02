@@ -258,6 +258,16 @@ function getOppositeDirection(direction) {
     return (direction + 3) % 8 + 1;
 }
 
+function setBoostUpgrade(roomname, value) {
+    let room = Game.rooms[roomname];
+    if (!room) {
+        return;
+    }
+
+    room.memory.boostUpgrade.enable = value;
+    return true;
+}
+
 module.exports = {
     getStructureByFlag,
     getConstructionSite,
@@ -284,4 +294,5 @@ module.exports = {
     setBoost,
     getOppositeDirection,
     setWar,
+    setBoostUpgrade,
 }
