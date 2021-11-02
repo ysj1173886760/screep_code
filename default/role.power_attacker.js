@@ -1,11 +1,13 @@
 var power_attacker = {
     run: function(creep) {
+        // creep.memory.extraInfo.boostResource = ['XUH2O'];
+        // creep.memory.extraInfo.needBoost = true;
         if (!creep.memory.boosted && creep.memory.extraInfo.needBoost) {
             creep.boostMe();
             return;
         }
 
-        let flag = Game.flags[`power ${creep.memory.extraInfo.squad.id} ${creep.room.name}`];
+        let flag = Game.flags[`power ${creep.memory.extraInfo.squadId} ${creep.memory.roomname}`];
         if (!flag) {
             return;
         }
@@ -14,6 +16,7 @@ var power_attacker = {
             creep.goTo(new RoomPosition(25, 25, flag.pos.roomName), 20);
             return;
         }
+        creep.memory.standed = true;
 
         if (!creep.memory.powerbank) {
             let powerbank = creep.room.find(FIND_STRUCTURES, {

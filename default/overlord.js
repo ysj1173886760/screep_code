@@ -157,6 +157,10 @@ function boostUpgradingController(room) {
 
     // should order some energy
     if (room.storage.store[RESOURCE_ENERGY] <= 300000) {
+
+        if (room.terminal.store[RESOURCE_ENERGY] >= 100000) {
+            return;
+        }
         
         let myorders = Game.market.getAllOrders({type: ORDER_BUY, resourceType: RESOURCE_ENERGY, roomName: room.name});
         if (myorders.length) {
@@ -694,7 +698,7 @@ function boostController(room) {
                 return;
             }
 
-            if (storage.store[entry.type] < 3000) {
+            if (storage.store[entry.type] < 1500) {
                 room.memory.boostController.stage = 'failed';
                 console.log('boost check_resource stage failed due to lacked resources');
                 return;
@@ -1320,7 +1324,7 @@ function runPowerSquad(room, squad) {
         }
 
         roomSpawn('power_attacker', room.name, false, 1, {
-            squadId: squad.id, needBoost: true, boostResource: ['UH2O']
+            squadId: squad.id, needBoost: true, boostResource: ['XUH2O']
         });
         roomSpawn('power_healer', room.name, false, 1, {
             squadId: squad.id, needBoost: true, boostResource: ['XLHO2']
@@ -1347,12 +1351,12 @@ function runPowerSquad(room, squad) {
         if (!powerbank) {
             return;
         }
-        if (powerbank.hits < 300000) {
+        if (powerbank.hits < 650000) {
             let num = Math.ceil(powerbank.power / 1600);
             for (let i = 0; i < num; i++) {
                 roomSpawn('power_retriever', room.name, false, 1, {squadId: squad.id});
             }
-            console.log('sending power retriever');
+            console.log(`sending power retriever ${num}`);
             squad.stage = 'done';
         }
     }

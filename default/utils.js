@@ -280,6 +280,15 @@ function addPowerSquad(roomname, id) {
     };
 }
 
+function removePowerSquad(roomname, id) {
+    let room = Game.rooms[roomname];
+    if (!room) {
+        return;
+    }
+
+    delete room.memory.powerController.powerSquad[id];
+}
+
 module.exports = {
     getStructureByFlag,
     getConstructionSite,
@@ -307,5 +316,6 @@ module.exports = {
     getOppositeDirection,
     setWar,
     setBoostUpgrade,
-    addPowerSquad
+    addPowerSquad,
+    removePowerSquad
 }

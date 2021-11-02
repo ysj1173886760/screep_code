@@ -602,6 +602,10 @@ const creepExtension = {
     },
 
     boostMe() {
+        if (this.room.name != this.memory.roomname) {
+            this.moveBackHomeRoom();
+            return;
+        }
         if ((this.memory.boostStage == 'init' || this.memory.boostStage == 'wait') && this.ticksToLive < 1450) {
             this.renewMe();
             return;

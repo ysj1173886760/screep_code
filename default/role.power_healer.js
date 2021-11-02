@@ -1,11 +1,13 @@
 var power_healer = {
     run: function(creep) {
+        // creep.memory.extraInfo.boostResource = ['XLHO2'];
+        // creep.memory.extraInfo.needBoost = true;
         if (!creep.memory.boosted && creep.memory.extraInfo.needBoost) {
             creep.boostMe();
             return;
         }
 
-        let flag = Game.flags[`power ${creep.memory.extraInfo.squad.id} ${creep.room.name}`];
+        let flag = Game.flags[`power ${creep.memory.extraInfo.squadId} ${creep.memory.roomname}`];
         if (!flag) {
             return;
         }
@@ -15,6 +17,7 @@ var power_healer = {
             return;
         }
 
+        creep.memory.standed = true;
         if (!creep.memory.powerbank) {
             let powerbank = creep.room.find(FIND_STRUCTURES, {
                 filter: (s) => {
@@ -28,21 +31,33 @@ var power_healer = {
 
         let powerbank = Game.getObjectById(creep.memory.powerbank);
 
+        if (!powerbank) {
+            return;
+        }
         if (!creep.pos.inRangeTo(powerbank, 2)) {
             creep.goTo(powerbank.pos, 2);
             return;
         }
 
-        let target = creep.room.find(FIND_MY_CREEPS, {
-            filter: (c) => {
-                return c.hits < c.hitsMax;
+        if (!creep.memory.attacker) {
+            let targets = creep.room.find(FIND_MY_CREEPS, {
+                filter: (c) => {
+                    return c.memory.role == 'power_attacker' &&
+                            c.memory.extraInfo &&
+                            c.memory.extraInfo.squadId == creep.memory.extraInfo.squadId;
+                }
+            });
+            if (targets.length) {
+                creep.memory.attacker = targets[0].id;
             }
-        });
-        if (target.length) {
-            if (!creep.pos.inRangeTo(target[0], 1)) {
-                creep.goTo(target[0].pos, 1);
+        }
+
+        let target = Game.getObjectById(creep.memory.attacker);
+        if (target) {
+            if (!creep.pos.inRangeTo(target, 1)) {
+                creep.goTo(target.pos, 1);
             } else {
-                creep.heal(target[0]);
+                creep.heal(target);
             }
         }
     }

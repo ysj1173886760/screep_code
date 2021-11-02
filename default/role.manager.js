@@ -90,7 +90,7 @@ var manager = {
             if (ret == ERR_NOT_IN_RANGE) {
                 // creep.moveTo(target);
                 creep.goTo(target.pos, 1);
-            } else if (ret == ERR_NOT_ENOUGH_RESOURCES) {
+            } else if (ret == ERR_NOT_ENOUGH_RESOURCES || ret == ERR_INVALID_TARGET) {
                 creep.memory.extraInfo.task = undefined;
                 creep.memory.stage = 'wait';
                 return;

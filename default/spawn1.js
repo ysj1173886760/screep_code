@@ -26,7 +26,7 @@ var spawn1 = {
         // type TOUGH = "tough";
         // type HEAL = "heal";
         // type CLAIM = "claim";
-        let newName = role + Game.time;
+        let newName = role + Game.time + spawn_name;
         let result;
         const component = {
             E37S58: {
@@ -57,7 +57,7 @@ var spawn1 = {
                 healer: {tough: 12, move: 10, heal: 28},
                 attacker: {tough: 12, move: 10, attack: 28},
                 deposit_harvester: {work: 15, carry: 10, move: 25},
-                power_attacker: {attack: 25, move: 25},
+                power_attacker: {move: 25, attack: 20},
                 power_healer: {heal: 25, move: 25},
                 power_retriever: {carry: 32, move: 16},
             },
@@ -88,6 +88,9 @@ var spawn1 = {
                 rebuilder: {carry: 2, move: 1},
                 boosted_upgrader: {work: 30, carry: 6, move: 5},
                 deposit_harvester: {work: 15, carry: 10, move: 25},
+                power_attacker: {move: 16, attack: 16},
+                power_healer: {heal: 20, move: 10},
+                power_retriever: {carry: 32, move: 16},
             },
             E47S59: {
                 worker: {work: 1, carry: 1, move: 1},

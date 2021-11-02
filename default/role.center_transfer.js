@@ -109,11 +109,11 @@ module.exports = {
             let ret = creep.withdraw(target, creep.memory.extraInfo.task.type, amount);
             if (ret == ERR_NOT_IN_RANGE) {
                 creep.goTo(target.pos, 1);
-            } else if (ret == ERR_NOT_ENOUGH_RESOURCES) {
+            } else if (ret == ERR_NOT_ENOUGH_RESOURCES || ret == ERR_INVALID_TARGET) {
                 creep.memory.extraInfo.task = undefined;
                 creep.memory.stage = 'wait';
                 return;
-            }
+            } 
             return;
         }
 

@@ -73,7 +73,8 @@ var {
     setBoost,
     setWar,
     setBoostUpgrade,
-    addPowerSquad
+    addPowerSquad,
+    removePowerSquad
 } = require('utils');
 
 const profiler = require('screeps-profiler');
@@ -268,3 +269,4 @@ global.G_setBoost = setBoost;
 global.G_setWar = setWar;
 global.G_setBoostUpgrade = setBoostUpgrade;
 global.G_addPowerSquad = addPowerSquad;
+global.G_removePowerSquad = removePowerSquad;
