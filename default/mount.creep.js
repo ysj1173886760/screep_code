@@ -382,7 +382,7 @@ const creepExtension = {
         const result = PathFinder.search(this.pos, {pos: target, range: range}, {
             plainCost: 2,
             swampCost: 10,
-            maxOps: 4000,
+            maxOps: 6000,
             roomCallback: roomName => {
                 // bypass room
                 if (Memory.bypassRooms && Memory.bypassRooms.includes(roomName)) {
@@ -599,6 +599,53 @@ const creepExtension = {
         }
         this.memory.prePos = currentPos;
         return OK;
+    },
+
+    boostMe() {
+        if ((this.memory.boostStage == 'init' || this.memory.boostStage == 'wait') && this.ticksToLive < 1450) {
+            this.renewMe();
+            return;
+        }
+
+        if (this.memory.boostStage == undefined) {
+            let room = this.room;
+            if (room.memory.boostController.enabled == false) {
+                this.memory.boosted = true;
+                return;
+            }
+            this.memory.boostStage = 'init';
+            return;
+        } 
+
+        if (this.memory.boostStage == 'init') {
+            let task = {
+                boostResource: this.memory.extraInfo.boostResource,
+                id: this.id,
+            };
+            let room = this.room
+            
+            room.memory.boostController.boostQueue.push(task);
+            this.memory.boostStage = 'wait';
+        }
+        
+
+        if (this.memory.boostStage == 'wait') {
+            return;
+        }
+
+        if (this.memory.boostStage == 'prepared') {
+            return;
+        }
+
+        if (this.memory.boostStage == 'failed') {
+            this.memory.extraInfo.needBoost = false;
+            this.memory.boosted = true;
+        }
+
+        if (this.memory.boostStage == 'ok') {
+            this.memory.boosted = true;
+        }
+        return;
     }
 
 }

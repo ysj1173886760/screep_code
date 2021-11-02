@@ -268,6 +268,18 @@ function setBoostUpgrade(roomname, value) {
     return true;
 }
 
+function addPowerSquad(roomname, id) {
+    let room = Game.rooms[roomname];
+    if (!room) {
+        return;
+    }
+
+    room.memory.powerController.powerSquad[id] = {
+        id: id,
+        stage: 'init'
+    };
+}
+
 module.exports = {
     getStructureByFlag,
     getConstructionSite,
@@ -295,4 +307,5 @@ module.exports = {
     getOppositeDirection,
     setWar,
     setBoostUpgrade,
+    addPowerSquad
 }

@@ -1,5 +1,6 @@
 const { getStructureByFlag, containBodyPart } = require("utils");
 const { whiteList } = require("whiteList");
+const { roomSpawn } = require("./utils");
 
 function setDistantCreeps(roomname, target_room, value) {
     for (let name in Game.creeps) {
@@ -1073,7 +1074,9 @@ function interRoomTransmissionController(room) {
         if (room.memory.transmission_queue.length > 0) {
             room.memory.current_transmission_task = room.memory.transmission_queue[0];
             room.memory.current_transmission_task.stage = 'check';
+            room.memory.current_transmission_task.time = Game.time;
             room.memory.transmission_queue.shift();
+            console.log('accept transmission task');
         } else {
             return
         }
@@ -1086,6 +1089,12 @@ function interRoomTransmissionController(room) {
     }
 
     let task = room.memory.current_transmission_task;
+    if (!task.time || Game.time - task.time > 500) {
+        console.log('abort transmission task due to timed out');
+        room.memory.current_transmission_task = undefined;
+        return;
+    }
+
     if (task.stage == 'check') {
         if (task.type == 'energy') {
             if (terminal.store[task.type] > task.amount * 2) {
@@ -1297,6 +1306,76 @@ function mineralController(room) {
     }
 }
 
+function runPowerSquad(room, squad) {
+    if (squad.stage == 'init') {
+        if (squad.id == undefined) {
+            console.log('can not find squad id');
+            return;
+        }
+
+        let flag = Game.flags[`power ${squad.id} ${room.name}`];
+        if (!flag) {
+            console.log('can not find squad flag');
+            return;
+        }
+
+        roomSpawn('power_attacker', room.name, false, 1, {
+            squadId: squad.id, needBoost: true, boostResource: ['UH2O']
+        });
+        roomSpawn('power_healer', room.name, false, 1, {
+            squadId: squad.id, needBoost: true, boostResource: ['XLHO2']
+        });
+        console.log('sending power squad');
+        squad.stage = 'work';
+    }
+
+    if (squad.stage == 'work') {
+        let flag = Game.flags[`power ${squad.id} ${room.name}`];
+        let target_room = Game.rooms[flag.pos.roomName];
+        if (!target_room) {
+            return;
+        }
+
+        if (!squad.powerbank) {
+            let bk = getStructureByFlag(flag, STRUCTURE_POWER_BANK);
+            if (bk) {
+                squad.powerbank = bk.id;
+            }
+        }
+
+        let powerbank = Game.getObjectById(squad.powerbank);
+        if (!powerbank) {
+            return;
+        }
+        if (powerbank.hits < 300000) {
+            let num = Math.ceil(powerbank.power / 1600);
+            for (let i = 0; i < num; i++) {
+                roomSpawn('power_retriever', room.name, false, 1, {squadId: squad.id});
+            }
+            console.log('sending power retriever');
+            squad.stage = 'done';
+        }
+    }
+
+}
+
+function powerController(room) {
+    if (room.memory.powerController == undefined) {
+        room.memory.powerController = {
+            powerSquad: {}
+        }
+    }
+
+    for (let squad_id in room.memory.powerController.powerSquad) {
+        let squad = room.memory.powerController.powerSquad[squad_id]
+        if (squad.stage == 'done') {
+            delete squad
+            continue;
+        }
+        runPowerSquad(room, squad);
+    }
+}
+
 module.exports = {
     reserveController,
     buildController,
@@ -1307,7 +1386,8 @@ module.exports = {
     interRoomTransmissionController,
     boostController,
     mineralController,
-    warController
+    warController,
+    powerController
 };
 
 // let task = {

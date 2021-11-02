@@ -4,7 +4,7 @@ var ruin_transfer = {
             creep.memory.transfering = false;
         }
 
-        if (!creep.memory.transfering && creep.store.getFreeCapacity() == 0) {
+        if (!creep.memory.transfering && creep.store.getUsedCapacity() != 0) {
             creep.memory.transfering = true;
         }
 
@@ -24,6 +24,12 @@ var ruin_transfer = {
                 }
                 for (let resourceType in target.store) {
                     creep.exWithdraw(target, resourceType);
+                }
+            } else {
+                let target = creep.room.find(FIND_DROPPED_RESOURCES);
+                if (target.length > 0) {
+                    creep.exPickup(target[0]);
+                    return;
                 }
             }
         }

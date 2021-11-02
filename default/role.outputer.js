@@ -10,6 +10,7 @@ var outputer = {
             creep.memory.transfering = true;
         }
 
+        creep.memory.standed = true;
         if (creep.memory.transfering) {
             // let terminal = creep.room.terminal;
             // if (terminal) {

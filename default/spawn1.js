@@ -57,6 +57,9 @@ var spawn1 = {
                 healer: {tough: 12, move: 10, heal: 28},
                 attacker: {tough: 12, move: 10, attack: 28},
                 deposit_harvester: {work: 15, carry: 10, move: 25},
+                power_attacker: {attack: 25, move: 25},
+                power_healer: {heal: 25, move: 25},
+                power_retriever: {carry: 32, move: 16},
             },
             E45S59: {
                 builder: {work: 5, carry: 5, move: 5},
@@ -87,7 +90,6 @@ var spawn1 = {
                 deposit_harvester: {work: 15, carry: 10, move: 25},
             },
             E47S59: {
-                rebuilder: {work: 1, carry: 1, move: 1}, 
                 worker: {work: 1, carry: 1, move: 1},
                 harvester: {work: 5, move: 1},
                 builder: {work: 4, carry: 4, move: 4},
@@ -96,7 +98,7 @@ var spawn1 = {
                 center_transfer: {carry: 8, move: 1},
                 harvest_linker: {work: 7, carry: 1, move: 1},
                 maintainer: {carry: 20, move: 10},
-                upgrader: {work: 6, carry: 3, move: 3},
+                upgrader: {work: 10, carry: 4, move: 5},
                 manager: {carry: 10, move: 5},
                 outputer: {carry: 10, move: 5},
                 rebuilder: {carry: 2, move: 1},

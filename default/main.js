@@ -30,6 +30,9 @@ var assaulter = require('role.assaulter');
 var superWarrior = require('role.superWarrior');
 var deposit_harvester = require('role.deposit_harvester');
 var ruin_transfer = require('role.ruin_transfer');
+var power_attacker = require('role.power_attacker');
+var power_healer = require('role.power_healer');
+var power_retriever = require('role.power_retriever');
 
 var basic_squad = require('basic_squad');
 
@@ -46,6 +49,7 @@ var {
     boostController,
     mineralController,
     warController,
+    powerController
 } = require('overlord');
 
 require('./mount')();
@@ -69,6 +73,7 @@ var {
     setBoost,
     setWar,
     setBoostUpgrade,
+    addPowerSquad
 } = require('utils');
 
 const profiler = require('screeps-profiler');
@@ -152,6 +157,7 @@ module.exports.loop = function() {
             boostController(room);
             mineralController(room);
             warController(room);
+            powerController(room);
         }
     }
     
@@ -203,6 +209,9 @@ module.exports.loop = function() {
         superWarrior: superWarrior,
         deposit_harvester: deposit_harvester,
         ruin_transfer: ruin_transfer,
+        power_attacker: power_attacker,
+        power_healer: power_healer,
+        power_retriever: power_retriever,
 
         // war
         attacker: warrior,
@@ -258,3 +267,4 @@ global.G_setReaction = setReaction;
 global.G_setBoost = setBoost;
 global.G_setWar = setWar;
 global.G_setBoostUpgrade = setBoostUpgrade;
+global.G_addPowerSquad = addPowerSquad;
