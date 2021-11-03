@@ -2,6 +2,25 @@ var assaulter = {
     run: function(creep) {
         let flag = Game.flags[`attack`];
         if (!flag) {
+            let target = creep.room.find(FIND_HOSTILE_CREEPS);
+            if (target.length) {
+                if (!creep.pos.inRangeTo(target[0], 1)) {
+                    creep.goTo(target[0].pos, 1);
+                } else {
+                    creep.attack(target[0]);
+                }
+                return;
+            }
+
+            target = creep.room.find(FIND_HOSTILE_STRUCTURES);
+            if (target.length) {
+                if (!creep.pos.inRangeTo(target[0], 1)) {
+                    creep.goTo(target[0].pos, 1);
+                } else {
+                    creep.attack(target[0]);
+                }
+                return;
+            }
             return;
         }
 

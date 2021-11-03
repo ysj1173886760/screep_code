@@ -49,7 +49,8 @@ var {
     boostController,
     mineralController,
     warController,
-    powerController
+    powerController,
+    factoryController
 } = require('overlord');
 
 require('./mount')();
@@ -74,7 +75,9 @@ var {
     setWar,
     setBoostUpgrade,
     addPowerSquad,
-    removePowerSquad
+    removePowerSquad,
+    setFactory,
+    addFactoryMission,
 } = require('utils');
 
 const profiler = require('screeps-profiler');
@@ -159,6 +162,7 @@ module.exports.loop = function() {
             mineralController(room);
             warController(room);
             powerController(room);
+            factoryController(room);
         }
     }
     
@@ -270,3 +274,5 @@ global.G_setWar = setWar;
 global.G_setBoostUpgrade = setBoostUpgrade;
 global.G_addPowerSquad = addPowerSquad;
 global.G_removePowerSquad = removePowerSquad;
+global.G_addFactoryMission = addFactoryMission;
+global.G_setFactory = setFactory;

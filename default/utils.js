@@ -289,6 +289,36 @@ function removePowerSquad(roomname, id) {
     delete room.memory.powerController.powerSquad[id];
 }
 
+function setFactory(roomname, value) {
+    let room = Game.rooms[roomname];
+    if (!room) {
+        return;
+    }
+
+    if (value) {
+        room.memory.factoryController.enabled = true;
+        room.memory.factoryController.stage = 'wait';
+    } else {
+        room.memory.factoryController.enabled = false;
+    }
+    return true;
+}
+
+function addFactoryMission(roomname, type, amount) {
+    let room = Game.rooms[roomname];
+    if (!room) {
+        return;
+    }
+
+    if (amount > 0) {
+        room.memory.factoryController.missionQueue.push({
+            type: type,
+            amount: amount
+        });
+        console.log(`FACTORY: add mission ${type} ${amount}`);
+    }
+}
+
 module.exports = {
     getStructureByFlag,
     getConstructionSite,
@@ -317,5 +347,7 @@ module.exports = {
     setWar,
     setBoostUpgrade,
     addPowerSquad,
-    removePowerSquad
+    removePowerSquad,
+    setFactory,
+    addFactoryMission,
 }

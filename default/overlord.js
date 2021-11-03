@@ -1,6 +1,7 @@
 const { getStructureByFlag, containBodyPart } = require("utils");
 const { whiteList } = require("whiteList");
 const { roomSpawn } = require("./utils");
+const { reactionTable } = require("./reactionTable")
 
 function setDistantCreeps(roomname, target_room, value) {
     for (let name in Game.creeps) {
@@ -1351,7 +1352,7 @@ function runPowerSquad(room, squad) {
         if (!powerbank) {
             return;
         }
-        if (powerbank.hits < 650000) {
+        if (powerbank.hits < 800000) {
             let num = Math.ceil(powerbank.power / 1600);
             for (let i = 0; i < num; i++) {
                 roomSpawn('power_retriever', room.name, false, 1, {squadId: squad.id});
@@ -1373,10 +1374,187 @@ function powerController(room) {
     for (let squad_id in room.memory.powerController.powerSquad) {
         let squad = room.memory.powerController.powerSquad[squad_id]
         if (squad.stage == 'done') {
-            delete squad
+            room.memory.powerController.powerSquad[squad_id] = undefined;
             continue;
         }
         runPowerSquad(room, squad);
+    }
+}
+
+function factoryController(room) {
+    if (room.memory.factoryController == undefined) {
+        room.memory.factoryController = {
+            enabled: false,
+            countdown: 10,
+            missionQueue: [],
+            currentMission: {},
+            stage: 'wait',
+        }
+    }
+
+    if (room.memory.factoryController.enabled == false) {
+        return;
+    }
+
+    room.memory.factoryController.countdown--;
+    if (room.memory.factoryController > 0) {
+        return;
+    }
+    room.memory.factoryController.countdown = 10;
+
+    if (room.memory.factoryController.stage == 'wait') {
+        if (room.memory.factoryController.missionQueue.length) {
+            room.memory.factoryController.currentMission = room.memory.factoryController.missionQueue[0];
+            console.log('FACTORY::accept mission');
+            room.memory.factoryController.missionQueue.shift();
+            room.memory.factoryController.stage = 'init';
+        } else {
+            return;
+        }
+    }
+
+    if (room.memory.factoryController.stage == 'init') {
+        if (!room.memory.factoryController.factory) {
+            let factory = room.find(FIND_STRUCTURES, {
+                filter: (s) => {
+                    return s.structureType == STRUCTURE_FACTORY;
+                }
+            });
+            if (factory.length) {
+                room.memory.factoryController.factory = factory[0].id;
+            } else {
+                room.memory.factoryController.stage = 'failed';
+                return;
+            }
+        }
+
+        let task = room.memory.factoryController.currentMission;
+        if (reactionTable[task.type] == undefined) {
+            console.log(`FACTORY::can not find ${task.type}`);
+            room.memory.factoryController.stage = 'failed';
+            room.memory.factoryController.countdown = 1;
+            return;
+        }
+
+        room.memory.factoryController.currentMission.material = reactionTable[task.type].material;
+        room.memory.factoryController.stage = 'check';
+    }
+
+    if (room.memory.factoryController.stage == 'check') {
+        let storage = room.storage;
+        if (!storage) {
+            return;
+        }
+
+        for (let res of room.memory.factoryController.currentMission.material) {
+            if (storage.store[res.type] < res.amount) {
+                console.log(`FACTORY ${res.type} is not enough`);
+                room.memory.factoryController.stage = 'failed';
+                room.memory.factoryController.countdown = 1;
+                return;
+            }
+        }
+        room.memory.factoryController.stage = 'prepare';
+    }
+
+    if (room.memory.factoryController.stage == 'prepare') {
+        let storage = room.storage;
+        if (!storage) {
+            return;
+        }
+        let factory = Game.getObjectById(room.memory.factoryController.factory);
+        if (!factory) {
+            return;
+        }
+
+        for (let resourceType in factory.store) {
+            if (factory.store[resourceType] > 0) {
+                room.memory.center_task_queue.push({
+                    from: factory.id,
+                    to: storage.id,
+                    type: resourceType,
+                    amount: factory.store[resourceType]
+                });
+            }
+        }
+
+        for (let res of room.memory.factoryController.currentMission.material) {
+            room.memory.center_task_queue.push({
+                from: storage.id,
+                to: factory.id,
+                type: res.type,
+                amount: res.amount
+            });
+        }
+        room.memory.factoryController.stage = 'wait_resource';
+    }
+
+    if (room.memory.factoryController.stage == 'wait_resource') {
+        let factory = Game.getObjectById(room.memory.factoryController.factory);
+        if (!factory) {
+            return;
+        }
+        for (let res of room.memory.factoryController.currentMission.material) {
+            if (factory.store[res.type] < res.amount) {
+                room.memory.factoryController.countdown = 1;
+                return;
+            }
+        }
+
+        room.memory.factoryController.stage = 'work';
+    }
+
+    if (room.memory.factoryController.stage == 'work') {
+        let factory = Game.getObjectById(room.memory.factoryController.factory);
+        if (!factory) {
+            return;
+        }
+
+        let type = room.memory.factoryController.currentMission.type;
+        if (factory.store[type] > 0) {
+            room.memory.factoryController.stage = 'retrieve';
+        } else {
+            if (factory.cooldown != 0) {
+                room.memory.factoryController.countdown = 1;
+                return;
+            }
+            factory.produce(type);
+        }
+    }
+
+    if (room.memory.factoryController.stage == 'retrieve') {
+        let storage = room.storage;
+        if (!storage) {
+            return;
+        }
+        let factory = Game.getObjectById(room.memory.factoryController.factory);
+        if (!factory) {
+            return;
+        }
+        let type = room.memory.factoryController.currentMission.type;
+        let amount = factory.store[type];
+        room.memory.center_task_queue.push({
+            from: factory.id,
+            to: storage.id,
+            type: type,
+            amount: amount
+        });
+
+        room.memory.factoryController.currentMission.amount -= amount;
+        if (room.memory.factoryController.currentMission.amount <= 0) {
+            console.log('FACTORY: mission complete');
+            room.memory.factoryController.stage = 'wait';
+            return;
+        } else {
+            room.memory.factoryController.stage = 'check';
+            console.log(`FACTORY: proceeding, amount left ${room.memory.factoryController.currentMission.amount}`);
+            return;
+        }
+    }
+
+    if (room.memory.factoryController.stage == 'failed') {
+        console.log('FACTORY: failed to proceed');
+        room.memory.factoryController.stage = 'wait';
     }
 }
 
@@ -1391,7 +1569,8 @@ module.exports = {
     boostController,
     mineralController,
     warController,
-    powerController
+    powerController,
+    factoryController
 };
 
 // let task = {

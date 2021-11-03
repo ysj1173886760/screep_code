@@ -30,6 +30,26 @@ function linkWork(room) {
             from2.transferEnergy(target);
         }
     }
+
+    // distant link
+    for (let i = 2; i <= 3; i++) {
+        let flag = Game.flags[`link ${i} ${room.name}`];
+        if (!flag) {
+            continue;
+        }
+        let link = getStructureByFlag(flag, STRUCTURE_LINK);
+        if (!link) {
+            continue;
+        }
+
+        if (link.cooldown == 0 && link.store[RESOURCE_ENERGY] >= 800) {
+            if (target && target.store[RESOURCE_ENERGY] == 0) {
+                link.transferEnergy(target);
+            } else if (upgrade_link && upgrade_link.store[RESOURCE_ENERGY] == 0) {
+                link.transferEnergy(upgrade_link);
+            }
+        }
+    }
 }
 
 module.exports = {

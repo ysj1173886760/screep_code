@@ -85,5 +85,79 @@ var reactionTable = {
         cooldown: 10
     },
 
+    // factory
+    utrium_bar: {
+        material: [
+            {type: 'U', amount: 500},
+            {type: 'energy', amount: 200},
+        ],
+        amount: 100
+    },
 
-}
+    lemergium_bar: {
+        material: [
+            {type: 'L', amount: 500},
+            {type: 'energy', amount: 200},
+        ],
+        amount: 100
+    },
+
+    zynthium_bar: {
+        material: [
+            {type: 'Z', amount: 500},
+            {type: 'energy', amount: 200},
+        ],
+        amount: 100
+    },
+
+    keanium_bar: {
+        material: [
+            {type: 'K', amount: 500},
+            {type: 'energy', amount: 200},
+        ],
+        amount: 100
+    },
+
+    ghodium_melt: {
+        material: [
+            {type: 'G', amount: 500},
+            {type: 'energy', amount: 200},
+        ],
+        amount: 100
+    },
+
+    oxidant: {
+        material: [
+            {type: 'O', amount: 500},
+            {type: 'energy', amount: 200},
+        ],
+        amount: 100
+    },
+
+    reductant: {
+        material: [
+            {type: 'G', amount: 500},
+            {type: 'energy', amount: 200},
+        ],
+        amount: 100
+    },
+
+    purifier: {
+        material: [
+            {type: 'G', amount: 500},
+            {type: 'energy', amount: 200},
+        ],
+        amount: 100
+    },
+
+    battery: {
+        material: [
+            {type: 'energy', amount: 600},
+        ],
+        amount: 50
+    }
+};
+
+module.exports = {
+    reactionTable
+};
