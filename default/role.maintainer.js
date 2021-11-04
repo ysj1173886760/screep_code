@@ -122,11 +122,6 @@ var maintainer = {
                 return;
             }
 
-            let flag = Game.flags[`upgrade_container ${creep.room.name}`];
-            target = getStructureByFlag(flag, STRUCTURE_CONTAINER);
-            if (target) {
-                creep.exTransfer(target, RESOURCE_ENERGY);
-            }
         } else {
             let target = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
             if (target.length > 0) {

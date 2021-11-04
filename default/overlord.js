@@ -1590,7 +1590,7 @@ function powerSpawnController(room) {
             }
         }
 
-        if (storage.store[RESOURCE_POWER] < 100 || storage.store[RESOURCE_ENERGY] < 10000) {
+        if (storage.store[RESOURCE_POWER] < 100 || storage.store[RESOURCE_ENERGY] < 50000) {
             room.memory.powerSpawnController.enabled = false;
             return;
         }

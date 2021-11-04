@@ -96,7 +96,7 @@ module.exports = {
         // then boost
         if (creep.memory.stage == 'boost') {
             if (!creep.memory.boosted && creep.memory.extraInfo.needBoost) {
-                if ((creep.memory.boostStage == 'init' || creep.memory.boostStage == 'wait') && creep.ticksToLive < 1450) {
+                if ((creep.memory.boostStage == 'init' || creep.memory.boostStage == 'wait') && creep.ticksToLive < 1400) {
                     creep.renewMe();
                     return;
                 }

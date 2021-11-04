@@ -1,7 +1,8 @@
 var {
     squadMove,
     leftShift,
-    checkSquad
+    checkSquad,
+    turnLeft
 } = require('warframe');
 
 module.exports = {
@@ -60,17 +61,49 @@ module.exports = {
             let creep2 = Game.getObjectById(squad.creeps[2]);
             let creep3 = Game.getObjectById(squad.creeps[3]);
 
-            if (creep0 && creep0.memory.stage != 'serve') {
-                return;
-            }
-            if (creep1 && creep1.memory.stage != 'serve') {
-                return;
-            }
-            if (creep2 && creep2.memory.stage != 'serve') {
-                return;
-            }
-            if (creep3 && creep3.memory.stage != 'serve') {
-                return;
+            let flag = Game.flags['t'];
+            if (flag) {
+                if (creep0) {
+                    if (creep0.memory.stage == 'serve') {
+                        creep0.goTo(new RoomPosition(flag.pos.x, flag.pos.y, flag.pos.roomName), 0);
+                    } else {
+                        return;
+                    }
+                }
+                if (creep1) {
+                    if (creep1.memory.stage == 'serve') {
+                        creep1.goTo(new RoomPosition(flag.pos.x + 1, flag.pos.y, flag.pos.roomName), 0);
+                    } else {
+                        return;
+                    }
+                }
+                if (creep2) {
+                    if (creep2.memory.stage == 'serve') {
+                        creep2.goTo(new RoomPosition(flag.pos.x, flag.pos.y + 1, flag.pos.roomName), 0);
+                    } else {
+                        return;
+                    }
+                }
+                if (creep3) {
+                    if (creep3.memory.stage == 'serve') {
+                        creep3.goTo(new RoomPosition(flag.pos.x + 1, flag.pos.y + 1, flag.pos.roomName), 0);
+                    } else {
+                        return;
+                    }
+                }
+            } else {
+                if (creep0 && creep0.memory.stage != 'serve') {
+                    return;
+                }
+                if (creep1 && creep1.memory.stage != 'serve') {
+                    return;
+                }
+                if (creep2 && creep2.memory.stage != 'serve') {
+                    return;
+                }
+                if (creep3 && creep3.memory.stage != 'serve') {
+                    return;
+                }
             }
 
             squad.stage = 'teamup';
@@ -98,6 +131,10 @@ module.exports = {
                 squad.stage = 'dismissed';
                 return;
             }
+            creep0.memory.standed = true;
+            creep1.memory.standed = true;
+            creep2.memory.standed = true;
+            creep3.memory.standed = true;
             
             if (creep0.pos.x == creep1.pos.x - 1 && creep0.pos.y == creep1.pos.y &&
                 creep0.pos.x == creep2.pos.x && creep0.pos.y == creep2.pos.y - 1 &&
@@ -150,12 +187,14 @@ module.exports = {
                 return;
             }
             
+            let flag = Game.flags['regroup'];
             let res = false;
             switch(squad.direction) {
             case TOP:
                 if (creep0.pos.x == creep1.pos.x - 1 && creep0.pos.y == creep1.pos.y &&
                     creep0.pos.x == creep2.pos.x && creep0.pos.y == creep2.pos.y - 1 &&
-                    creep0.pos.x == creep3.pos.x - 1 && creep0.pos.y == creep3.pos.y - 1) {
+                    creep0.pos.x == creep3.pos.x - 1 && creep0.pos.y == creep3.pos.y - 1 &&
+                    creep0.pos.x == flag.pos.x && creep0.pos.y == flag.pos.y) {
                     res = true;
                 }
                 break;
@@ -164,7 +203,8 @@ module.exports = {
                 // 0 2
                 if (creep0.pos.x == creep1.pos.x && creep0.pos.y == creep1.pos.y + 1 &&
                     creep0.pos.x == creep2.pos.x - 1 && creep0.pos.y == creep2.pos.y &&
-                    creep0.pos.x == creep3.pos.x - 1 && creep0.pos.y == creep3.pos.y + 1) {
+                    creep0.pos.x == creep3.pos.x - 1 && creep0.pos.y == creep3.pos.y + 1 &&
+                    creep0.pos.x == flag.pos.x && creep0.pos.y == flag.pos.y) {
                     res = true;
                 }
                 break;
@@ -173,7 +213,8 @@ module.exports = {
                 // 1 0
                 if (creep0.pos.x == creep1.pos.x + 1 && creep0.pos.y == creep1.pos.y &&
                     creep0.pos.x == creep2.pos.x && creep0.pos.y == creep2.pos.y + 1 &&
-                    creep0.pos.x == creep3.pos.x + 1 && creep0.pos.y == creep3.pos.y + 1) {
+                    creep0.pos.x == creep3.pos.x + 1 && creep0.pos.y == creep3.pos.y + 1 &&
+                    creep0.pos.x == flag.pos.x && creep0.pos.y == flag.pos.y) {
                     res = true;
                 }
                 break;
@@ -182,19 +223,38 @@ module.exports = {
                 // 3 1
                 if (creep0.pos.x == creep1.pos.x && creep0.pos.y == creep1.pos.y - 1 &&
                     creep0.pos.x == creep2.pos.x + 1 && creep0.pos.y == creep2.pos.y &&
-                    creep0.pos.x == creep3.pos.x + 1 && creep0.pos.y == creep3.pos.y - 1) {
+                    creep0.pos.x == creep3.pos.x + 1 && creep0.pos.y == creep3.pos.y - 1 &&
+                    creep0.pos.x == flag.pos.x && creep0.pos.y == flag.pos.y) {
                     res = true;
                 }
             }
 
+            let target = creep2.pos.findInRange(FIND_MY_CREEPS, {
+                filter: (c) => {
+                    return c.hits < c.hitsMax;
+                }
+            });
+            if (target.length) {
+                creep2.heal(target[0]);
+            }
+
+            target = creep3.pos.findInRange(FIND_MY_CREEPS, {
+                filter: (c) => {
+                    return c.hits < c.hitsMax;
+                }
+            });
+            if (target.length) {
+                creep3.heal(target[0]);
+            }
+
             if (res) {
-                let flag = Game.flags['regroup'];
+                flag = Game.flags['regroup'];
                 flag.remove();
                 squad.stage = 'battle';
                 return;
             }
 
-            let flag = Game.flags['regroup'];
+            flag = Game.flags['regroup'];
             if (flag) {
                 switch (squad.direction) {
                 case TOP:
@@ -305,32 +365,55 @@ module.exports = {
                 creep3.heal(Game.getObjectById(damage[0].id));
             }
 
-            if (!creep0.pos.inRangeTo(flag.pos, 1)) {
-                squadMove(squad, flag.pos);
-                return;
-            }
+            let arbitaryFlag = Game.flags['arbitary'];
 
-            let hostile = creep0.pos.findInRange(FIND_HOSTILE_CREEPS, 1);
-            if (hostile.length > 0) {
-                if (!creep1.pos.inRangeTo(hostile[0], 1)) {
-                    leftShift(squad);
+            if (arbitaryFlag) {
+                let hostile = creep0.pos.findInRange(FIND_HOSTILE_CREEPS, 1);
+                if (hostile.length > 0) {
+                    if (!creep1.pos.inRangeTo(hostile[0], 1)) {
+                        leftShift(squad);
+                    }
+                    creep0.attack(hostile[0]);
+                    creep1.attack(hostile[0]);
                 }
-                creep0.attack(hostile[0]);
-                creep1.attack(hostile[0]);
-            }
-
-
-            target = flag.pos.lookFor(LOOK_STRUCTURES);
-            if (target.length) {
-                if (!creep0.pos.inRangeTo(target[0], 1)) {
-                    squadMove(squad, target[0]);
+                target = creep0.pos.findClosestByPath(FIND_HOSTILE_STRUCTURES);
+                if (target) {
+                    if (!creep0.pos.inRangeTo(target, 1)) {
+                        squadMove(squad, target);
+                        return;
+                    }
+                    if (!creep1.pos.inRangeTo(target, 1)) {
+                        turnLeft(squad);
+                    }
+                    creep1.attack(target);
+                    creep0.attack(target);
+                }
+            } else {
+                if (!creep0.pos.inRangeTo(flag.pos, 1)) {
+                    squadMove(squad, flag.pos);
                     return;
                 }
-                if (!creep1.pos.inRangeTo(target[0], 1)) {
-                    leftShift(squad);
+
+                let hostile = creep0.pos.findInRange(FIND_HOSTILE_CREEPS, 1);
+                if (hostile.length > 0) {
+                    if (!creep1.pos.inRangeTo(hostile[0], 1)) {
+                        leftShift(squad);
+                    }
+                    creep0.attack(hostile[0]);
+                    creep1.attack(hostile[0]);
                 }
-                creep1.attack(target[0]);
-                creep0.attack(target[0]);
+                target = flag.pos.lookFor(LOOK_STRUCTURES);
+                if (target.length) {
+                    if (!creep0.pos.inRangeTo(target[0], 1)) {
+                        squadMove(squad, target[0]);
+                        return;
+                    }
+                    if (!creep1.pos.inRangeTo(target[0], 1)) {
+                        leftShift(squad);
+                    }
+                    creep1.attack(target[0]);
+                    creep0.attack(target[0]);
+                }
             }
 
         }

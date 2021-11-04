@@ -62,6 +62,17 @@ function squadFindPath(from, to) {
 }
 
 function canMove(squad, direction) {
+    let creep0 = Game.getObjectById(squad.creeps[0]);
+    let creep1 = Game.getObjectById(squad.creeps[1]);
+    let creep2 = Game.getObjectById(squad.creeps[2]);
+    let creep3 = Game.getObjectById(squad.creeps[3]);
+
+    if (creep0.pos.roomName != creep1.pos.roomName || 
+        creep0.pos.roomName != creep2.pos.roomName ||
+        creep0.pos.roomName != creep3.pos.roomName) {
+        return true;
+    }
+
     let array = [];
     for (let i = 0; i < 4; i++) {
         array.push(Game.getObjectById(squad.creeps[i]));
@@ -85,6 +96,26 @@ function canMove(squad, direction) {
         if (terrain.get(nx, ny) == TERRAIN_MASK_WALL) {
             res = false;
             break;
+        }
+
+        let s = room.lookForAt(LOOK_STRUCTURES, nx, ny);
+        if (s.length) {
+            for (let s0 of s) {
+                if (!(s0.structureType == STRUCTURE_ROAD || s0.structureType == STRUCTURE_CONTAINER ||
+                    (s0.structureType == STRUCTURE_RAMPART && s0.my))) {
+                    res = false;
+                    break;
+                }
+            }
+        }
+        s = room.lookForAt(LOOK_CREEPS, nx, ny); 
+        if (s.length) {
+            for (let s0 of s) {
+                if (squad.creeps.indexOf(s0.id) == -1) {
+                    res = false;
+                    break;
+                }
+            }
         }
     }
 
@@ -180,6 +211,11 @@ function squadMove(squad, pos) {
                         }
                         break;
                     }
+                }
+                if (!moving) {
+                    moving = true;
+                    shifting = true;
+                    turnLeft(squad);
                 }
             }
         }
@@ -497,5 +533,6 @@ function checkSquad(squad) {
 module.exports = {
     squadMove,
     leftShift,
-    checkSquad
+    checkSquad,
+    turnLeft
 }
