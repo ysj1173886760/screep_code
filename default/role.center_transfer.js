@@ -87,7 +87,6 @@ module.exports = {
             } else {
                 creep.memory.stage = 'withdraw';
             }
-            return;
         }
 
         if (creep.memory.stage == 'withdraw' && creep.store.getUsedCapacity() != 0) {

@@ -79,6 +79,7 @@ var {
     removePowerSquad,
     setFactory,
     addFactoryMission,
+    setPowerSpawn
 } = require('utils');
 
 const profiler = require('screeps-profiler');
@@ -278,3 +279,4 @@ global.G_addPowerSquad = addPowerSquad;
 global.G_removePowerSquad = removePowerSquad;
 global.G_addFactoryMission = addFactoryMission;
 global.G_setFactory = setFactory;
+global.G_setPowerSpawn = setPowerSpawn;
