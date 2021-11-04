@@ -319,6 +319,17 @@ function addFactoryMission(roomname, type, amount) {
     }
 }
 
+function setPowerSpawn(roomname, value) {
+    let room = Game.rooms[roomname];
+    if (!room) {
+        return;
+    }
+
+    room.memory.powerSpawnController.enabled = value;
+    room.memory.powerSpawnController.stage = 'check';
+    return true;
+}
+
 module.exports = {
     getStructureByFlag,
     getConstructionSite,

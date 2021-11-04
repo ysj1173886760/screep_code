@@ -50,7 +50,8 @@ var {
     mineralController,
     warController,
     powerController,
-    factoryController
+    factoryController,
+    powerSpawnController
 } = require('overlord');
 
 require('./mount')();
@@ -163,6 +164,7 @@ module.exports.loop = function() {
             warController(room);
             powerController(room);
             factoryController(room);
+            powerSpawnController(room);
         }
     }
     

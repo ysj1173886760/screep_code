@@ -1558,6 +1558,101 @@ function factoryController(room) {
     }
 }
 
+function powerSpawnController(room) {
+    if (room.memory.powerSpawnController == undefined) {
+        room.memory.powerSpawnController = {
+            enabled: false,
+            stage: 'check',
+        };
+    }
+
+    if (!room.memory.powerSpawnController.enabled) {
+        return;
+    }
+
+    if (room.memory.powerSpawnController.stage == 'check') {
+        let storage = room.storage;
+        if (!storage) {
+            return;
+        }
+
+        if (!room.memory.powerSpawnController.powerSpawn) {
+            let spawns = room.find(FIND_STRUCTURES, {
+                filter: (s) => {
+                    return s.structureType == STRUCTURE_POWER_SPAWN;
+                }
+            });
+            if (spawns.length) {
+                room.memory.powerSpawnController.powerSpawn = spawns[0].id;
+            } else {
+                room.memory.powerSpawnController.enabled = false;
+                return;
+            }
+        }
+
+        if (storage.store[RESOURCE_POWER] < 100 || storage.store[RESOURCE_ENERGY] < 10000) {
+            room.memory.powerSpawnController.enabled = false;
+            return;
+        }
+
+        room.memory.powerSpawnController.stage = 'send_mission';
+    }
+
+    if (room.memory.powerSpawnController.stage == 'send_mission') {
+        let storage = room.storage;
+        if (!storage) {
+            return;
+        }
+
+        let powerSpawn = Game.getObjectById(room.memory.powerSpawnController.powerSpawn);
+        if (!powerSpawn) {
+            return;
+        }
+
+        console.log(`POWERSPAWN: sending mission`)
+        for (let resourceType of [RESOURCE_ENERGY, RESOURCE_POWER]) {
+            if (powerSpawn.store.getFreeCapacity(resourceType) > 0) {
+                room.memory.task_queue.push({
+                    from: storage.id,
+                    to: powerSpawn.id,
+                    type: resourceType,
+                    amount: powerSpawn.store.getFreeCapacity(resourceType)
+                });
+            }
+        }
+
+        room.memory.powerSpawnController.stage = 'wait_resource';
+    }
+
+    if (room.memory.powerSpawnController.stage == 'wait_resource') {
+        let powerSpawn = Game.getObjectById(room.memory.powerSpawnController.powerSpawn);
+        if (!powerSpawn) {
+            return;
+        }
+
+        for (let resourceType of [RESOURCE_ENERGY, RESOURCE_POWER]) {
+            if (powerSpawn.store.getFreeCapacity(resourceType) > 0) {
+                return;
+            }
+        }
+
+        console.log('POWERSPAWN: preparation complete, start working');
+        room.memory.powerSpawnController.stage = 'work';
+    }
+
+    if (room.memory.powerSpawnController.stage == 'work') {
+        let powerSpawn = Game.getObjectById(room.memory.powerSpawnController.powerSpawn);
+        if (!powerSpawn) {
+            return;
+        }
+
+        let res = powerSpawn.processPower();
+        if (res == ERR_NOT_ENOUGH_RESOURCES) {
+            room.memory.powerSpawnController.stage = 'check';
+        }
+    }
+}
+
 module.exports = {
     reserveController,
     buildController,
@@ -1570,7 +1665,8 @@ module.exports = {
     mineralController,
     warController,
     powerController,
-    factoryController
+    factoryController,
+    powerSpawnController
 };
 
 // let task = {

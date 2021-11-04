@@ -155,6 +155,15 @@ var reactionTable = {
             {type: 'energy', amount: 600},
         ],
         amount: 50
+    },
+    
+    cell: {
+        material: [
+            {type: 'lemergium_bar', amount: 20},
+            {type: 'biomass', amount: 100},
+            {type: 'energy', amount: 40},
+        ],
+        amount: 20
     }
 };
 
