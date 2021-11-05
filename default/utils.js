@@ -268,6 +268,16 @@ function setBoostUpgrade(roomname, value) {
     return true;
 }
 
+function setDailyMaintain(roomname, value) {
+    let room = Game.rooms[roomname];
+    if (!room) {
+        return;
+    }
+
+    room.memory.maintainController.enable = value;
+    return true;
+}
+
 function addPowerSquad(roomname, id) {
     let room = Game.rooms[roomname];
     if (!room) {
@@ -361,5 +371,6 @@ module.exports = {
     removePowerSquad,
     setFactory,
     addFactoryMission,
-    setPowerSpawn
+    setPowerSpawn,
+    setDailyMaintain
 }

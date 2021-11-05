@@ -285,7 +285,7 @@ function labReactionController(room) {
             return;
         }
 
-        if (storage.store[RESOURCE_ENERGY] < 100000) {
+        if (storage.store[RESOURCE_ENERGY] < 50000) {
             room.memory.labController.enabled = false;
             return;
         }
@@ -1100,6 +1100,10 @@ function interRoomTransmissionController(room) {
         return;
     }
 
+    if (terminal.cooldown != 0) {
+        return;
+    }
+
     if (task.stage == 'check') {
         if (task.type == 'energy') {
             if (terminal.store[task.type] > task.amount * 2) {
@@ -1653,6 +1657,59 @@ function powerSpawnController(room) {
     }
 }
 
+function dailyMaintainController(room) {
+    if (room.memory.maintainController == undefined) {
+        room.memory.maintainController = {
+            enable: false,
+            countdown: 0,
+        }
+    }
+
+    if (room.memory.maintainController.enable == false) {
+        return;
+    }
+
+    if (room.memory.maintainController.countdown != 0) {
+        room.memory.maintainController.countdown--;
+        return;
+    }
+    room.memory.maintainController.countdown = 100;
+
+    // should order some energy
+    if (room.storage.store[RESOURCE_ENERGY] <= 100000) {
+
+        if (room.terminal.store[RESOURCE_ENERGY] >= 100000) {
+            return;
+        }
+        
+        let myorders = Game.market.getAllOrders({type: ORDER_BUY, resourceType: RESOURCE_ENERGY, roomName: room.name});
+        if (myorders.length) {
+            console.log(`${room.name} has already ordered the energy`);
+            return;
+        }
+
+        let orders = Game.market.getAllOrders({type: ORDER_BUY, resourceType: RESOURCE_ENERGY});
+        top5 = orders.sort((a, b) => (b.price - a.price)).slice(0, 5);
+        let sum = 0.0;
+        for (let i = 0; i < top5.length; i++) {
+            sum += top5[i].price;
+        }
+        sum /= top5.length;
+        
+        let amount = 100000;
+        
+        Game.market.createOrder({
+            type: ORDER_BUY,
+            resourceType: RESOURCE_ENERGY,
+            price: sum,
+            totalAmount: amount,
+            roomName: room.name,
+        });
+
+        console.log(`creating order for ${room.name}, buying ${amount} energy for ${sum}`)
+    }
+}
+
 module.exports = {
     reserveController,
     buildController,
@@ -1666,7 +1723,8 @@ module.exports = {
     warController,
     powerController,
     factoryController,
-    powerSpawnController
+    powerSpawnController,
+    dailyMaintainController
 };
 
 // let task = {

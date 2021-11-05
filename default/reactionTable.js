@@ -164,6 +164,13 @@ var reactionTable = {
             {type: 'energy', amount: 40},
         ],
         amount: 20
+    },
+
+    energy: {
+        material: [
+            {type: 'battery', amount: 50},
+        ],
+        amount: 500
     }
 };
 

@@ -34,6 +34,8 @@ var power_attacker = require('role.power_attacker');
 var power_healer = require('role.power_healer');
 var power_retriever = require('role.power_retriever');
 
+var power_creep = require('power_creep');
+
 var basic_squad = require('basic_squad');
 
 var {linkWork} = require('link');
@@ -51,7 +53,8 @@ var {
     warController,
     powerController,
     factoryController,
-    powerSpawnController
+    powerSpawnController,
+    dailyMaintainController
 } = require('overlord');
 
 require('./mount')();
@@ -79,7 +82,8 @@ var {
     removePowerSquad,
     setFactory,
     addFactoryMission,
-    setPowerSpawn
+    setPowerSpawn,
+    setDailyMaintain
 } = require('utils');
 
 const profiler = require('screeps-profiler');
@@ -166,6 +170,7 @@ module.exports.loop = function() {
             powerController(room);
             factoryController(room);
             powerSpawnController(room);
+            dailyMaintainController(room);
         }
     }
     
@@ -226,6 +231,11 @@ module.exports.loop = function() {
         healer: warrior
     };
 
+    for (let name in Game.powerCreeps) {
+        let creep = Game.powerCreeps[name];
+        power_creep.run(creep);
+    }
+
     // console.log('.............................');
     for (let name in Game.creeps) {
         let startCpu = Game.cpu.getUsed();
@@ -280,3 +290,4 @@ global.G_removePowerSquad = removePowerSquad;
 global.G_addFactoryMission = addFactoryMission;
 global.G_setFactory = setFactory;
 global.G_setPowerSpawn = setPowerSpawn;
+global.G_setDailyMaintain = setDailyMaintain;

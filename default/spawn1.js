@@ -114,7 +114,7 @@ var spawn1 = {
                 ruin_transfer: {carry: 16, move: 8},
                 boosted_upgrader: {work: 15, carry: 3, move: 5},
                 defender: {tough: 13, attack: 5, move: 9},
-                claimer: {claim: 2, move: 2},
+                claimer: {claim: 3, move: 3},
                 distant_harvester: {work: 6, carry: 2, move: 3},
                 distant_transfer: {carry: 16, move: 8},
                 distant_repairer: {work: 5, carry: 5, move: 5},

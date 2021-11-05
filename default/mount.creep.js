@@ -2,6 +2,7 @@ const { getOppositeDirection } = require("./utils");
 
 module.exports = function() {
     _.assign(Creep.prototype, creepExtension);
+    _.assign(PowerCreep.prototype, creepExtension);
 }
 
 const creepExtension = {
