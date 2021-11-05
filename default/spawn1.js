@@ -62,6 +62,8 @@ var spawn1 = {
                 power_retriever: {carry: 32, move: 16},
                 distant_repairer: {work: 5, carry: 5, move: 5},
                 assaulter: {move: 10, attack: 10},
+                wall_breaker: {work: 25, move: 25},
+                slaimer: {ranged_attack: 20, move: 25, heal: 5},
             },
             E45S59: {
                 builder: {work: 10, carry: 10, move: 10},

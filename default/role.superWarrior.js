@@ -47,9 +47,7 @@ var superWarrior = {
             return;
         }
 
-        if (creep.hits < creep.hitsMax) {
-            creep.heal(creep);
-        }
+        creep.heal(creep);
 
         let flag = Game.flags['attack'];
         if (!flag) {
@@ -92,17 +90,21 @@ var superWarrior = {
             return;
         }
 
-        if (!creep.pos.inRangeTo(flag, 3)) {
-            creep.goTo(flag.pos, 0);
-        }
-
         target = flag.pos.lookFor(LOOK_STRUCTURES);
         if (target.length) {
-            if (!creep.pos.inRangeTo(target[0], 3)) {
-                creep.goTo(target[0].pos, 2);
-                return;
+            creep.goTo(target[0].pos, 1);
+            if (creep.pos.inRangeTo(target[0], 1)) {
+                // creep.rangedMassAttack();
+                creep.rangedAttack(target[0]);
+            } else if (creep.pos.inRangeTo(target[0], 3)) {
+                creep.rangedAttack(target[0]);
             }
-            creep.rangedAttack(target[0]);
+            return;
+        }
+
+        if (!creep.pos.inRangeTo(flag, 3)) {
+            creep.goTo(flag.pos, 0);
+            return;
         }
 
     }

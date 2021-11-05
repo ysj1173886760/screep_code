@@ -63,33 +63,37 @@ module.exports = {
 
             let flag = Game.flags['t'];
             if (flag) {
+                let res = true;
                 if (creep0) {
                     if (creep0.memory.stage == 'serve') {
                         creep0.goTo(new RoomPosition(flag.pos.x, flag.pos.y, flag.pos.roomName), 0);
                     } else {
-                        return;
+                        res = false;
                     }
                 }
                 if (creep1) {
                     if (creep1.memory.stage == 'serve') {
                         creep1.goTo(new RoomPosition(flag.pos.x + 1, flag.pos.y, flag.pos.roomName), 0);
                     } else {
-                        return;
+                        res = false;
                     }
                 }
                 if (creep2) {
                     if (creep2.memory.stage == 'serve') {
                         creep2.goTo(new RoomPosition(flag.pos.x, flag.pos.y + 1, flag.pos.roomName), 0);
                     } else {
-                        return;
+                        res = false;
                     }
                 }
                 if (creep3) {
                     if (creep3.memory.stage == 'serve') {
                         creep3.goTo(new RoomPosition(flag.pos.x + 1, flag.pos.y + 1, flag.pos.roomName), 0);
                     } else {
-                        return;
+                        res = false;
                     }
+                }
+                if (!res) {
+                    return;
                 }
             } else {
                 if (creep0 && creep0.memory.stage != 'serve') {
@@ -391,6 +395,15 @@ module.exports = {
             } else {
                 if (!creep0.pos.inRangeTo(flag.pos, 1)) {
                     squadMove(squad, flag.pos);
+                    let hostile = creep0.pos.findInRange(FIND_HOSTILE_CREEPS, 1);
+                    if (hostile.length) {
+                        creep0.attack(hostile[0]);
+                    }
+                    hostile = creep1.pos.findInRange(FIND_HOSTILE_CREEPS, 1);
+                    if (hostile.length) {
+                        creep1.attack(hostile[0]);
+                    }
+
                     return;
                 }
 
@@ -401,6 +414,7 @@ module.exports = {
                     }
                     creep0.attack(hostile[0]);
                     creep1.attack(hostile[0]);
+                    return;
                 }
                 target = flag.pos.lookFor(LOOK_STRUCTURES);
                 if (target.length) {
@@ -409,7 +423,7 @@ module.exports = {
                         return;
                     }
                     if (!creep1.pos.inRangeTo(target[0], 1)) {
-                        leftShift(squad);
+                        turnLeft(squad);
                     }
                     creep1.attack(target[0]);
                     creep0.attack(target[0]);

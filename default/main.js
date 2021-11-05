@@ -33,6 +33,8 @@ var ruin_transfer = require('role.ruin_transfer');
 var power_attacker = require('role.power_attacker');
 var power_healer = require('role.power_healer');
 var power_retriever = require('role.power_retriever');
+var wall_breaker = require('role.wall_breaker');
+var slaimer = require('role.slaimer');
 
 var power_creep = require('power_creep');
 
@@ -83,7 +85,9 @@ var {
     setFactory,
     addFactoryMission,
     setPowerSpawn,
-    setDailyMaintain
+    setDailyMaintain,
+    removeByPassRoom,
+    addByPassRoom
 } = require('utils');
 
 const profiler = require('screeps-profiler');
@@ -225,6 +229,8 @@ module.exports.loop = function() {
         power_attacker: power_attacker,
         power_healer: power_healer,
         power_retriever: power_retriever,
+        wall_breaker: wall_breaker,
+        slaimer: slaimer,
 
         // war
         attacker: warrior,
@@ -291,3 +297,5 @@ global.G_addFactoryMission = addFactoryMission;
 global.G_setFactory = setFactory;
 global.G_setPowerSpawn = setPowerSpawn;
 global.G_setDailyMaintain = setDailyMaintain;
+global.G_addBypassRoom = addByPassRoom;
+global.G_removeBypassRoom = removeByPassRoom;

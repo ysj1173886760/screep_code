@@ -1038,7 +1038,7 @@ function warController(room) {
                         amount: 2000 - lab.store[RESOURCE_ENERGY],
                     });
                 }
-                room.memory.labController.boostControl[lab.id].countdown = Game.time;
+                room.memory.labController.boostControl[id].countdown = Game.time;
             }
         }
     }
@@ -1356,13 +1356,25 @@ function runPowerSquad(room, squad) {
         if (!powerbank) {
             return;
         }
-        if (powerbank.hits < 800000) {
-            let num = Math.ceil(powerbank.power / 1600);
-            for (let i = 0; i < num; i++) {
-                roomSpawn('power_retriever', room.name, false, 1, {squadId: squad.id});
+
+        if (powerbank.power <= 4800) {
+            if (powerbank.hits < 1000000) {
+                let num = Math.ceil(powerbank.power / 1600);
+                for (let i = 0; i < num; i++) {
+                    roomSpawn('power_retriever', room.name, false, 1, {squadId: squad.id});
+                }
+                console.log(`sending power retriever ${num}`);
+                squad.stage = 'done';
             }
-            console.log(`sending power retriever ${num}`);
-            squad.stage = 'done';
+        } else {
+            if (powerbank.hits < 1400000) {
+                let num = Math.ceil(powerbank.power / 1600);
+                for (let i = 0; i < num; i++) {
+                    roomSpawn('power_retriever', room.name, false, 1, {squadId: squad.id});
+                }
+                console.log(`sending power retriever ${num}`);
+                squad.stage = 'done';
+            }
         }
     }
 

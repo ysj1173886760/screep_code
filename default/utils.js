@@ -340,6 +340,21 @@ function setPowerSpawn(roomname, value) {
     return true;
 }
 
+function addByPassRoom(roomname) {
+    if (Memory.bypassRooms.indexOf(roomname) == -1) {
+        Memory.bypassRooms.push(roomname);
+        console.log('add complete');
+    }
+}
+
+function removeByPassRoom(roomname) {
+    let index = Memory.bypassRooms.indexOf(roomname);
+    if (index != -1) {
+        Memory.byPassRooms.splice(index, 1);
+        console.log('delete complete');
+    }
+}
+
 module.exports = {
     getStructureByFlag,
     getConstructionSite,
@@ -372,5 +387,7 @@ module.exports = {
     setFactory,
     addFactoryMission,
     setPowerSpawn,
-    setDailyMaintain
+    setDailyMaintain,
+    addByPassRoom,
+    removeByPassRoom
 }
