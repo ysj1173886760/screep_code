@@ -8,6 +8,7 @@ module.exports = {
             creep.memory.mining = true;
         }
 
+        creep.memory.standed = true;
         if (creep.memory.mining) {
             if (creep.memory.working_source == undefined) {
                 let target = creep.room.find(FIND_MINERALS);

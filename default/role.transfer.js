@@ -79,7 +79,9 @@ var roleTransfer = {
             if (creep.memory.container == undefined) {
                 let flag = Game.flags[`container ${creep.memory.extraInfo.working_location} ${creep.room.name}`];
                 target = getStructureByFlag(flag, STRUCTURE_CONTAINER);
-                creep.memory.container = target.id;
+                if (target) {
+                    creep.memory.container = target.id;
+                }
             }
             
             target = Game.getObjectById(creep.memory.container);

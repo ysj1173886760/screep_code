@@ -7,7 +7,7 @@ var power_attacker = {
             return;
         }
 
-        let flag = Game.flags[`power ${creep.memory.extraInfo.squadId} ${creep.memory.roomname}`];
+        let flag = Game.flags[`${creep.memory.extraInfo.powerbank}`];
         if (!flag) {
             return;
         }
@@ -16,20 +16,10 @@ var power_attacker = {
             creep.goTo(new RoomPosition(25, 25, flag.pos.roomName), 20);
             return;
         }
+
         creep.memory.standed = true;
 
-        if (!creep.memory.powerbank) {
-            let powerbank = creep.room.find(FIND_STRUCTURES, {
-                filter: (s) => {
-                    return s.structureType == STRUCTURE_POWER_BANK;
-                }
-            });
-            if (powerbank.length) {
-                creep.memory.powerbank = powerbank[0].id;
-            }
-        }
-
-        let powerbank = Game.getObjectById(creep.memory.powerbank);
+        let powerbank = Game.getObjectById(creep.memory.extraInfo.powerbank);
         if (!powerbank) {
             return;
         }

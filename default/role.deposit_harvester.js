@@ -1,8 +1,15 @@
 var deposit_harvester = {
     run: function(creep) {
+        // G_roomSpawn('deposit_harvester', 'E45S59', true, 100, {needBoost: true, boostResource: ['UHO2']})
         if (creep.spawning) {
             return;
         }
+
+        if (!creep.memory.boosted && creep.memory.extraInfo.needBoost) {
+            creep.boostMe();
+            return;
+        }
+
         if (creep.memory.harvesting && creep.store.getFreeCapacity() == 0) {
             creep.memory.harvesting = false;
         }
@@ -40,6 +47,10 @@ var deposit_harvester = {
             let source = Game.getObjectById(creep.memory.working_source);
             if (source) {
                 if (source.lastCooldown > 50) {
+                    if (creep.memory.extraInfo.needBoost) {
+                        creep.memory.extraInfo.needBoost = false;
+                    }
+                } else if (source.lastCooldown > 100) {
                     if (creep.memory.isNeeded) {
                         creep.memory.isNeeded = false;
                     }

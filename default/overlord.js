@@ -1315,88 +1315,6 @@ function mineralController(room) {
     }
 }
 
-function runPowerSquad(room, squad) {
-    if (squad.stage == 'init') {
-        if (squad.id == undefined) {
-            console.log('can not find squad id');
-            return;
-        }
-
-        let flag = Game.flags[`power ${squad.id} ${room.name}`];
-        if (!flag) {
-            console.log('can not find squad flag');
-            return;
-        }
-
-        roomSpawn('power_attacker', room.name, false, 1, {
-            squadId: squad.id, needBoost: true, boostResource: ['XUH2O']
-        });
-        roomSpawn('power_healer', room.name, false, 1, {
-            squadId: squad.id, needBoost: true, boostResource: ['XLHO2']
-        });
-        console.log('sending power squad');
-        squad.stage = 'work';
-    }
-
-    if (squad.stage == 'work') {
-        let flag = Game.flags[`power ${squad.id} ${room.name}`];
-        let target_room = Game.rooms[flag.pos.roomName];
-        if (!target_room) {
-            return;
-        }
-
-        if (!squad.powerbank) {
-            let bk = getStructureByFlag(flag, STRUCTURE_POWER_BANK);
-            if (bk) {
-                squad.powerbank = bk.id;
-            }
-        }
-
-        let powerbank = Game.getObjectById(squad.powerbank);
-        if (!powerbank) {
-            return;
-        }
-
-        if (powerbank.power <= 4800) {
-            if (powerbank.hits < 1000000) {
-                let num = Math.ceil(powerbank.power / 1600);
-                for (let i = 0; i < num; i++) {
-                    roomSpawn('power_retriever', room.name, false, 1, {squadId: squad.id});
-                }
-                console.log(`sending power retriever ${num}`);
-                squad.stage = 'done';
-            }
-        } else {
-            if (powerbank.hits < 1400000) {
-                let num = Math.ceil(powerbank.power / 1600);
-                for (let i = 0; i < num; i++) {
-                    roomSpawn('power_retriever', room.name, false, 1, {squadId: squad.id});
-                }
-                console.log(`sending power retriever ${num}`);
-                squad.stage = 'done';
-            }
-        }
-    }
-
-}
-
-function powerController(room) {
-    if (room.memory.powerController == undefined) {
-        room.memory.powerController = {
-            powerSquad: {}
-        }
-    }
-
-    for (let squad_id in room.memory.powerController.powerSquad) {
-        let squad = room.memory.powerController.powerSquad[squad_id]
-        if (squad.stage == 'done') {
-            room.memory.powerController.powerSquad[squad_id] = undefined;
-            continue;
-        }
-        runPowerSquad(room, squad);
-    }
-}
-
 function factoryController(room) {
     if (room.memory.factoryController == undefined) {
         room.memory.factoryController = {
@@ -1722,6 +1640,173 @@ function dailyMaintainController(room) {
     }
 }
 
+function observerController(room) {
+    if (room.controller.level < 8) {
+        return;
+    }
+
+    if (room.memory.observerController == undefined) {
+        let ob = room.find(FIND_STRUCTURES, {
+            filter: (s) => {
+                return s.structureType == STRUCTURE_OBSERVER;
+            }
+        });
+
+        if (ob.length == 0) {
+            return;
+        }
+
+        room.memory.observerController = {
+            ob: ob[0].id,
+            countdown: 10,
+            observing_room: [],
+            index: 0,
+            lastRoom: ''
+        }
+    }
+
+    room.memory.observerController.countdown--;
+    if (room.memory.observerController.countdown > 0) {
+        return;
+    }
+    room.memory.observerController.countdown = 10;
+
+    if (room.memory.observerController.observing_room.length == 0) {
+        return;
+    }
+
+    if (room.memory.observerController.index >= room.memory.observerController.observing_room.length) {
+        room.memory.observerController.index = 0;
+    }
+
+    let ob = Game.getObjectById(room.memory.observerController.ob);
+    if (!ob) {
+        return;
+    }
+
+    let roomname = room.memory.observerController.observing_room[room.memory.observerController.index];
+    let ret = ob.observeRoom(roomname);
+    if (ret == OK) {
+        room.memory.observerController.lastRoom = roomname;
+        room.memory.observerController.index++;
+    } else {
+        console.log(`failed to observeRoom ${ret}`);
+    }
+}
+
+function powerSquadController() {
+    if (Memory.powerSquad == undefined) {
+        Memory.powerSquad = {}
+    }
+
+    for (let id in Memory.powerSquad) {
+        let squad = Memory.powerSquad[id];
+        let room = Game.rooms[squad.roomname];
+        if (!room) {
+            continue;
+        }
+        if (squad.stage == 'done' && Game.time - squad.starttime > 5000) {
+            let flag =  Game.flags[`${squad.powerbank}`];
+            if (flag) {
+                flag.remove()
+            }
+            delete Memory.powerSquad[id];
+            continue;
+        }
+        runPowerSquad(room, squad);
+    }
+}
+
+function runPowerSquad(room, squad) {
+    if (squad.stage == 'init') {
+        let flag = Game.flags[`${squad.powerbank}`];
+        if (!flag) {
+            console.log('can not find squad flag');
+            return;
+        }
+
+        roomSpawn('power_attacker', room.name, false, 1, {
+            powerbank: squad.powerbank, needBoost: true, boostResource: ['XUH2O']
+        });
+        roomSpawn('power_healer', room.name, false, 1, {
+            powerbank: squad.powerbank, needBoost: true, boostResource: ['XLHO2']
+        });
+        console.log('sending power squad');
+        squad.stage = 'work';
+    }
+
+    if (squad.stage == 'work') {
+        let flag = Game.flags[`${squad.powerbank}`];
+        let target_room = Game.rooms[flag.pos.roomName];
+        if (!target_room) {
+            return;
+        }
+
+        let powerbank = Game.getObjectById(squad.powerbank);
+        if (!powerbank) {
+            return;
+        }
+
+        if (powerbank.power <= 4800) {
+            if (powerbank.hits < 1000000) {
+                let num = Math.ceil(powerbank.power / 1600);
+                for (let i = 0; i < num; i++) {
+                    roomSpawn('power_retriever', room.name, false, 1, {powerbank: squad.powerbank});
+                }
+                console.log(`sending power retriever ${num}`);
+                squad.stage = 'done';
+            }
+        } else {
+            if (powerbank.hits < 1400000) {
+                let num = Math.ceil(powerbank.power / 1600);
+                for (let i = 0; i < num; i++) {
+                    roomSpawn('power_retriever', room.name, false, 1, {powerbank: squad.powerbank});
+                }
+                console.log(`sending power retriever ${num}`);
+                squad.stage = 'done';
+            }
+        }
+    }
+
+}
+
+
+function resourceDetector(room) {
+    if (room.memory.observerController == undefined) {
+        return;
+    }
+
+    if (room.memory.observerController.lastRoom != '') {
+        let room = Game.rooms[room.memory.observerController.lastRoom];
+        if (!room) {
+            return;
+        }
+
+        let pw = room.find(FIND_STRUCTURES, {
+            filter: (s) => {
+                return s.structureType == STRUCTURE_POWER_BANK;
+            }
+        });
+        if (pw.length) {
+            if (Memory.powerSquad == undefined) {
+                return;
+            }
+
+            for (let i = 0; i < pw.length; i++) {
+                let powerbank = pw[i];
+                if (Memory.powerSquad[powerbank.id] == undefined) {
+                    Memory.powerSquad[powerbank.id] = {
+                        starttime: Game.time,
+                        roomname: room.name,
+                        powerbank: powerbank.id,
+                    }
+                    powerbank.pos.createFlag(powerbank.id);
+                }
+            }
+        }
+    }
+}
+
 module.exports = {
     reserveController,
     buildController,
@@ -1733,10 +1818,12 @@ module.exports = {
     boostController,
     mineralController,
     warController,
-    powerController,
     factoryController,
     powerSpawnController,
-    dailyMaintainController
+    dailyMaintainController,
+    observerController,
+    powerSquadController,
+    resourceDetector
 };
 
 // let task = {

@@ -21,7 +21,7 @@ var power_retriever = {
 
             creep.exTransferAll(creep.room.storage);
         } else {
-            let flag = Game.flags[`power ${creep.memory.extraInfo.squadId} ${creep.memory.roomname}`];
+            let flag = Game.flags[`${creep.memory.extraInfo.powerbank}`];
             if (!flag) {
                 return;
             }
@@ -50,11 +50,6 @@ var power_retriever = {
                 creep.exPickup(target[0]);
                 return;
             } else {
-                if (creep.store.getUsedCapacity() == 0) {
-                    creep.suicide();
-                    creep.say('suicide');
-                    return;
-                }
                 creep.memory.transfer = true;
             }
         }

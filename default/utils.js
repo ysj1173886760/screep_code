@@ -401,6 +401,15 @@ function removeByPassRoom(roomname) {
     }
 }
 
+function deleteOrder() {
+    let orders = Game.market.orders;
+    for (let id in orders) {
+        if (!orders[id].active) {
+            Game.market.cancelOrder(id);
+        }
+    }
+}
+
 module.exports = {
     getStructureByFlag,
     getConstructionSite,
@@ -437,5 +446,6 @@ module.exports = {
     addByPassRoom,
     removeByPassRoom,
     fillNuker,
-    launchNuker
+    launchNuker,
+    deleteOrder,
 }

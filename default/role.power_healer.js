@@ -7,7 +7,7 @@ var power_healer = {
             return;
         }
 
-        let flag = Game.flags[`power ${creep.memory.extraInfo.squadId} ${creep.memory.roomname}`];
+        let flag = Game.flags[`${creep.memory.extraInfo.powerbank}`];
         if (!flag) {
             return;
         }
@@ -18,18 +18,8 @@ var power_healer = {
         }
 
         creep.memory.standed = true;
-        if (!creep.memory.powerbank) {
-            let powerbank = creep.room.find(FIND_STRUCTURES, {
-                filter: (s) => {
-                    return s.structureType == STRUCTURE_POWER_BANK;
-                }
-            });
-            if (powerbank.length) {
-                creep.memory.powerbank = powerbank[0].id;
-            }
-        }
 
-        let powerbank = Game.getObjectById(creep.memory.powerbank);
+        let powerbank = Game.getObjectById(creep.memory.extraInfo.powerbank);
 
         if (!powerbank) {
             return;
@@ -44,7 +34,7 @@ var power_healer = {
                 filter: (c) => {
                     return c.memory.role == 'power_attacker' &&
                             c.memory.extraInfo &&
-                            c.memory.extraInfo.squadId == creep.memory.extraInfo.squadId;
+                            c.memory.extraInfo.powerbank == creep.memory.extraInfo.powerbank;
                 }
             });
             if (targets.length) {

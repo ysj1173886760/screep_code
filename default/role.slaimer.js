@@ -37,7 +37,7 @@ var slaimer = {
             return;
         }
 
-        creep.goTo(flag.pos, 1);
+        creep.goTo(flag.pos, 0);
     }
 };
 

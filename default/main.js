@@ -53,10 +53,12 @@ var {
     boostController,
     mineralController,
     warController,
-    powerController,
     factoryController,
     powerSpawnController,
-    dailyMaintainController
+    dailyMaintainController,
+    powerSquadController,
+    observerController,
+    resourceDetector
 } = require('overlord');
 
 require('./mount')();
@@ -89,7 +91,8 @@ var {
     removeByPassRoom,
     addByPassRoom,
     launchNuker,
-    fillNuker
+    fillNuker,
+    deleteOrder
 } = require('utils');
 
 const profiler = require('screeps-profiler');
@@ -173,10 +176,12 @@ module.exports.loop = function() {
             boostController(room);
             mineralController(room);
             warController(room);
-            powerController(room);
             factoryController(room);
             powerSpawnController(room);
             dailyMaintainController(room);
+            observerController(room);
+            powerSquadController(room);
+            resourceDetector(room);
         }
     }
     
@@ -303,3 +308,4 @@ global.G_addBypassRoom = addByPassRoom;
 global.G_removeBypassRoom = removeByPassRoom;
 global.G_launchNuker = launchNuker;
 global.G_fillNuker = fillNuker;
+global.G_deleteOrder = deleteOrder;
