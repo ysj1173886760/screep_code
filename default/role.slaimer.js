@@ -25,8 +25,7 @@ var slaimer = {
         target = creep.room.find(FIND_HOSTILE_STRUCTURES, {
             filter: (s) => {
                 return s.structureType == STRUCTURE_EXTENSION ||
-                        s.structureType == STRUCTURE_SPAWN || 
-                        s.structureType == STRUCTURE_TOWER;
+                        s.structureType == STRUCTURE_SPAWN;
             }
         });
         if (target.length) {

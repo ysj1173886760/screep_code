@@ -87,7 +87,9 @@ var {
     setPowerSpawn,
     setDailyMaintain,
     removeByPassRoom,
-    addByPassRoom
+    addByPassRoom,
+    launchNuker,
+    fillNuker
 } = require('utils');
 
 const profiler = require('screeps-profiler');
@@ -299,3 +301,5 @@ global.G_setPowerSpawn = setPowerSpawn;
 global.G_setDailyMaintain = setDailyMaintain;
 global.G_addBypassRoom = addByPassRoom;
 global.G_removeBypassRoom = removeByPassRoom;
+global.G_launchNuker = launchNuker;
+global.G_fillNuker = fillNuker;

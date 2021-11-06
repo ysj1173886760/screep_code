@@ -891,7 +891,7 @@ function warController(room) {
 
     room.memory.labController.enabled = false;
     room.memory.boostController.enabled = false;
-    const warReloadCountdown = 50;
+    const warReloadCountdown = 100;
 
     const boostResource = ['XZHO2', 'XKHO2', 'XUH2O', 'XLHO2', 'XGHO2'];
     if (room.memory.warController.stage == 'init') {

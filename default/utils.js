@@ -207,6 +207,52 @@ function enableLab(roomname) {
     room.memory.labController.enabled = true;
 }
 
+function fillNuker(roomname) {
+    let room = Game.rooms[roomname];
+    if (!room) {
+        return;
+    }
+
+    let nuke = room.find(FIND_MY_STRUCTURES, {
+        filter: (s) => {
+            return s.structureType == STRUCTURE_NUKER;
+        }
+    });
+    let storage = room.storage;
+    if (nuke.length) {
+        room.memory.task_queue.push({
+            from: storage.id,
+            to: nuke[0].id,
+            type: RESOURCE_GHODIUM,
+            amount: nuke[0].store.getFreeCapacity(RESOURCE_GHODIUM),
+        });
+        console.log('start filling nuke');
+    }
+}
+
+function launchNuker(roomname, x, y, roomName) {
+    let room = Game.rooms[roomname];
+    if (!room) {
+        return;
+    }
+
+    let nuke = room.find(FIND_MY_STRUCTURES, {
+        filter: (s) => {
+            return s.structureType == STRUCTURE_NUKER;
+        }
+    });
+
+    let pos = new RoomPosition(x, y, roomName);
+    if (nuke.length) {
+        let ret = nuke[0].launchNuke(pos);
+        if (ret == OK) {
+            console.log(`launching nuker to ${x} ${y}, ${roomName}`);
+        } else {
+            console.log(`${ret} failed to launch nuker`);
+        }
+    }
+}
+
 function setReaction(roomname, res1, res2) {
     let room = Game.rooms[roomname];
     if (!room) {
@@ -389,5 +435,7 @@ module.exports = {
     setPowerSpawn,
     setDailyMaintain,
     addByPassRoom,
-    removeByPassRoom
+    removeByPassRoom,
+    fillNuker,
+    launchNuker
 }

@@ -54,9 +54,8 @@ var superWarrior = {
             creep.say('destroy');
             let target = creep.room.find(FIND_HOSTILE_CREEPS);
             if (target.length) {
-                if (!creep.pos.inRangeTo(target[0], 3)) {
-                    creep.goTo(target[0].pos, 3);
-                } else {
+                creep.goTo(target[0].pos, 3);
+                if (creep.pos.inRangeTo(target[0], 3)) {
                     creep.rangedAttack(target[0]);
                 }
                 return;
@@ -87,6 +86,7 @@ var superWarrior = {
         let target = creep.pos.findInRange(FIND_HOSTILE_CREEPS, 3);
         if (target.length) {
             creep.rangedAttack(target[0]);
+            creep.goTo(flag.pos, 0);
             return;
         }
 
