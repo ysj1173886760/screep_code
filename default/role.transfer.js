@@ -37,6 +37,10 @@ var roleTransfer = {
             creep.memory.transfering = true;
         }
 
+        if (creep.room.name != creep.memory.roomname) {
+            creep.moveBackHomeRoom();
+        }
+
         if (creep.memory.transfering) {
             if (creep.memory.target) {
                 let tmp = Game.getObjectById(creep.memory.target)

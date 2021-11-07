@@ -52,7 +52,9 @@ var roleBuilder = {
             }
 
             let resource = Game.getObjectById(creep.memory.working_source);
-            creep.exHarvestCache(resource, 10);
+            if (resource) {
+                creep.exHarvestCache(resource, 10);
+            }
         }
     }
 };

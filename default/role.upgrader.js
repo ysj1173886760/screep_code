@@ -33,7 +33,10 @@ var roleUpgrader = {
                 } else {
                     flag = Game.flags[`upgrade_container ${creep.room.name}`];
                     let target = getStructureByFlag(flag, STRUCTURE_CONTAINER);
-                    creep.memory.container = target.id;
+                    if (target) {
+                        creep.memory.container = target.id;
+                    }
+                    
                 }
             }
 

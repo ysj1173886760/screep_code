@@ -2,6 +2,9 @@ var {getStructureByFlag} = require('utils');
 
 var roleHarvester = {
     run: function(creep) {
+        if (creep.room.name != creep.memory.roomname) {
+            creep.moveBackHomeRoom();
+        }
 
         if (creep.memory.positioned && creep.memory.working_source != undefined) {
             let resource = Game.getObjectById(creep.memory.working_source);

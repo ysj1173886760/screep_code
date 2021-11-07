@@ -410,6 +410,34 @@ function deleteOrder() {
     }
 }
 
+function addObserveRoom(mainroom, targetroom) {
+    let room = Game.rooms[mainroom];
+    if (!room) {
+        return;
+    }
+
+    if (!room.memory.observerController) {
+        return;
+    }
+
+    if (room.memory.observerController.observing_room.indexOf(targetroom) == -1) {
+        room.memory.observerController.observing_room.push(targetroom);
+        console.log('add observing room successfully');
+    } else {
+        console.log('failed to add room, already observing it');
+    }
+}
+
+function deleteRole(room, role) {
+    for (let name in Game.creeps) {
+        let creep = Game.creeps[name];
+        if (creep.memory.role == role && creep.memory.roomname) {
+            creep.memory.isNeeded = false;
+            console.log(`delete ${name}`);
+        }
+    }
+}
+
 module.exports = {
     getStructureByFlag,
     getConstructionSite,
@@ -448,4 +476,6 @@ module.exports = {
     fillNuker,
     launchNuker,
     deleteOrder,
+    addObserveRoom,
+    deleteRole
 }

@@ -92,7 +92,9 @@ var {
     addByPassRoom,
     launchNuker,
     fillNuker,
-    deleteOrder
+    deleteOrder,
+    addObserveRoom,
+    deleteRole
 } = require('utils');
 
 const profiler = require('screeps-profiler');
@@ -309,3 +311,5 @@ global.G_removeBypassRoom = removeByPassRoom;
 global.G_launchNuker = launchNuker;
 global.G_fillNuker = fillNuker;
 global.G_deleteOrder = deleteOrder;
+global.G_addObserveRoom = addObserveRoom;
+global.G_deleteRole = deleteRole;

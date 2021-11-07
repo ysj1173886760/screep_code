@@ -1718,6 +1718,9 @@ function powerSquadController() {
 }
 
 function runPowerSquad(room, squad) {
+    if (!squad.stage) {
+        squad.stage = 'init';
+    }
     if (squad.stage == 'init') {
         let flag = Game.flags[`${squad.powerbank}`];
         if (!flag) {
@@ -1770,19 +1773,18 @@ function runPowerSquad(room, squad) {
 
 }
 
-
 function resourceDetector(room) {
     if (room.memory.observerController == undefined) {
         return;
     }
 
     if (room.memory.observerController.lastRoom != '') {
-        let room = Game.rooms[room.memory.observerController.lastRoom];
-        if (!room) {
+        let target_room = Game.rooms[room.memory.observerController.lastRoom];
+        if (!target_room) {
             return;
         }
 
-        let pw = room.find(FIND_STRUCTURES, {
+        let pw = target_room.find(FIND_STRUCTURES, {
             filter: (s) => {
                 return s.structureType == STRUCTURE_POWER_BANK;
             }
@@ -1794,13 +1796,21 @@ function resourceDetector(room) {
 
             for (let i = 0; i < pw.length; i++) {
                 let powerbank = pw[i];
+                if (powerbank.power < 2000) {
+                    continue;
+                }
+                if (powerbank.ticksToDecay < 2000) {
+                    continue;
+                }
                 if (Memory.powerSquad[powerbank.id] == undefined) {
                     Memory.powerSquad[powerbank.id] = {
                         starttime: Game.time,
                         roomname: room.name,
                         powerbank: powerbank.id,
+                        stage: 'init',
                     }
                     powerbank.pos.createFlag(powerbank.id);
+                    console.log(`find powerbank in ${target_room.name}`);
                 }
             }
         }
