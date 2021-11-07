@@ -5,6 +5,9 @@ var manager = {
             creep.say('transfer');
             return;
         }
+        if (!creep.room.storage) {
+            return;
+        }
 
         if (creep.memory.stage == undefined || creep.memory.stage == 'wait') {
             let room = Game.rooms[creep.memory.roomname];

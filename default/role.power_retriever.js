@@ -6,6 +6,7 @@ var power_retriever = {
         }
 
         if (!creep.memory.transfer && creep.store.getFreeCapacity() == 0) {
+            creep.memory.transfered = true;
             creep.memory.transfer = true;
         }
 
@@ -21,6 +22,11 @@ var power_retriever = {
 
             creep.exTransferAll(creep.room.storage);
         } else {
+            if (creep.memory.transfered) {
+                creep.suicide();
+                return;
+            }
+
             let flag = Game.flags[`${creep.memory.extraInfo.powerbank}`];
             if (!flag) {
                 return;

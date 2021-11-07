@@ -39,6 +39,7 @@ var roleTransfer = {
 
         if (creep.room.name != creep.memory.roomname) {
             creep.moveBackHomeRoom();
+            return;
         }
 
         if (creep.memory.transfering) {

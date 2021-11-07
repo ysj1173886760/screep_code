@@ -11,6 +11,10 @@ module.exports = {
             creep.memory.transfer = true;
         }
 
+        if (!creep.room.storage) {
+            return;
+        }
+
         creep.memory.standed = true;
         // initialize part
         let flag = Game.flags[`center ${creep.room.name}`];

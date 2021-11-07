@@ -201,6 +201,9 @@ function labReactionController(room) {
         room.memory.task_queue = new Array();
     }
 
+    if (!room.storage) {
+        return;
+    }
     if (room.memory.labController == undefined) {
         let flag1 = Game.flags[`lab 1 ${room.name}`];
         let flag2 = Game.flags[`lab 2 ${room.name}`];

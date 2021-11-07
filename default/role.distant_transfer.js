@@ -6,7 +6,7 @@ var distant_transfer = {
         if (!creep.memory.transfering && creep.store.getFreeCapacity() == 0) {
             creep.memory.transfering = true;
         }
-        if (creep.memory.transfering && creep.store[RESOURCE_ENERGY] == 0) {
+        if (creep.memory.transfering && creep.store.getUsedCapacity() == 0) {
             creep.memory.transfering = false;
         }
         

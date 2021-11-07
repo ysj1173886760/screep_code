@@ -12,6 +12,7 @@ var roleBuilder = {
 
         if (creep.room.name != creep.memory.roomname) {
             creep.moveBackHomeRoom();
+            return;
         }
         creep.memory.standed = true;
         if (creep.memory.building) {

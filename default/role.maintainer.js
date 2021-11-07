@@ -61,7 +61,7 @@ var maintainer = {
     },
 
     run: function(creep) {
-        if (creep.memory.transfering && creep.store[RESOURCE_ENERGY] == 0) {
+        if (creep.memory.transfering && creep.store.getUsedCapacity() == 0) {
             creep.memory.transfering = false;
         }
 

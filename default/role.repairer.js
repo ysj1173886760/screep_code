@@ -28,6 +28,7 @@ var roleRepairer = {
 
         if (creep.room.name != creep.memory.roomname) {
             creep.moveBackHomeRoom();
+            return;
         }
         
         if (creep.memory.repairing) {
