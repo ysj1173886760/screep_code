@@ -24,10 +24,13 @@ var power_healer = {
         if (!powerbank) {
             return;
         }
-        if (!creep.pos.inRangeTo(powerbank, 2)) {
-            creep.goTo(powerbank.pos, 2);
-            return;
+        if (!creep.memory.attacker) {
+            if (!creep.pos.inRangeTo(powerbank, 3)) {
+                creep.goTo(powerbank.pos, 3);
+                return;
+            }
         }
+        
 
         if (!creep.memory.attacker) {
             let targets = creep.room.find(FIND_MY_CREEPS, {

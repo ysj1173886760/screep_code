@@ -383,7 +383,7 @@ const creepExtension = {
         const result = PathFinder.search(this.pos, {pos: target, range: range}, {
             plainCost: 2,
             swampCost: 10,
-            maxOps: 7000,
+            maxOps: 8000,
             roomCallback: roomName => {
                 // bypass room
                 if (Memory.bypassRooms && Memory.bypassRooms.includes(roomName)) {
@@ -407,7 +407,7 @@ const creepExtension = {
                         if (s.structureType == STRUCTURE_ROAD) {
                             costs.set(s.pos.x, s.pos.y, 1);
                         } else if (s.structureType !== STRUCTURE_CONTAINER && 
-                                    (s.structureType !== STRUCTURE_RAMPART || !s.my)) {
+                                    (s.structureType !== STRUCTURE_RAMPART || !(s.my || s.isPublic))) {
                             costs.set(s.pos.x, s.pos.y, 0xff);
                         }
                     }

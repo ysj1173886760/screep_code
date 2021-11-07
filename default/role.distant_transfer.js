@@ -34,13 +34,13 @@ var distant_transfer = {
             if (creep.room.name != creep.memory.roomname) {
                 // creep.moveTo(new RoomPosition(25, 25, creep.memory.roomname), {visualizePathStyle: {stroke: '#ffffff'}, reusePath: 20});
                 creep.moveBackHomeRoom();
-
                 return;
             }
 
             target = creep.room.storage;
 
             if (target) {
+                // creep.moveTo(target);
                 creep.exTransferAll(target);
                 return;
             }

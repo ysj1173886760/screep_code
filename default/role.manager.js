@@ -1,9 +1,27 @@
 var manager = {
+    callback: {
+        labCallback: function(creep, args) {
+            if (!args) {
+                return;
+            }
+
+            let room = creep.room;
+            if (!room.memory.labController) {
+                return;
+            }
+
+            room.memory.labController.missionControl[args.id] = false;
+            console.log(`doing callback ${args.id}`);
+        }
+    },
     run: function(creep) {
-        if (creep.store.getUsedCapacity() != 0 && creep.memory.extraInfo.task == undefined) {
-            creep.exTransferAll(creep.room.storage);
-            creep.say('transfer');
-            return;
+        if (creep.memory.extraInfo.task == undefined) {
+            creep.memory.stage = 'wait';
+            if (creep.store.getUsedCapacity() != 0) {
+                creep.exTransferAll(creep.room.storage);
+                creep.say('transfer');
+                return;
+            }
         }
         if (!creep.room.storage) {
             return;
@@ -107,6 +125,9 @@ var manager = {
         if (creep.memory.stage == 'transfer' && creep.store.getUsedCapacity() == 0) {
             creep.memory.extraInfo.task.amount -= creep.memory.amount;
             if (creep.memory.extraInfo.task.amount == 0) {
+                if (creep.memory.extraInfo.task.callback != undefined) {
+                    this.callback[creep.memory.extraInfo.task.callback.name](creep, creep.memory.extraInfo.task.callback.args);
+                }
                 creep.memory.extraInfo.task = undefined;
                 creep.memory.stage = 'wait';
                 creep.say('complete');

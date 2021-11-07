@@ -102,6 +102,7 @@ function buildController(room) {
                         extraInfo: {working_location: 2}
                     }
                     room.memory.spawn_queue.push(task);
+                    room.memory.spawn_queue.push(task);
                 } else {
                     // one for 1, one for 0
                     room.memory.spawn_queue.push({
@@ -410,9 +411,13 @@ function labReactionController(room) {
 
         if (lab1.store[res1] < amountNeeded) {
             return;
+        } else {
+            room.memory.labController.missionControl[lab1.id] = false;
         }
         if (lab2.store[res2] < amountNeeded) {
             return;
+        } else {
+            room.memory.labController.missionControl[lab2.id] = false;
         }
         if (lab1.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
             return;
@@ -445,33 +450,41 @@ function labReactionController(room) {
         let lab2 = Game.getObjectById(room.memory.labController.lab2);
         let storage = room.storage;
 
-        if (storage.store[res1] > 500 && storage.store[res2] > 500) {
-            if (lab1.store[res1] < 500) {
+        if (storage.store[res1] > 1000 && storage.store[res2] > 1000) {
+            if (lab1.store[res1] < 1000) {
                 if (room.memory.labController.missionControl[lab1.id] == false) {
                     room.memory.task_queue.push({
                         from: storage.id,
                         to: lab1.id,
                         type: res1,
-                        amount: 500
+                        amount: 1000,
+                        callback: {
+                            name: 'labCallback',
+                            args: {
+                                id: lab1.id
+                            }
+                        }
                     });
                     room.memory.labController.missionControl[lab1.id] = true;
                 }
-            } else {
-                room.memory.labController.missionControl[lab1.id] = false;
             }
 
-            if (lab2.store[res2] < 500) {
+            if (lab2.store[res2] < 1000) {
                 if (room.memory.labController.missionControl[lab2.id] == false) {
                     room.memory.task_queue.push({
                         from: storage.id,
                         to: lab2.id,
                         type: res2,
-                        amount: 500
+                        amount: 1000,
+                        callback: {
+                            name: 'labCallback',
+                            args: {
+                                id: lab2.id
+                            }
+                        }
                     });
                     room.memory.labController.missionControl[lab2.id] = true;
                 }
-            } else {
-                room.memory.labController.missionControl[lab2.id] = false;
             }
         }
         for (let i = 0; i < room.memory.labController.labs.length; i++) {
@@ -486,12 +499,16 @@ function labReactionController(room) {
                         from: lab.id,
                         to: storage.id,
                         type: lab.mineralType,
-                        amount: 500
+                        amount: 500,
+                        callback: {
+                            name: 'labCallback',
+                            args: {
+                                id: lab.id
+                            }
+                        }
                     });
                     room.memory.labController.missionControl[lab.id] = true;
                 }
-            } else {
-                room.memory.labController.missionControl[lab.id] = false;
             }
 
             let ret = lab.runReaction(lab1, lab2);
@@ -502,7 +519,45 @@ function labReactionController(room) {
         }
         
         if (!res) {
-            room.memory.labController.stage = 'retrieve';
+            if (storage.store[res1] > 1000 && storage.store[res2] > 1000) {
+                if (lab1.store[res1] < 1000) {
+                    if (room.memory.labController.missionControl[lab1.id] == false) {
+                        room.memory.task_queue.push({
+                            from: storage.id,
+                            to: lab1.id,
+                            type: res1,
+                            amount: 1000,
+                            callback: {
+                                name: 'labCallback',
+                                args: {
+                                    id: lab1.id
+                                }
+                            }
+                        });
+                        room.memory.labController.missionControl[lab1.id] = true;
+                    }
+                }
+    
+                if (lab2.store[res2] < 1000) {
+                    if (room.memory.labController.missionControl[lab2.id] == false) {
+                        room.memory.task_queue.push({
+                            from: storage.id,
+                            to: lab2.id,
+                            type: res2,
+                            amount: 1000,
+                            callback: {
+                                name: 'labCallback',
+                                args: {
+                                    id: lab2.id
+                                }
+                            }
+                        });
+                        room.memory.labController.missionControl[lab2.id] = true;
+                    }
+                }
+            } else {
+                room.memory.labController.stage = 'retrieve';
+            }
         }
     }
 
@@ -1699,7 +1754,7 @@ function observerController(room) {
 
 function powerSquadController() {
     if (Memory.powerSquad == undefined) {
-        Memory.powerSquad = {}
+        Memory.powerSquad = {};
     }
 
     for (let id in Memory.powerSquad) {
@@ -1708,11 +1763,12 @@ function powerSquadController() {
         if (!room) {
             continue;
         }
-        if (squad.stage == 'done' && Game.time - squad.starttime > 5000) {
+        if (squad.stage == 'done' && Game.time - squad.starttime > 3000) {
             let flag =  Game.flags[`${squad.powerbank}`];
             if (flag) {
                 flag.remove()
             }
+            Memory.powerSquadNum[squad.roomname]--;
             delete Memory.powerSquad[id];
             continue;
         }
@@ -1781,6 +1837,13 @@ function resourceDetector(room) {
         return;
     }
 
+    if (Memory.powerSquadNum == undefined) {
+        Memory.powerSquadNum = {};
+    }
+    if (Memory.powerSquadNum[room.name] == undefined) {
+        Memory.powerSquadNum[room.name] = 0;
+    }
+
     if (room.memory.observerController.lastRoom != '') {
         let target_room = Game.rooms[room.memory.observerController.lastRoom];
         if (!target_room) {
@@ -1805,7 +1868,8 @@ function resourceDetector(room) {
                 if (powerbank.ticksToDecay < 2000) {
                     continue;
                 }
-                if (Memory.powerSquad[powerbank.id] == undefined) {
+                if (Memory.powerSquad[powerbank.id] == undefined && Memory.powerSquadNum[room.name] < 2) {
+                    Memory.powerSquadNum[room.name]++;
                     Memory.powerSquad[powerbank.id] = {
                         starttime: Game.time,
                         roomname: room.name,
