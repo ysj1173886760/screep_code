@@ -86,7 +86,7 @@ var spawn1 = {
                 extender: {work: 5, carry: 5, move: 5}, 
                 harvest_linker: {work: 7, carry: 1, move: 1},
                 center_transfer: {carry: 16, move: 1},
-                manager: {carry: 10, move: 5},
+                manager: {carry: 20, move: 10},
                 miner: {work: 5, carry: 5, move: 5},
                 assaulter: {move: 10, attack: 10},
                 rebuilder: {carry: 2, move: 1},
@@ -128,6 +128,10 @@ var spawn1 = {
                 upgrader: {work: 6, move: 1, carry: 1},
                 repairer: {work: 3, carry: 3, move: 3},
                 builder: {work: 4, carry: 4, move: 4},
+                outputer: {carry: 6, move: 3}
+            },
+            E35S52: {
+                worker: {work: 2, carry: 4, move: 2},
             },
             test: {
                 attacker: {move: 2},

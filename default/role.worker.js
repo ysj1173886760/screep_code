@@ -45,7 +45,9 @@ module.exports = {
             }
 
             let resource = Game.getObjectById(creep.memory.working_source);
-            creep.exHarvest(resource);
+            if (resource) {
+                creep.exHarvest(resource);
+            }
         }
     }
 };

@@ -33,7 +33,16 @@ var extender = {
             }
 
             let resource = Game.getObjectById(creep.memory.working_source);
-            creep.exHarvest(resource);
+            if (resource) {
+                if (creep.pos.inRangeTo(resource, 1)) {
+                    let ret = creep.harvest(resource);
+                    if (ret == ERR_NOT_ENOUGH_RESOURCES) {
+                        creep.memory.harvesting = false;
+                    }
+                } else {
+                    creep.goTo(resource.pos, 1);
+                }
+            }
 
         } else {
             let target = creep.room.find(FIND_STRUCTURES, {
