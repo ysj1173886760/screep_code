@@ -139,7 +139,26 @@ module.exports.loop = function() {
 
         // priority check
         let check = false;
-        let high_priority = ['harvester', 'transfer', 'maintainer', 'harvest_linker', 'center_transfer'];
+        let super_high_priority = ['maintainer'];
+        let high_priority = ['harvester', 'transfer', 'harvest_linker', 'center_transfer'];
+
+        for (let i = 0; i < room.memory.spawn_queue.length; i++) {
+            if (super_high_priority.includes(room.memory.spawn_queue[i].role)) {
+                check = true;
+                let task = room.memory.spawn_queue[i];
+                console.log(`spawning super high priority role ${task.role}`);
+                let res = spawn1.spawn(spawn_name, task.role, task.roomname, task.isNeeded, task.respawnTime, task.extraInfo);
+                if (res) {
+                    room.memory.spawn_queue.splice(i, 1);
+                }
+                break;
+            }
+        }
+
+        if (check) {
+            continue;
+        }
+
         for (let i = 0; i < room.memory.spawn_queue.length; i++) {
             if (high_priority.includes(room.memory.spawn_queue[i].role)) {
                 check = true;

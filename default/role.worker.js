@@ -27,7 +27,7 @@ module.exports = {
                 });
 
                 if (target.length > 0) {
-                    creep.exTransfer(target[0]);
+                    creep.exTransfer(target[0], RESOURCE_ENERGY);
                     return;
                 }
 

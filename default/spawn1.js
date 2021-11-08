@@ -131,7 +131,13 @@ var spawn1 = {
                 outputer: {carry: 6, move: 3}
             },
             E35S52: {
-                worker: {work: 2, carry: 4, move: 2},
+                harvester: {work: 5, move: 1},
+                worker: {work: 1, carry: 1, move: 1},
+                transfer: {carry: 6, move: 3},
+                upgrader: {work: 3, move: 1, carry: 1},
+                repairer: {work: 2, carry: 2, move: 2},
+                builder: {work: 2, carry: 2, move: 2},
+                outputer: {carry: 6, move: 3}
             },
             test: {
                 attacker: {move: 2},
