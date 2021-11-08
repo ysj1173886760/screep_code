@@ -61,6 +61,10 @@ var {
     resourceDetector
 } = require('overlord');
 
+var {
+    towerController
+} = require('towerController');
+
 require('./mount')();
 
 var {
@@ -203,6 +207,7 @@ module.exports.loop = function() {
             observerController(room);
             powerSquadController(room);
             resourceDetector(room);
+            towerController(room);
         }
     }
     
@@ -213,10 +218,10 @@ module.exports.loop = function() {
         basic_squad.run(Memory.squads[i]);
     }
 
-    var towers = _.filter(Game.structures, (s) => (s.structureType == STRUCTURE_TOWER));
-    for (let tower of towers) {
-        Tower.run(tower);
-    }
+    // var towers = _.filter(Game.structures, (s) => (s.structureType == STRUCTURE_TOWER));
+    // for (let tower of towers) {
+    //     Tower.run(tower);
+    // }
 
     // if (Game.cpu.bucket == 10000) {
     //     console.log('generating pixel');

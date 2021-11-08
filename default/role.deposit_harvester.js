@@ -46,13 +46,13 @@ var deposit_harvester = {
 
             let source = Game.getObjectById(creep.memory.working_source);
             if (source) {
-                if (source.lastCooldown > 50) {
-                    if (creep.memory.extraInfo.needBoost) {
-                        creep.memory.extraInfo.needBoost = false;
-                    }
-                } else if (source.lastCooldown > 100) {
+                if (source.lastCooldown > 100) {
                     if (creep.memory.isNeeded) {
                         creep.memory.isNeeded = false;
+                    }
+                } else if (source.lastCooldown > 50) {
+                    if (creep.memory.extraInfo.needBoost) {
+                        creep.memory.extraInfo.needBoost = false;
                     }
                 }
                 if (creep.pos.inRangeTo(source, 1)) {

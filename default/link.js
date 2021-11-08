@@ -42,7 +42,7 @@ function linkWork(room) {
             continue;
         }
 
-        if (link.cooldown == 0 && link.store[RESOURCE_ENERGY] >= 700) {
+        if (link.cooldown == 0 && link.store[RESOURCE_ENERGY] >= 400) {
             if (target && target.store[RESOURCE_ENERGY] == 0) {
                 link.transferEnergy(target);
             } else if (upgrade_link && upgrade_link.store[RESOURCE_ENERGY] == 0) {

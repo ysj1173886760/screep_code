@@ -192,6 +192,47 @@ function boostUpgradingController(room) {
     }
 }
 
+function boostPowerController(room) {
+    if (room.memory.boostPower == undefined) {
+        room.memory.boostPower = {
+            enable: false,
+            countdown: 0,
+        }
+    }
+
+    if (room.memory.boostPower.enable == false) {
+        return;
+    }
+
+    if (room.memory.boostPower.countdown != 0) {
+        room.memory.boostPower.countdown--;
+        return;
+    }
+    room.memory.boostPower.countdown = 100;
+
+    // should order some energy
+    if (room.terminal && room.terminal.cooldown != 0) {
+        room.memory.boostPower.countdown = 1;
+        return;
+    }
+
+    if (room.storage.store[RESOURCE_POWER] <= 2000) {
+
+        if (room.terminal.store[RESOURCE_POWER] >= 2000) {
+            return;
+        }
+        
+        let orders = Game.market.getAllOrders({type: ORDER_SELL, resourceType: RESOURCE_POWER});
+        orders.sort((a, b) => (b.price - a.price));
+
+        if (orders.length) {
+            let amount = Math.min(orders[0].amount, 3000);
+            Game.market.deal(orders[0].id, amount, room.name);
+            console.log(`${room.name}, buying ${amount} power for ${orders[0].price}`);
+        }
+    }
+}
+
 const boostingCountdown = 2000;
 const reloadCountdown = 100;
 const labControllerCountdown = 5;
