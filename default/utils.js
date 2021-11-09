@@ -428,6 +428,25 @@ function addObserveRoom(mainroom, targetroom) {
     }
 }
 
+function removeObserveRoom(mainroom, targetroom) {
+    let room = Game.rooms[mainroom];
+    if (!room) {
+        return;
+    }
+
+    if (!room.memory.observerController) {
+        return;
+    }
+
+    let index = room.memory.observerController.observing_room.indexOf(targetroom);
+    if (index != -1) {
+        room.memory.observerController.observing_room.splice(index, 1);
+        console.log('remove observing room successfully');
+    } else {
+        console.log('failed to remove room');
+    }
+}
+
 function deleteRole(room, role) {
     for (let name in Game.creeps) {
         let creep = Game.creeps[name];
@@ -477,5 +496,6 @@ module.exports = {
     launchNuker,
     deleteOrder,
     addObserveRoom,
-    deleteRole
+    deleteRole,
+    removeObserveRoom
 }

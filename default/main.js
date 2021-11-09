@@ -58,7 +58,8 @@ var {
     dailyMaintainController,
     powerSquadController,
     observerController,
-    resourceDetector
+    resourceDetector,
+    boostPowerController
 } = require('overlord');
 
 var {
@@ -98,7 +99,8 @@ var {
     fillNuker,
     deleteOrder,
     addObserveRoom,
-    deleteRole
+    deleteRole,
+    removeObserveRoom
 } = require('utils');
 
 const profiler = require('screeps-profiler');
@@ -337,3 +339,4 @@ global.G_fillNuker = fillNuker;
 global.G_deleteOrder = deleteOrder;
 global.G_addObserveRoom = addObserveRoom;
 global.G_deleteRole = deleteRole;
+global.G_removeObserveRoom = removeObserveRoom;

@@ -1,4 +1,7 @@
-var {upgradeController} = require('utils');
+var {
+    upgradeController,
+    getStructureByFlag
+} = require('utils');
 
 var extender = {
     // @ts-ignore
@@ -30,6 +33,13 @@ var extender = {
                 if (target) {
                     creep.memory.working_source = target.id;
                 }
+            }
+
+            let flag = Game.flags[`container ${creep.memory.extraInfo.working_location} ${creep.room.name}`];
+            let target = getStructureByFlag(flag, STRUCTURE_CONTAINER);
+            if (target && target.store[RESOURCE_ENERGY] > 500) {
+                creep.exWithdraw(target, RESOURCE_ENERGY);
+                return;
             }
 
             let resource = Game.getObjectById(creep.memory.working_source);

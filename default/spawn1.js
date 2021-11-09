@@ -129,7 +129,9 @@ var spawn1 = {
                 upgrader: {work: 6, move: 1, carry: 1},
                 repairer: {work: 3, carry: 3, move: 3},
                 builder: {work: 4, carry: 4, move: 4},
-                outputer: {carry: 6, move: 3}
+                outputer: {carry: 6, move: 3},
+                harvest_linker: {work: 7, carry: 1, move: 1},
+                center_transfer: {carry: 8, move: 1},
             },
             E35S52: {
                 harvester: {work: 5, move: 1},
@@ -138,7 +140,20 @@ var spawn1 = {
                 upgrader: {work: 5, move: 1, carry: 1},
                 repairer: {work: 2, carry: 2, move: 2},
                 builder: {work: 2, carry: 2, move: 2},
-                outputer: {carry: 6, move: 3}
+                outputer: {carry: 6, move: 3},
+                harvest_linker: {work: 7, carry: 1, move: 1},
+                center_transfer: {carry: 8, move: 1},
+            },
+            E44S59: {
+                harvester: {work: 5, move: 1},
+                worker: {work: 1, carry: 1, move: 1},
+                transfer: {carry: 8, move: 4},
+                upgrader: {work: 5, move: 1, carry: 1},
+                repairer: {work: 2, carry: 2, move: 2},
+                builder: {work: 3, carry: 3, move: 3},
+                outputer: {carry: 6, move: 3},
+                harvest_linker: {work: 7, carry: 1, move: 1},
+                center_transfer: {carry: 8, move: 1},
             },
             test: {
                 attacker: {move: 2},

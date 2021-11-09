@@ -1804,7 +1804,7 @@ function powerSquadController() {
         if (!room) {
             continue;
         }
-        if (squad.stage == 'done' && Game.time - squad.starttime > 3000) {
+        if ((squad.stage == 'done' && Game.time - squad.starttime > 3000) || (Game.time - squad.starttime > 5000)) {
             let flag =  Game.flags[`${squad.powerbank}`];
             if (flag) {
                 flag.remove()
@@ -1909,7 +1909,7 @@ function resourceDetector(room) {
                 if (powerbank.ticksToDecay < 2000) {
                     continue;
                 }
-                if (Memory.powerSquad[powerbank.id] == undefined && Memory.powerSquadNum[room.name] < 2) {
+                if (Memory.powerSquad[powerbank.id] == undefined && Memory.powerSquadNum[room.name] < 3) {
                     Memory.powerSquadNum[room.name]++;
                     Memory.powerSquad[powerbank.id] = {
                         starttime: Game.time,
@@ -1941,7 +1941,8 @@ module.exports = {
     dailyMaintainController,
     observerController,
     powerSquadController,
-    resourceDetector
+    resourceDetector,
+    boostPowerController
 };
 
 // let task = {

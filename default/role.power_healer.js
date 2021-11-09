@@ -17,12 +17,15 @@ var power_healer = {
             return;
         }
 
-        creep.memory.standed = true;
+        creep.memory.crossLevel = 11;
 
         let powerbank = Game.getObjectById(creep.memory.extraInfo.powerbank);
 
         if (!powerbank) {
+            creep.memory.standed = false;
             return;
+        } else {
+            creep.memory.standed = true;
         }
         if (!creep.memory.attacker) {
             if (!creep.pos.inRangeTo(powerbank, 3)) {

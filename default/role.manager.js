@@ -45,6 +45,10 @@ var manager = {
                     room.memory.task_queue.shift();
                     creep.memory.stage = 'check';
                     console.log(`${creep.name} mission acquired, transfer ${creep.memory.extraInfo.task.amount} ${creep.memory.extraInfo.task.type}`);
+                    let from = Game.getObjectById(creep.memory.extraInfo.task.from);
+                    if (from) {
+                        creep.goTo(from.pos, 1);
+                    }
                 }
             } else {
                 creep.memory.stage = 'check';
@@ -92,7 +96,10 @@ var manager = {
         if (creep.memory.stage == 'withdraw' && creep.store.getUsedCapacity() != 0) {
             creep.memory.stage = 'transfer';
             creep.memory.amount = creep.store.getUsedCapacity();
-            return;
+            let target = Game.getObjectById(creep.memory.extraInfo.task.to);
+            if (target && !creep.pos.inRangeTo(target, 1)) {
+                creep.goTo(target.pos, 1);
+            }
         }
 
         if (creep.memory.stage == 'withdraw' && creep.store.getUsedCapacity() == 0) {
@@ -114,10 +121,14 @@ var manager = {
             } else if (ret == ERR_NOT_ENOUGH_RESOURCES || ret == ERR_INVALID_TARGET) {
                 creep.memory.extraInfo.task = undefined;
                 creep.memory.stage = 'wait';
-                return;
             } else if (ret == ERR_INVALID_ARGS){
                 creep.memory.extraInfo.task = undefined;
                 creep.memory.stage = 'wait';
+            } else if (ret == OK) {
+                let target = Game.getObjectById(creep.memory.extraInfo.task.to);
+                if (target && !creep.pos.inRangeTo(target, 1)) {
+                    creep.goTo(target.pos, 1);
+                }
             }
             return;
         }
@@ -134,6 +145,26 @@ var manager = {
             } else {
                 creep.memory.stage = 'check';
                 creep.say('continue');
+
+                let target = Game.getObjectById(creep.memory.extraInfo.task.from);
+                if (target) {
+                    if (creep.pos.inRangeTo(target, 1)) {
+                        let amount = Math.min(creep.store.getFreeCapacity(), creep.memory.extraInfo.task.amount);
+                        let ret = creep.withdraw(target, creep.memory.extraInfo.task.type, amount);
+                        if (ret == OK) {
+                            let to = Game.getObjectById(creep.memory.extraInfo.task.to);
+                            if (to) {
+                                creep.goTo(to.pos, 1);
+                            }
+                        } else if (ret == ERR_NOT_ENOUGH_RESOURCES || ret == ERR_INVALID_ARGS || ret == ERR_INVALID_TARGET) {
+                            creep.memory.extraInfo.task = undefined;
+                            creep.memory.stage = 'wait';
+                        }
+                    } else {
+                        creep.goTo(target.pos, 1);
+                    }
+                }
+                
             }
             return;
         }
@@ -148,6 +179,11 @@ var manager = {
                 console.log(`${creep.name} abort the mission due to the lack of space`);
                 creep.memory.extraInfo.task = undefined;
                 creep.memory.stage = 'wait';
+            } else if (ret == OK) {
+                let target = Game.getObjectById(creep.memory.extraInfo.task.from);
+                if (target) {
+                    creep.goTo(target.pos, 1);
+                }
             }
             return;
         }

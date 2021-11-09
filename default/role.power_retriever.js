@@ -4,6 +4,8 @@ var power_retriever = {
             creep.boostMe();
             return;
         }
+        creep.memory.crossLevel = 13;
+        creep.memory.standed = true;
 
         if (!creep.memory.transfer && creep.store.getFreeCapacity() == 0) {
             creep.memory.transfered = true;
