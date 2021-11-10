@@ -85,7 +85,7 @@ var spawn1 = {
                 scout: {move: 1},
                 controller: {claim: 1, move: 1},
                 extender: {work: 15, carry: 20, move: 15}, 
-                harvest_linker: {work: 10, carry: 1, move: 5},
+                harvest_linker: {work: 10, carry: 2, move: 5},
                 center_transfer: {carry: 16, move: 1},
                 manager: {carry: 20, move: 10},
                 miner: {work: 10, carry: 10, move: 10},

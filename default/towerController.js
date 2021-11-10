@@ -82,6 +82,17 @@ function towerController(room) {
         room.memory.towerController.structure = undefined;
     }
 
+    let creep = room.find(FIND_MY_CREEPS, {
+        filter: (c) => {
+            return c.hits < c.hitsMax;
+        }
+    });
+    if (creep.length) {
+        for (let tower of towers) {
+            tower.heal(creep[0]);
+        }
+    }
+
 }
 
 module.exports = {

@@ -20,7 +20,11 @@ var power_creep = {
     callback: {
         [PWR_REGEN_SOURCE]: function(room, args) {
             room.memory.powerCreepController[PWR_REGEN_SOURCE].sources[args.id].missionSended = false;
-            console.log(`doing power creep callback ${args.id}`);
+            console.log(`doing power creep regen source callback ${args.id}`);
+        },
+        [PWR_OPERATE_LAB]: function(room, args) {
+            room.memory.powerCreepController[PWR_OPERATE_LAB].labs[args.id].missionSended = false;
+            console.log(`doing power creep operate lab callback ${args.id}`);
         }
     },
     /**
@@ -111,7 +115,7 @@ var power_creep = {
 
             let target = Game.getObjectById(creep.memory.task.target);
             if (target) {
-                if (creep.pos.inRangeTo(target, 2)) {
+                if (creep.pos.inRangeTo(target, 3)) {
                     let ret = creep.usePower(creep.memory.task.type, target);
                     if (ret == OK) {
                         if (creep.memory.task.callback) {
@@ -123,7 +127,7 @@ var power_creep = {
                         console.log(`failed to operate ${ret}`);
                     }
                 } else {
-                    creep.goTo(target.pos, 2);
+                    creep.goTo(target.pos, 3);
                 }
             }
         }
