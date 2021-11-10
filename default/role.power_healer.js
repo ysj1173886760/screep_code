@@ -11,6 +11,9 @@ var power_healer = {
         if (!flag) {
             return;
         }
+        if (creep.hits < creep.hitsMax) {
+            creep.heal(creep);
+        }
 
         if (creep.room.name != flag.pos.roomName) {
             creep.goTo(new RoomPosition(25, 25, flag.pos.roomName), 20);

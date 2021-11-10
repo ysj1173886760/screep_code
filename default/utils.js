@@ -457,6 +457,24 @@ function deleteRole(room, role) {
     }
 }
 
+function setPowerCreep(roomname, value) {
+    let room = Game.rooms[roomname];
+    if (!room) {
+        return;
+    }
+
+    if (room.controller.level < 8) {
+        return;
+    }
+
+    if (!room.memory.powerCreepController) {
+        return;
+    }
+
+    room.memory.powerCreepController.enabled = value;
+    console.log('setting power creep');
+}
+
 module.exports = {
     getStructureByFlag,
     getConstructionSite,
@@ -497,5 +515,6 @@ module.exports = {
     deleteOrder,
     addObserveRoom,
     deleteRole,
-    removeObserveRoom
+    removeObserveRoom,
+    setPowerCreep
 }

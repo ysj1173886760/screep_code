@@ -14,20 +14,26 @@ function linkWork(room) {
     let from1 = getStructureByFlag(flag1, STRUCTURE_LINK);
     let from2 = getStructureByFlag(flag2, STRUCTURE_LINK);
     let upgrade_link = getStructureByFlag(upgrade_link_flag, STRUCTURE_LINK);
+    let to_target = false;
+    let to_upgrade = false;
 
     if (from1 && from1.cooldown == 0 && from1.store[RESOURCE_ENERGY] >= 800) {
         if (upgrade_link && upgrade_link.store[RESOURCE_ENERGY] == 0) {
             from1.transferEnergy(upgrade_link);
+            to_upgrade = true;
         } else if (target && target.store[RESOURCE_ENERGY] == 0) {
             from1.transferEnergy(target);
+            to_target = true;
         }
     }
 
     if (from2 && from2.cooldown == 0 && from2.store[RESOURCE_ENERGY] >= 800) {
-        if (upgrade_link && upgrade_link.store[RESOURCE_ENERGY] == 0) {
+        if (upgrade_link && upgrade_link.store[RESOURCE_ENERGY] == 0 && !to_upgrade) {
             from2.transferEnergy(upgrade_link);
-        } else if (target && target.store[RESOURCE_ENERGY] == 0) {
+            to_upgrade = true;
+        } else if (target && target.store[RESOURCE_ENERGY] == 0 && !to_target) {
             from2.transferEnergy(target);
+            to_target = true;
         }
     }
 
@@ -43,10 +49,12 @@ function linkWork(room) {
         }
 
         if (link.cooldown == 0 && link.store[RESOURCE_ENERGY] >= 400) {
-            if (target && target.store[RESOURCE_ENERGY] == 0) {
+            if (target && target.store[RESOURCE_ENERGY] == 0 && !to_target) {
                 link.transferEnergy(target);
-            } else if (upgrade_link && upgrade_link.store[RESOURCE_ENERGY] == 0) {
+                to_target = true;
+            } else if (upgrade_link && upgrade_link.store[RESOURCE_ENERGY] == 0 && !to_upgrade) {
                 link.transferEnergy(upgrade_link);
+                to_upgrade = true;
             }
         }
     }

@@ -1,4 +1,28 @@
 var power_creep = {
+    costTable: {
+        [PWR_GENERATE_OPS]: 0,
+        [PWR_OPERATE_SPAWN]: 100,
+        [PWR_OPERATE_TOWER]: 10,
+        [PWR_OPERATE_STORAGE]: 100,
+        [PWR_OPERATE_LAB]: 10,
+        [PWR_OPERATE_EXTENSION]: 2,
+        [PWR_OPERATE_OBSERVER]: 10,
+        [PWR_OPERATE_TERMINAL]: 100,
+        [PWR_DISRUPT_SPAWN]: 10,
+        [PWR_DISRUPT_TOWER]: 10,
+        [PWR_DISRUPT_SOURCE]: 100,
+        [PWR_REGEN_SOURCE]: 0,
+        [PWR_REGEN_MINERAL]: 0,
+        [PWR_OPERATE_POWER]: 200,
+        [PWR_OPERATE_CONTROLLER]: 200,
+        [PWR_OPERATE_FACTORY]: 100,
+    },
+    callback: {
+        [PWR_REGEN_SOURCE]: function(room, args) {
+            room.memory.powerCreepController[PWR_REGEN_SOURCE].sources[args.id].missionSended = false;
+            console.log(`doing power creep callback ${args.id}`);
+        }
+    },
     /**
      * 
      * @param {PowerCreep} creep 
@@ -40,13 +64,66 @@ var power_creep = {
             return;
         }
 
+        if (creep.powers[PWR_GENERATE_OPS] && 
+            creep.powers[PWR_GENERATE_OPS].cooldown == 0 && 
+            creep.store.getFreeCapacity(RESOURCE_OPS) != 0) {
+            creep.usePower(PWR_GENERATE_OPS);
+            return;
+        }
+
         if (creep.memory.stage == undefined || creep.memory.stage == 'wait') {
             creep.memory.stage = 'wait';
             if (creep.store.getFreeCapacity(RESOURCE_OPS) == 0) {
                 creep.exTransfer(creep.room.storage, RESOURCE_OPS);
-            } else {
-                if (creep.powers[PWR_GENERATE_OPS] && creep.powers[PWR_GENERATE_OPS].cooldown == 0) {
-                    creep.usePower(PWR_GENERATE_OPS);
+            }
+
+            if (!creep.room.memory.powerCreepController || creep.room.memory.powerCreepController.enabled == false) {
+                return;
+            }
+
+            for (let power_id in creep.powers) {
+                let power = creep.powers[power_id];
+                if (power.cooldown > 0) {
+                    continue;
+                }
+
+                if (creep.room.memory.powerCreepController[power_id] == undefined) {
+                    continue;
+                }
+
+                if (creep.room.memory.powerCreepController[power_id].tasks && 
+                    creep.room.memory.powerCreepController[power_id].tasks.length > 0) {
+                    creep.memory.task = creep.room.memory.powerCreepController[power_id].tasks[0];
+                    creep.room.memory.powerCreepController[power_id].tasks.shift();
+                    creep.memory.stage = 'work';
+                    console.log(`POWERCREEP: accept mission, using ${creep.memory.task.type} to ${creep.memory.task.target}`);
+                    break;
+                }
+            }
+        }
+
+        if (creep.memory.stage == 'work') {
+            let cost = this.costTable[creep.memory.task.type];
+            if (creep.store[RESOURCE_OPS] < cost) {
+                creep.exWithdraw(creep.room.storage, RESOURCE_OPS);
+                return;
+            }
+
+            let target = Game.getObjectById(creep.memory.task.target);
+            if (target) {
+                if (creep.pos.inRangeTo(target, 2)) {
+                    let ret = creep.usePower(creep.memory.task.type, target);
+                    if (ret == OK) {
+                        if (creep.memory.task.callback) {
+                            this.callback[creep.memory.task.type](creep.room, creep.memory.task.callback.args);
+                        }
+                        creep.memory.task = undefined;
+                        creep.memory.stage = 'wait';
+                    } else {
+                        console.log(`failed to operate ${ret}`);
+                    }
+                } else {
+                    creep.goTo(target.pos, 2);
                 }
             }
         }

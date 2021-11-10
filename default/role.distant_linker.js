@@ -20,7 +20,8 @@ var distant_linker = {
 
             let target = creep.pos.findInRange(FIND_STRUCTURES, 5, {
                 filter: (s) => {
-                    return s.structureType == STRUCTURE_LINK;
+                    return s.structureType == STRUCTURE_LINK &&
+                            s.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
                 }
             });
             if (target.length) {

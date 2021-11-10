@@ -100,8 +100,13 @@ var {
     deleteOrder,
     addObserveRoom,
     deleteRole,
-    removeObserveRoom
+    removeObserveRoom,
+    setPowerCreep
 } = require('utils');
+
+var {
+    powerCreepController
+} = require('powerCreepController');
 
 const profiler = require('screeps-profiler');
 // profiler.enable();
@@ -210,6 +215,7 @@ module.exports.loop = function() {
             powerSquadController(room);
             resourceDetector(room);
             towerController(room);
+            powerCreepController(room);
         }
     }
     
@@ -340,3 +346,4 @@ global.G_deleteOrder = deleteOrder;
 global.G_addObserveRoom = addObserveRoom;
 global.G_deleteRole = deleteRole;
 global.G_removeObserveRoom = removeObserveRoom;
+global.G_setPowerCreep = setPowerCreep;
