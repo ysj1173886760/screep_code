@@ -64,6 +64,12 @@ var manager = {
         if (creep.memory.stage == 'check') {
             let from = Game.getObjectById(creep.memory.extraInfo.task.from);
             let to = Game.getObjectById(creep.memory.extraInfo.task.to);
+            if (!from || !to) {
+                console.log(`${creep.room.name} abort mission due to invalid target`);
+                creep.memory.extraInfo.task = undefined;
+                creep.memory.stage = 'wait';
+                return;
+            }
             if (from.store[creep.memory.extraInfo.task.type] < creep.memory.extraInfo.task.amount) {
                 console.log(`${creep.room.name} abort mission due to lack of source`);
                 creep.memory.extraInfo.task = undefined;

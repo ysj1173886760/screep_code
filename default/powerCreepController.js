@@ -50,10 +50,10 @@ function regenSource(room) {
     for (let id in room.memory.powerCreepController[PWR_REGEN_SOURCE].sources) {
         let source = Game.getObjectById(id);
         if (!source) {
-            return;
+            continue;
         }
 
-        if ((!source.effects || !source.effects.find((e) => (e.effect == PWR_REGEN_SOURCE))) && 
+        if ((!source.effects || !source.effects.find((e) => (e.effect == PWR_REGEN_SOURCE && e.ticksRemaining > 30))) && 
             room.memory.powerCreepController[PWR_REGEN_SOURCE].sources[id].missionSended == false) {
             // send mission
             room.memory.powerCreepController[PWR_REGEN_SOURCE].tasks.push({
@@ -92,16 +92,20 @@ function operateLab(room) {
     }
     room.memory.powerCreepController[PWR_OPERATE_LAB].countdown = Game.time;
 
+    if (room.memory.labController.enabled == false) {
+        return;
+    }
+
     for (let id in room.memory.powerCreepController[PWR_OPERATE_LAB].labs) {
         let lab = Game.getObjectById(id);
         if (!lab) {
-            return;
+            continue;
         }
         if (room.memory.labController.boostControl[id].enabled) {
-            return;
+            continue;
         }
 
-        if ((!lab.effects || !lab.effects.find((e) => (e.effect == PWR_OPERATE_LAB))) && 
+        if ((!lab.effects || !lab.effects.find((e) => (e.effect == PWR_OPERATE_LAB && e.ticksRemaining > 30))) && 
             room.memory.powerCreepController[PWR_OPERATE_LAB].labs[id].missionSended == false) {
             // send mission
             room.memory.powerCreepController[PWR_OPERATE_LAB].tasks.push({
