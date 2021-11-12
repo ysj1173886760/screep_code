@@ -1645,12 +1645,43 @@ function powerSpawnController(room) {
         console.log(`POWERSPAWN: sending mission`)
         for (let resourceType of [RESOURCE_ENERGY, RESOURCE_POWER]) {
             if (powerSpawn.store.getFreeCapacity(resourceType) > 0) {
-                room.memory.task_queue.push({
-                    from: storage.id,
-                    to: powerSpawn.id,
-                    type: resourceType,
-                    amount: powerSpawn.store.getFreeCapacity(resourceType)
-                });
+                let task = {}
+                if (resourceType == RESOURCE_ENERGY) {
+                    task = {
+                        from: storage.id,
+                        to: powerSpawn.id,
+                        type: RESOURCE_ENERGY,
+                        amount: powerSpawn.store.getFreeCapacity(RESOURCE_ENERGY),
+                        callback: {
+                            name: 'powerSpawnCallback',
+                            args: {
+                                type: 'requestEnergy'
+                            }
+                        }
+                    };
+                    room.memory.powerSpawnController.requestEnergy = true;
+                } else {
+                    task = {
+                        from: storage.id,
+                        to: powerSpawn.id,
+                        type: RESOURCE_POWER,
+                        amount: powerSpawn.store.getFreeCapacity(RESOURCE_POWER),
+                        callback: {
+                            name: 'powerSpawnCallback',
+                            args: {
+                                type: 'requestPower'
+                            }
+                        }
+                    };
+                    room.memory.powerSpawnController.requestPower = true;
+                }
+
+                let flag = Game.flags[`center ${room.name}`];
+                if (powerSpawn.pos.isNearTo(flag)) {
+                    room.memory.center_task_queue.push(task);
+                } else {
+                    room.memory.task_queue.push(task);
+                }
             }
         }
 
@@ -1680,6 +1711,50 @@ function powerSpawnController(room) {
         }
 
         let res = powerSpawn.processPower();
+        let storage = room.storage;
+        if (!room.memory.powerSpawnController.requestEnergy && powerSpawn.store[RESOURCE_ENERGY] < 2500 && storage.store[RESOURCE_ENERGY] > 5000) {
+            let task = {
+                from: storage.id,
+                to: powerSpawn.id,
+                type: RESOURCE_ENERGY,
+                amount: powerSpawn.store.getFreeCapacity(RESOURCE_ENERGY),
+                callback: {
+                    name: 'powerSpawnCallback',
+                    args: {
+                        type: 'requestEnergy'
+                    }
+                }
+            };
+            let flag = Game.flags[`center ${room.name}`];
+            if (powerSpawn.pos.isNearTo(flag)) {
+                room.memory.center_task_queue.push(task);
+            } else {
+                room.memory.task_queue.push(task);
+            }
+            room.memory.powerSpawnController.requestEnergy = true;
+        }
+        if (!room.memory.powerSpawnController.requestPower && powerSpawn.store[RESOURCE_POWER] < 50 && storage.store[RESOURCE_POWER] > 100) {
+            let task = {
+                from: storage.id,
+                to: powerSpawn.id,
+                type: RESOURCE_POWER,
+                amount: powerSpawn.store.getFreeCapacity(RESOURCE_POWER),
+                callback: {
+                    name: 'powerSpawnCallback',
+                    args: {
+                        type: 'requestPower'
+                    }
+                }
+            };
+            let flag = Game.flags[`center ${room.name}`];
+            if (powerSpawn.pos.isNearTo(flag)) {
+                room.memory.center_task_queue.push(task);
+            } else {
+                room.memory.task_queue.push(task);
+            }
+            room.memory.powerSpawnController.requestPower = true;
+        }
+
         if (res == ERR_NOT_ENOUGH_RESOURCES) {
             room.memory.powerSpawnController.stage = 'check';
         }

@@ -34,7 +34,7 @@ var power_retriever = {
                 return;
             }
             if (creep.room.name != flag.pos.roomName) {
-                creep.goTo(new RoomPosition(25, 25, flag.pos.roomName), 20);
+                creep.goTo(new RoomPosition(25, 25, flag.pos.roomName));
                 return;
             }
 

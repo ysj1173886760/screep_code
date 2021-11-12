@@ -2,6 +2,21 @@ const { transform } = require('lodash');
 var {getStructureByFlag} = require('utils');
 
 module.exports = {
+    callback: {
+        powerSpawnCallback: function(creep, args) {
+            if (!args) {
+                return;
+            }
+
+            let room = creep.room;
+            if (!room.memory.powerSpawnController) {
+                return;
+            }
+
+            room.memory.powerSpawnController[args.type] = false;
+            console.log(`doing powerSpawn callback ${args.type}`);
+        }
+    },
     run: function(creep) {
         if (creep.memory.transfer && creep.store[RESOURCE_ENERGY] == 0) {
             creep.memory.transfer = false;
@@ -59,6 +74,9 @@ module.exports = {
         if (creep.memory.stage == 'transfer' && creep.store.getUsedCapacity() == 0) {
             creep.memory.extraInfo.task.amount -= creep.memory.amount;
             if (creep.memory.extraInfo.task.amount <= 0) {
+                if (creep.memory.extraInfo.task.callback != undefined) {
+                    this.callback[creep.memory.extraInfo.task.callback.name](creep, creep.memory.extraInfo.task.callback.args);
+                }
                 creep.memory.extraInfo.task = undefined;
                 creep.memory.stage = 'wait';
                 creep.say('complete');

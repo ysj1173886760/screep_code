@@ -122,6 +122,11 @@ var maintainer = {
                 return;
             }
 
+            if (creep.ticksToLive < 10) {
+                creep.exTransferAll(creep.room.storage);
+                creep.suicide();
+            }
+
         } else {
             let target = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
             if (target.length > 0) {
@@ -137,6 +142,7 @@ var maintainer = {
             if (creep.room.storage) {
                 creep.exWithdraw(creep.room.storage, RESOURCE_ENERGY);
             }
+
         }
     }
 };

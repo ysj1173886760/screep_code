@@ -11,7 +11,20 @@ var manager = {
             }
 
             room.memory.labController.missionControl[args.id] = false;
-            console.log(`doing callback ${args.id}`);
+            console.log(`doing lab callback ${args.id}`);
+        },
+        powerSpawnCallback: function(creep, args) {
+            if (!args) {
+                return;
+            }
+
+            let room = creep.room;
+            if (!room.memory.powerSpawnController) {
+                return;
+            }
+
+            room.memory.powerSpawnController[args.type] = false;
+            console.log(`doing powerSpawn callback ${args.type}`);
         }
     },
     run: function(creep) {
