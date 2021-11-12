@@ -396,7 +396,7 @@ function addByPassRoom(roomname) {
 function removeByPassRoom(roomname) {
     let index = Memory.bypassRooms.indexOf(roomname);
     if (index != -1) {
-        Memory.byPassRooms.splice(index, 1);
+        Memory.bypassRooms.splice(index, 1);
         console.log('delete complete');
     }
 }

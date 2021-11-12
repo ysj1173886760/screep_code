@@ -132,6 +132,7 @@ var spawn1 = {
                 outputer: {carry: 10, move: 5},
                 harvest_linker: {work: 7, carry: 1, move: 1},
                 center_transfer: {carry: 8, move: 1},
+                miner: {work: 5, carry: 5, move: 5},
             },
             E35S52: {
                 harvester: {work: 5, move: 1},
@@ -154,6 +155,7 @@ var spawn1 = {
                 outputer: {carry: 10, move: 5},
                 harvest_linker: {work: 7, carry: 1, move: 1},
                 center_transfer: {carry: 8, move: 1},
+                miner: {work: 5, carry: 5, move: 5},
             },
             test: {
                 attacker: {move: 2},

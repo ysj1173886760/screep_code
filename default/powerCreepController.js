@@ -19,6 +19,7 @@ function powerCreepController(room) {
 
     regenSource(room);
     operateLab(room);
+    operatePowerSpawn(room);
 
 }
 
@@ -118,6 +119,58 @@ function operateLab(room) {
                 }
             });
             room.memory.powerCreepController[PWR_OPERATE_LAB].labs[id].missionSended = true;
+        }
+    }
+}
+
+function operatePowerSpawn(room) {
+    if (room.memory.powerCreepController[PWR_OPERATE_POWER] == undefined) {
+        let powerSpawn = room.find(FIND_MY_STRUCTURES, {
+            filter: (s) => {
+                return s.structureType == STRUCTURE_POWER_SPAWN;
+            }
+        });
+        
+        let entrys = {};
+        if (powerSpawn.length) {
+            entrys[powerSpawn[0].id] = {
+                missionSended: false
+            }
+        }
+        room.memory.powerCreepController[PWR_OPERATE_POWER] = {
+            powerSpawns: entrys,
+            tasks: [],
+            countdown: Game.time
+        }
+    }
+
+    if (!room.memory.powerCreepController[PWR_OPERATE_POWER].countdown) {
+        room.memory.powerCreepController[PWR_OPERATE_POWER].countdown = Game.time;
+    }
+    if (Game.time - room.memory.powerCreepController[PWR_OPERATE_POWER].countdown < 10) {
+        return;
+    }
+    room.memory.powerCreepController[PWR_OPERATE_POWER].countdown = Game.time;
+
+    for (let id in room.memory.powerCreepController[PWR_OPERATE_POWER].powerSpawns) {
+        let powerSpawn = Game.getObjectById(id);
+        if (!powerSpawn) {
+            continue;
+        }
+
+        if ((!powerSpawn.effects || !powerSpawn.effects.find((e) => (e.effect == PWR_OPERATE_POWER && e.ticksRemaining > 30))) && 
+            room.memory.powerCreepController[PWR_OPERATE_POWER].powerSpawns[id].missionSended == false) {
+            // send mission
+            room.memory.powerCreepController[PWR_OPERATE_POWER].tasks.push({
+                target: id,
+                type: PWR_OPERATE_POWER,
+                callback: {
+                    args: {
+                        id: id
+                    }
+                }
+            });
+            room.memory.powerCreepController[PWR_OPERATE_POWER].powerSpawns[id].missionSended = true;
         }
     }
 }

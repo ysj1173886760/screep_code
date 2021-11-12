@@ -1755,7 +1755,9 @@ function powerSpawnController(room) {
             room.memory.powerSpawnController.requestPower = true;
         }
 
-        if (res == ERR_NOT_ENOUGH_RESOURCES) {
+        if (res == ERR_NOT_ENOUGH_RESOURCES && 
+            !room.memory.powerSpawnController.requestPower && 
+            !room.memory.powerSpawnController.requestEnergy) {
             room.memory.powerSpawnController.stage = 'check';
         }
     }
