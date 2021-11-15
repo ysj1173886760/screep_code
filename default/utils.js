@@ -314,6 +314,16 @@ function setBoostUpgrade(roomname, value) {
     return true;
 }
 
+function setBoostPower(roomname, value) {
+    let room = Game.rooms[roomname];
+    if (!room) {
+        return;
+    }
+
+    room.memory.boostPower.enable = value;
+    return true;
+}
+
 function setDailyMaintain(roomname, value) {
     let room = Game.rooms[roomname];
     if (!room) {
@@ -516,5 +526,6 @@ module.exports = {
     addObserveRoom,
     deleteRole,
     removeObserveRoom,
-    setPowerCreep
+    setPowerCreep,
+    setBoostPower
 }

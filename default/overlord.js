@@ -223,7 +223,7 @@ function boostPowerController(room) {
         }
         
         let orders = Game.market.getAllOrders({type: ORDER_SELL, resourceType: RESOURCE_POWER});
-        orders.sort((a, b) => (b.price - a.price));
+        orders.sort((a, b) => (a.price - b.price));
 
         if (orders.length) {
             let amount = Math.min(orders[0].amount, 3000);
@@ -1205,7 +1205,8 @@ function interRoomTransmissionController(room) {
 
     if (task.stage == 'check') {
         if (task.type == 'energy') {
-            if (terminal.store[task.type] > task.amount * 2) {
+            let cost = Game.market.calcTransactionCost(task.amount, task.from, task.to)
+            if (terminal.store[task.type] > task.amount + cost) {
                 let ret = terminal.send(task.type, task.amount, task.to);
                 if (ret == OK) {
                     console.log(`send ${task.amount} ${task.type} from ${task.from} to ${task.to} success`);
@@ -1221,7 +1222,7 @@ function interRoomTransmissionController(room) {
                     from: storage.id,
                     to: terminal.id,
                     type: task.type,
-                    amount: task.amount * 2 - terminal.store[task.type]
+                    amount: task.amount + cost - terminal.store[task.type]
                 });
                 room.memory.current_transmission_task.stage = 'wait';
                 return;
@@ -1270,7 +1271,8 @@ function interRoomTransmissionController(room) {
 
     if (task.stage == 'wait') {
         if (task.type == 'energy') {
-            if (terminal.store[task.type] >= task.amount * 2) {
+            let cost = Game.market.calcTransactionCost(task.amount, task.from, task.to)
+            if (terminal.store[task.type] >= task.amount + cost) {
                 let ret = terminal.send(task.type, task.amount, task.to);
                 if (ret == OK) {
                     console.log(`send ${task.amount} ${task.type} from ${task.from} to ${task.to} success`);
@@ -1333,7 +1335,7 @@ function terminalController(room) {
         return;
     }
 
-    if (terminal.store[RESOURCE_ENERGY] > 50000) {
+    if (terminal.store[RESOURCE_ENERGY] > 50000 && storage.store.getFreeCapacity() > 50000) {
         let amount = Math.min(terminal.store[RESOURCE_ENERGY] - 50000, maxTransferAmount);
         room.memory.center_task_queue.push({
             from: terminal.id,
@@ -1986,7 +1988,7 @@ function resourceDetector(room) {
                 if (powerbank.ticksToDecay < 2000) {
                     continue;
                 }
-                if (Memory.powerSquad[powerbank.id] == undefined && Memory.powerSquadNum[room.name] < 3) {
+                if (Memory.powerSquad[powerbank.id] == undefined && Memory.powerSquadNum[room.name] < 2) {
                     Memory.powerSquadNum[room.name]++;
                     Memory.powerSquad[powerbank.id] = {
                         starttime: Game.time,

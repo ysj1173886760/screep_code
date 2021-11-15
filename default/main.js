@@ -101,7 +101,8 @@ var {
     addObserveRoom,
     deleteRole,
     removeObserveRoom,
-    setPowerCreep
+    setPowerCreep,
+    setBoostPower
 } = require('utils');
 
 var {
@@ -216,6 +217,7 @@ module.exports.loop = function() {
             resourceDetector(room);
             towerController(room);
             powerCreepController(room);
+            boostPowerController(room);
         }
     }
     
@@ -347,3 +349,4 @@ global.G_addObserveRoom = addObserveRoom;
 global.G_deleteRole = deleteRole;
 global.G_removeObserveRoom = removeObserveRoom;
 global.G_setPowerCreep = setPowerCreep;
+global.G_setBoostPower = setBoostPower;

@@ -102,6 +102,11 @@ var power_creep = {
                 if (creep.room.memory.powerCreepController[power_id].tasks && 
                     creep.room.memory.powerCreepController[power_id].tasks.length > 0) {
                     creep.memory.task = creep.room.memory.powerCreepController[power_id].tasks[0];
+                    let cost = this.costTable[creep.memory.task.type];
+                    if (creep.store[RESOURCE_OPS] < cost && creep.room.storage.store[RESOURCE_OPS] < cost) {
+                        creep.memory.task = undefined;
+                        continue;
+                    }
                     creep.room.memory.powerCreepController[power_id].tasks.shift();
                     creep.memory.stage = 'work';
                     console.log(`POWERCREEP: accept mission, using ${creep.memory.task.type} to ${creep.memory.task.target}`);

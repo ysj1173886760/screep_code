@@ -54,13 +54,22 @@ module.exports = {
             return;
         }
         if (creep.memory.transferLink) {
-            creep.transfer(creep.room.storage, RESOURCE_ENERGY);
+            if (creep.room.storage.store.getFreeCapacity() == 0) {
+                creep.transfer(creep.room.terminal, RESOURCE_ENERGY)
+            } else {
+                creep.transfer(creep.room.storage, RESOURCE_ENERGY);
+            }
+            
             creep.memory.transferLink = false;
             return;
         }
 
         if (creep.store.getUsedCapacity() != 0 && creep.memory.extraInfo.task == undefined) {
-            creep.exTransferAll(creep.room.storage);
+            if (creep.room.storage.store.getFreeCapacity() == 0) {
+                creep.exTransferAll(creep.room.terminal)
+            } else {
+                creep.exTransferAll(creep.room.storage);
+            }
             creep.say('transfer');
             return;
         }
