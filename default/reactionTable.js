@@ -171,7 +171,71 @@ var reactionTable = {
             {type: 'battery', amount: 50},
         ],
         amount: 500
-    }
+    },
+
+    U: {
+        material: [
+            {type: 'utrium_bar', amount: 100},
+            {type: 'energy', amount: 200},
+        ],
+        amount: 500
+    },
+    
+    L: {
+        material: [
+            {type: 'lemergium_bar', amount: 100},
+            {type: 'energy', amount: 200},
+        ],
+        amount: 500
+    },
+
+    Z: {
+        material: [
+            {type: 'zynthium_bar', amount: 100},
+            {type: 'energy', amount: 200},
+        ],
+        amount: 500
+    },
+
+    K: {
+        material: [
+            {type: 'keanium_bar', amount: 100},
+            {type: 'energy', amount: 200},
+        ],
+        amount: 500
+    },
+
+    G: {
+        material: [
+            {type: 'ghodium_bar', amount: 100},
+            {type: 'energy', amount: 200},
+        ],
+        amount: 500
+    },
+
+    O: {
+        material: [
+            {type: 'oxidant', amount: 100},
+            {type: 'energy', amount: 200},
+        ],
+        amount: 500
+    },
+
+    H: {
+        material: [
+            {type: 'reductant', amount: 100},
+            {type: 'energy', amount: 200},
+        ],
+        amount: 500
+    },
+
+    X: {
+        material: [
+            {type: 'purifier', amount: 100},
+            {type: 'energy', amount: 200},
+        ],
+        amount: 500
+    },
 };
 
 module.exports = {
