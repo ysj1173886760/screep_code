@@ -40,6 +40,7 @@ var manager = {
             return;
         }
 
+        creep.memory.crossLevel = 11;
         if (creep.memory.stage == undefined || creep.memory.stage == 'wait') {
             let room = Game.rooms[creep.memory.roomname];
             if (room.memory.task_queue == undefined) {

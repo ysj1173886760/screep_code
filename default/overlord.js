@@ -225,7 +225,7 @@ function boostPowerController(room) {
         let orders = Game.market.getAllOrders({type: ORDER_SELL, resourceType: RESOURCE_POWER});
         orders.sort((a, b) => (a.price - b.price));
 
-        if (orders.length) {
+        if (orders.length && orders[0].price < 50) {
             let amount = Math.min(orders[0].amount, 3000);
             Game.market.deal(orders[0].id, amount, room.name);
             console.log(`${room.name}, buying ${amount} power for ${orders[0].price}`);

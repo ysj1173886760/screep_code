@@ -107,7 +107,8 @@ function operateLab(room) {
         }
 
         if ((!lab.effects || !lab.effects.find((e) => (e.effect == PWR_OPERATE_LAB && e.ticksRemaining > 30))) && 
-            room.memory.powerCreepController[PWR_OPERATE_LAB].labs[id].missionSended == false) {
+            room.memory.powerCreepController[PWR_OPERATE_LAB].labs[id].missionSended == false &&
+            lab.cooldown != 0) {
             // send mission
             room.memory.powerCreepController[PWR_OPERATE_LAB].tasks.push({
                 target: id,
