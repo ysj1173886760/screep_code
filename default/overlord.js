@@ -1207,15 +1207,28 @@ function interRoomTransmissionController(room) {
         if (task.type == 'energy') {
             let cost = Game.market.calcTransactionCost(task.amount, task.from, task.to)
             if (terminal.store[task.type] > task.amount + cost) {
-                let ret = terminal.send(task.type, task.amount, task.to);
-                if (ret == OK) {
-                    console.log(`send ${task.amount} ${task.type} from ${task.from} to ${task.to} success`);
-                    room.memory.current_transmission_task = undefined;
-                    return;
+                if (!task.dealing) {
+                    let ret = terminal.send(task.type, task.amount, task.to);
+                    if (ret == OK) {
+                        console.log(`send ${task.amount} ${task.type} from ${task.from} to ${task.to} success`);
+                        room.memory.current_transmission_task = undefined;
+                        return;
+                    } else {
+                        console.log(`${ret} failed to send ${task.amount} ${task.type} from ${task.from} to ${task.to}`);
+                        room.memory.current_transmission_task = undefined;
+                        return;
+                    }
                 } else {
-                    console.log(`${ret} failed to send ${task.amount} ${task.type} from ${task.from} to ${task.to}`);
-                    room.memory.current_transmission_task = undefined;
-                    return;
+                    let ret = Game.market.deal(task.orderId, task.amount, room.name)
+                    if (ret == OK) {
+                        console.log(`deal ${task.amount} ${task.type} success`);
+                        room.memory.current_transmission_task = undefined;
+                        return;
+                    } else {
+                        console.log(`${ret} failed to deal ${task.amount} ${task.type}`);
+                        room.memory.current_transmission_task = undefined;
+                        return;
+                    }
                 }
             } else {
                 room.memory.center_task_queue.push({
@@ -1228,16 +1241,30 @@ function interRoomTransmissionController(room) {
                 return;
             }
         } else {
-            if (terminal.store[task.type] > task.amount && terminal.store[RESOURCE_ENERGY] > task.amount) {
-                let ret = terminal.send(task.type, task.amount, task.to);
-                if (ret == OK) {
-                    console.log(`send ${task.amount} ${task.type} from ${task.from} to ${task.to} success`);
-                    room.memory.current_transmission_task = undefined;
-                    return;
+            let cost = Game.market.calcTransactionCost(task.amount, task.from, task.to)
+            if (terminal.store[task.type] > task.amount && terminal.store[RESOURCE_ENERGY] > cost) {
+                if (!task.dealing) {
+                    let ret = terminal.send(task.type, task.amount, task.to);
+                    if (ret == OK) {
+                        console.log(`send ${task.amount} ${task.type} from ${task.from} to ${task.to} success`);
+                        room.memory.current_transmission_task = undefined;
+                        return;
+                    } else {
+                        console.log(`${ret} failed to send ${task.amount} ${task.type} from ${task.from} to ${task.to}`);
+                        room.memory.current_transmission_task = undefined;
+                        return;
+                    }
                 } else {
-                    console.log(`${ret} failed to send ${task.amount} ${task.type} from ${task.from} to ${task.to}`);
-                    room.memory.current_transmission_task = undefined;
-                    return;
+                    let ret = Game.market.deal(task.orderId, task.amount, room.name)
+                    if (ret == OK) {
+                        console.log(`deal ${task.amount} ${task.type} success`);
+                        room.memory.current_transmission_task = undefined;
+                        return;
+                    } else {
+                        console.log(`${ret} failed to deal ${task.amount} ${task.type}`);
+                        room.memory.current_transmission_task = undefined;
+                        return;
+                    }
                 }
             } else {
                 if (storage.store[task.type] > task.amount) {
@@ -1255,7 +1282,7 @@ function interRoomTransmissionController(room) {
                             from: storage.id,
                             to: terminal.id,
                             type: RESOURCE_ENERGY,
-                            amount: task.amount - terminal.store[RESOURCE_ENERGY]
+                            amount: cost - terminal.store[RESOURCE_ENERGY]
                         });
                     }
                     room.memory.current_transmission_task.stage = 'wait';
@@ -1273,28 +1300,55 @@ function interRoomTransmissionController(room) {
         if (task.type == 'energy') {
             let cost = Game.market.calcTransactionCost(task.amount, task.from, task.to)
             if (terminal.store[task.type] >= task.amount + cost) {
-                let ret = terminal.send(task.type, task.amount, task.to);
-                if (ret == OK) {
-                    console.log(`send ${task.amount} ${task.type} from ${task.from} to ${task.to} success`);
-                    room.memory.current_transmission_task = undefined;
-                    return;
+                if (!task.dealing) {
+                    let ret = terminal.send(task.type, task.amount, task.to);
+                    if (ret == OK) {
+                        console.log(`send ${task.amount} ${task.type} from ${task.from} to ${task.to} success`);
+                        room.memory.current_transmission_task = undefined;
+                        return;
+                    } else {
+                        console.log(`${ret} failed to send ${task.amount} ${task.type} from ${task.from} to ${task.to}`);
+                        room.memory.current_transmission_task = undefined;
+                        return;
+                    }
                 } else {
-                    console.log(`${ret} failed to send ${task.amount} ${task.type} from ${task.from} to ${task.to}`);
-                    room.memory.current_transmission_task = undefined;
-                    return;
+                    let ret = Game.market.deal(task.orderId, task.amount, room.name)
+                    if (ret == OK) {
+                        console.log(`deal ${task.amount} ${task.type} success`);
+                        room.memory.current_transmission_task = undefined;
+                        return;
+                    } else {
+                        console.log(`${ret} failed to deal ${task.amount} ${task.type}`);
+                        room.memory.current_transmission_task = undefined;
+                        return;
+                    }
                 }
             }
         } else {
-            if (terminal.store[task.type] >= task.amount && terminal.store[RESOURCE_ENERGY] >= task.amount) {
-                let ret = terminal.send(task.type, task.amount, task.to);
-                if (ret == OK) {
-                    console.log(`send ${task.amount} ${task.type} from ${task.from} to ${task.to} success`);
-                    room.memory.current_transmission_task = undefined;
-                    return;
+            let cost = Game.market.calcTransactionCost(task.amount, task.from, task.to)
+            if (terminal.store[task.type] >= task.amount && terminal.store[RESOURCE_ENERGY] >= cost) {
+                if (!task.dealing) {
+                    let ret = terminal.send(task.type, task.amount, task.to);
+                    if (ret == OK) {
+                        console.log(`send ${task.amount} ${task.type} from ${task.from} to ${task.to} success`);
+                        room.memory.current_transmission_task = undefined;
+                        return;
+                    } else {
+                        console.log(`${ret} failed to send ${task.amount} ${task.type} from ${task.from} to ${task.to}`);
+                        room.memory.current_transmission_task = undefined;
+                        return;
+                    }
                 } else {
-                    console.log(`${ret} failed to send ${task.amount} ${task.type} from ${task.from} to ${task.to}`);
-                    room.memory.current_transmission_task = undefined;
-                    return;
+                    let ret = Game.market.deal(task.orderId, task.amount, room.name)
+                    if (ret == OK) {
+                        console.log(`deal ${task.amount} ${task.type} success`);
+                        room.memory.current_transmission_task = undefined;
+                        return;
+                    } else {
+                        console.log(`${ret} failed to deal ${task.amount} ${task.type}`);
+                        room.memory.current_transmission_task = undefined;
+                        return;
+                    }
                 }
             }
         }

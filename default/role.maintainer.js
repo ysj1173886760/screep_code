@@ -61,7 +61,12 @@ var maintainer = {
     },
 
     run: function(creep) {
-        if (creep.memory.transfering && creep.store.getUsedCapacity() == 0) {
+        if (creep.memory.transfering && creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
+            if (creep.memory.retire) {
+                creep.suicide();
+                return;
+            }
+
             creep.memory.transfering = false;
         }
 
@@ -124,7 +129,7 @@ var maintainer = {
 
             if (creep.ticksToLive < 10) {
                 creep.exTransferAll(creep.room.storage);
-                creep.suicide();
+                creep.memory.retire = true;
             }
 
         } else {

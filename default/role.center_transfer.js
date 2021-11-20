@@ -35,8 +35,6 @@ module.exports = {
         let flag = Game.flags[`center ${creep.room.name}`];
         if (!creep.pos.isEqualTo(flag.pos)) {
             creep.goTo(flag.pos, 0);
-            // clear the previous task
-            creep.memory.extraInfo.task = undefined;
             return;
         }
 
@@ -64,7 +62,7 @@ module.exports = {
             return;
         }
 
-        if (creep.store.getUsedCapacity() != 0 && creep.memory.extraInfo.task == undefined) {
+        if (creep.store.getUsedCapacity() != 0 && creep.room.memory.center_task == undefined) {
             if (creep.room.storage.store.getFreeCapacity() == 0) {
                 creep.exTransferAll(creep.room.terminal)
             } else {
@@ -74,19 +72,19 @@ module.exports = {
             return;
         }
 
-        if (creep.store.getUsedCapacity() != 0 && creep.memory.extraInfo.task && creep.store[creep.memory.extraInfo.task.type] == 0) {
+        if (creep.store.getUsedCapacity() != 0 && creep.room.memory.center_task && creep.store[creep.room.memory.center_task.type] == 0) {
             creep.exTransferAll(creep.room.storage);
             creep.say('transfer');
             return;
         }
 
         if (creep.memory.stage == 'transfer' && creep.store.getUsedCapacity() == 0) {
-            creep.memory.extraInfo.task.amount -= creep.memory.amount;
-            if (creep.memory.extraInfo.task.amount <= 0) {
-                if (creep.memory.extraInfo.task.callback != undefined) {
-                    this.callback[creep.memory.extraInfo.task.callback.name](creep, creep.memory.extraInfo.task.callback.args);
+            creep.room.memory.center_task.amount -= creep.memory.amount;
+            if (creep.room.memory.center_task.amount <= 0) {
+                if (creep.room.memory.center_task.callback != undefined) {
+                    this.callback[creep.room.memory.center_task.callback.name](creep, creep.room.memory.center_task.callback.args);
                 }
-                creep.memory.extraInfo.task = undefined;
+                creep.room.memory.center_task = undefined;
                 creep.memory.stage = 'wait';
                 creep.say('complete');
             } else {
@@ -108,12 +106,12 @@ module.exports = {
                 return;
             }
 
-            if (creep.memory.extraInfo.task == undefined) {
+            if (creep.room.memory.center_task == undefined) {
                 if (room.memory.center_task_queue.length > 0) {
-                    creep.memory.extraInfo.task = room.memory.center_task_queue[0];
+                    creep.room.memory.center_task = room.memory.center_task_queue[0];
                     room.memory.center_task_queue.shift();
                     creep.memory.stage = 'withdraw';
-                    console.log(`mission acquired, transfer ${creep.memory.extraInfo.task.amount} ${creep.memory.extraInfo.task.type}`);
+                    console.log(`mission acquired, transfer ${creep.room.memory.center_task.amount} ${creep.room.memory.center_task.type}`);
                 }
             } else {
                 creep.memory.stage = 'withdraw';
@@ -126,21 +124,21 @@ module.exports = {
         }
 
         if (creep.memory.stage == 'withdraw' && creep.store.getUsedCapacity() == 0) {
-            let target = Game.getObjectById(creep.memory.extraInfo.task.from);
+            let target = Game.getObjectById(creep.room.memory.center_task.from);
 
-            let amount = Math.min(creep.store.getFreeCapacity(), creep.memory.extraInfo.task.amount);
+            let amount = Math.min(creep.store.getFreeCapacity(), creep.room.memory.center_task.amount);
             creep.say(amount);
             if (amount < 0) {
-                creep.memory.extraInfo.task = undefined;
+                creep.room.memory.center_task = undefined;
                 creep.memory.stage = 'wait';
                 return;
             }
             
-            let ret = creep.withdraw(target, creep.memory.extraInfo.task.type, amount);
+            let ret = creep.withdraw(target, creep.room.memory.center_task.type, amount);
             if (ret == ERR_NOT_IN_RANGE) {
                 creep.goTo(target.pos, 1);
             } else if (ret == ERR_NOT_ENOUGH_RESOURCES || ret == ERR_INVALID_TARGET) {
-                creep.memory.extraInfo.task = undefined;
+                creep.room.memory.center_task = undefined;
                 creep.memory.stage = 'wait';
                 return;
             } 
@@ -148,14 +146,14 @@ module.exports = {
         }
 
         if (creep.memory.stage == 'transfer' && creep.store.getUsedCapacity() != 0) {
-            let target = Game.getObjectById(creep.memory.extraInfo.task.to);
-            let ret = creep.transfer(target, creep.memory.extraInfo.task.type);
+            let target = Game.getObjectById(creep.room.memory.center_task.to);
+            let ret = creep.transfer(target, creep.room.memory.center_task.type);
             if (ret == ERR_NOT_IN_RANGE) {
                 // creep.moveTo(target);
                 creep.goTo(target.pos, 1);
             } else if (ret == ERR_FULL) {
                 console.log(`${creep.name} abort the mission due to the lack of space`);
-                creep.memory.extraInfo.task = undefined;
+                creep.room.memory.center_task = undefined;
                 creep.memory.stage = 'wait';
             }
             return;
