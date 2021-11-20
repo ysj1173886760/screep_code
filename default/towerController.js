@@ -1,5 +1,14 @@
 var {whiteList} = require('whiteList');
 
+function getHostile(room) {
+    let hostile = room.find(FIND_HOSTILE_CREEPS, {
+        filter: (c) => {
+            return whiteList.indexOf(c.owner.username) == -1;
+        }
+    });
+    return hostile;
+}
+
 function towerController(room) {
     if (room.memory.towerController == undefined) {
         room.memory.towerController = {
@@ -15,27 +24,23 @@ function towerController(room) {
     if (room.memory.towerController.hostile) {
         let target = Game.getObjectById(room.memory.towerController.hostile);
         if (!target) {
-            let hostile = room.find(FIND_HOSTILE_CREEPS, {
-                filter: (c) => {
-                    return whiteList.indexOf(c.owner.username) == -1;
-                }
-            });
+            let hostile = getHostile(room);
             if (hostile.length) {
                 room.memory.towerController.hostile = hostile[0].id;
-                target = Game.getObjectById(room.memory.towerController.hostile);
+                if (hostile[0].owner.username == 'Invader' && hostile.length > 1) {
+                    room.memory.towerController.secondaryHostile = hostile[1].id;
+                }
             } else {
                 room.memory.towerController.hostile = undefined;
             }
         }
     } else {
-        let hostile = room.find(FIND_HOSTILE_CREEPS, {
-            filter: (c) => {
-                return whiteList.indexOf(c.owner.username) == -1;
-            }
-        });
+        let hostile = getHostile(room);
         if (hostile.length) {
             room.memory.towerController.hostile = hostile[0].id;
-            target = Game.getObjectById(room.memory.towerController.hostile);
+            if (hostile[0].owner.username == 'Invader' && hostile.length > 1) {
+                room.memory.towerController.secondaryHostile = hostile[1].id;
+            }
         } else {
             room.memory.towerController.hostile = undefined;
         }
@@ -44,9 +49,27 @@ function towerController(room) {
     if (room.memory.towerController.hostile) {
         let target = Game.getObjectById(room.memory.towerController.hostile);
         if (target) {
-            for (let tower of towers) {
-                tower.attack(target);
-            }
+            // if (room.memory.towerController.secondaryHostile) {
+            //     let secondaryTarget = Game.getObjectById(room.memory.towerController.secondaryHostile);
+            //     if (secondaryTarget) {
+            //         let i = 0;
+            //         for (; i < towers.length / 2; i++) {
+            //             towers[i].attack(target);
+            //         }
+            //         for (; i < towers.length; i++) {
+            //             towers[i].attack(secondaryTarget);
+            //         }
+            //     } else {
+            //         room.memory.towerController.secondaryHostile = undefined;
+            //         for (let tower of towers) {
+            //             tower.attack(target);
+            //         }
+            //     }
+            // } else {
+                for (let tower of towers) {
+                    tower.attack(target);
+                }
+            // }
             return;
         }
     }
