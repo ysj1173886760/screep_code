@@ -38,6 +38,9 @@ module.exports = {
 
         } else {
             if (creep.memory.working_source == undefined) {
+                if (creep.memory.extraInfo.working_location == undefined) {
+                    creep.memory.extraInfo.working_location = 0;
+                }
                 let flag = Game.flags[`container ${creep.memory.extraInfo.working_location} ${creep.room.name}`];
 
                 let target = flag.pos.findClosestByPath(FIND_SOURCES);

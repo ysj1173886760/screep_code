@@ -139,7 +139,7 @@ var manager = {
                 // creep.moveTo(target);
                 creep.goTo(target.pos, 1);
             } else if (ret == ERR_NOT_ENOUGH_RESOURCES || ret == ERR_INVALID_TARGET) {
-                creep.room.memory.manager_task.task = undefined;
+                creep.room.memory.manager_task = undefined;
                 creep.memory.stage = 'wait';
             } else if (ret == ERR_INVALID_ARGS){
                 creep.room.memory.manager_task = undefined;
@@ -159,7 +159,7 @@ var manager = {
                 if (creep.room.memory.manager_task.callback != undefined) {
                     this.callback[creep.room.memory.manager_task.callback.name](creep, creep.room.memory.manager_task.callback.args);
                 }
-                creep.room.memory.manager_task.task = undefined;
+                creep.room.memory.manager_task = undefined;
                 creep.memory.stage = 'wait';
                 creep.say('complete');
             } else {
@@ -177,7 +177,7 @@ var manager = {
                                 creep.goTo(to.pos, 1);
                             }
                         } else if (ret == ERR_NOT_ENOUGH_RESOURCES || ret == ERR_INVALID_ARGS || ret == ERR_INVALID_TARGET) {
-                            creep.room.memory.manager_task.task = undefined;
+                            creep.room.memory.manager_task = undefined;
                             creep.memory.stage = 'wait';
                         }
                     } else {

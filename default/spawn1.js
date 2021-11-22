@@ -156,7 +156,7 @@ var spawn1 = {
                 center_transfer: {carry: 8, move: 1},
                 miner: {work: 5, carry: 5, move: 5},
                 maintainer: {carry: 16, move: 8},
-                boosted_upgrader: {work: 10, carry: 2, move: 5},
+                boosted_upgrader: {work: 20, carry: 2, move: 10},
                 manager: {carry: 10, move: 5},
             },
             E44S59: {
@@ -174,10 +174,15 @@ var spawn1 = {
                 boosted_upgrader: {work: 10, carry: 2, move: 5},
                 manager: {carry: 10, move: 5},
             },
+            E26S59: {
+                worker: {work: 4, carry: 1, move: 2},
+                builder: {work: 4, carry: 1, move: 2},
+            },
             test: {
                 attacker: {move: 2},
                 healer: {move: 2}
-            }
+            },
+
         };
 
         // @ts-ignore
