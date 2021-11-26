@@ -80,12 +80,18 @@ var manager = {
             let to = Game.getObjectById(creep.room.memory.manager_task.to);
             if (!from || !to) {
                 console.log(`${creep.room.name} abort mission due to invalid target`);
+                if (creep.room.memory.manager_task.callback != undefined) {
+                    this.callback[creep.room.memory.manager_task.callback.name](creep, creep.room.memory.manager_task.callback.args);
+                }
                 creep.room.memory.manager_task = undefined;
                 creep.memory.stage = 'wait';
                 return;
             }
             if (from.store[creep.room.memory.manager_task.type] < creep.room.memory.manager_task.amount) {
                 console.log(`${creep.room.name} abort mission due to lack of source`);
+                if (creep.room.memory.manager_task.callback != undefined) {
+                    this.callback[creep.room.memory.manager_task.callback.name](creep, creep.room.memory.manager_task.callback.args);
+                }
                 creep.room.memory.manager_task = undefined;
                 creep.memory.stage = 'wait';
                 return;
@@ -93,6 +99,9 @@ var manager = {
 
             if (to.store.getFreeCapacity(creep.room.memory.manager_task.type) == 0) {
                 console.log(`${creep.room.name} abort mission due to not enough space`);
+                if (creep.room.memory.manager_task.callback != undefined) {
+                    this.callback[creep.room.memory.manager_task.callback.name](creep, creep.room.memory.manager_task.callback.args);
+                }
                 creep.room.memory.manager_task = undefined;
                 creep.memory.stage = 'wait';
                 return;
@@ -105,6 +114,9 @@ var manager = {
 
             if (creep.room.memory.manager_task.amount <= 0) {
                 console.log(`${creep.room.name} abort mission due to unknown error`);
+                if (creep.room.memory.manager_task.callback != undefined) {
+                    this.callback[creep.room.memory.manager_task.callback.name](creep, creep.room.memory.manager_task.callback.args);
+                }
                 creep.room.memory.manager_task = undefined;
                 creep.memory.stage = 'wait';
                 return;
@@ -139,9 +151,15 @@ var manager = {
                 // creep.moveTo(target);
                 creep.goTo(target.pos, 1);
             } else if (ret == ERR_NOT_ENOUGH_RESOURCES || ret == ERR_INVALID_TARGET) {
+                if (creep.room.memory.manager_task.callback != undefined) {
+                    this.callback[creep.room.memory.manager_task.callback.name](creep, creep.room.memory.manager_task.callback.args);
+                }
                 creep.room.memory.manager_task = undefined;
                 creep.memory.stage = 'wait';
             } else if (ret == ERR_INVALID_ARGS){
+                if (creep.room.memory.manager_task.callback != undefined) {
+                    this.callback[creep.room.memory.manager_task.callback.name](creep, creep.room.memory.manager_task.callback.args);
+                }
                 creep.room.memory.manager_task = undefined;
                 creep.memory.stage = 'wait';
             } else if (ret == OK) {
@@ -197,6 +215,9 @@ var manager = {
                 creep.goTo(target.pos, 1);
             } else if (ret == ERR_FULL) {
                 console.log(`${creep.name} abort the mission due to the lack of space`);
+                if (creep.room.memory.manager_task.callback != undefined) {
+                    this.callback[creep.room.memory.manager_task.callback.name](creep, creep.room.memory.manager_task.callback.args);
+                }
                 creep.room.memory.manager_task = undefined;
                 creep.memory.stage = 'wait';
             } else if (ret == OK) {

@@ -75,7 +75,7 @@ var maintainer = {
             creep.memory.transfering = true;
         }
 
-        creep.memory.crossLevel = 12;
+        
         if (creep.memory.transfering) {
             // let terminal = creep.room.terminal;
             // if (terminal) {
@@ -101,12 +101,13 @@ var maintainer = {
             if (target) {
                 let ret = creep.transfer(target, RESOURCE_ENERGY);
                 if (ret == ERR_NOT_IN_RANGE) {
+                    creep.memory.crossLevel = 12;
                     creep.goTo(target.pos, 1);
                     // creep.moveTo(target);
                 } else if (ret == OK) {
                     let nxt = Game.getObjectById(this.getNextTargetAhead(creep));
                     if (nxt && nxt.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
-                        // creep.moveTo(nxt);
+                        creep.memory.crossLevel = 12;
                         creep.goTo(nxt.pos, 1);
                         creep.memory.target = nxt.id;
                     } else {
@@ -116,18 +117,20 @@ var maintainer = {
                 return;
             }
 
-            target = creep.room.find(FIND_STRUCTURES, {
-                filter: (s) => {
-                    return s.structureType == STRUCTURE_NUKER &&
-                            s.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
-                }
-            });
-            if (target.length) {
-                creep.exTransfer(target[0], RESOURCE_ENERGY);
-                return;
-            }
+            // target = creep.room.find(FIND_STRUCTURES, {
+            //     filter: (s) => {
+            //         return s.structureType == STRUCTURE_NUKER &&
+            //                 s.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
+            //     }
+            // });
+            creep.memory.crossLevel = 10;
+            // if (target.length) {
+            //     creep.exTransfer(target[0], RESOURCE_ENERGY);
+            //     return;
+            // }
 
             if (creep.ticksToLive < 10) {
+                creep.memory.crossLevel = 10;
                 creep.exTransferAll(creep.room.storage);
                 creep.memory.retire = true;
             }

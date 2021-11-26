@@ -15,7 +15,7 @@ var roleBuilder = {
             return;
         }
 
-        creep.memory.standed = true;
+        creep.memory.standed = false;
         if (creep.memory.building) {
             let target = creep.room.find(FIND_CONSTRUCTION_SITES);
 

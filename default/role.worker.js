@@ -8,15 +8,15 @@ module.exports = {
         }
 
         if (creep.memory.working) {
-            if (creep.memory.extraInfo.building) {
-                let target = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
+            // if (creep.memory.extraInfo.building) {
+            //     let target = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
 
-                if (target) {
-                    creep.exBuild(target);
-                    return;
-                }
+            //     if (target) {
+            //         creep.exBuild(target);
+            //         return;
+            //     }
 
-            } else {
+            // } else {
                 // first fill the structures
                 let target = creep.room.find(FIND_MY_STRUCTURES, {
                     filter: (s) => {
@@ -31,7 +31,7 @@ module.exports = {
                     return;
                 }
 
-            }
+            // }
 
             // try to upgrade controller
             creep.exUpgradeController(creep.room.controller);

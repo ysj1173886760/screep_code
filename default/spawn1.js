@@ -124,17 +124,19 @@ var spawn1 = {
                 power_attacker: {move: 20, attack: 20},
                 power_healer: {heal: 25, move: 25},
                 power_retriever: {carry: 32, move: 16},
+                deposit_harvester: {work: 15, carry: 10, move: 25},
+
             },
             E31S58: {
                 worker: {work: 1, carry: 1, move: 1},
                 harvester: {work: 5, move: 1},
                 transfer: {carry: 8, move: 4},
-                upgrader: {work: 10, move: 2, carry: 2},
+                upgrader: {work: 1, move: 1, carry: 1},
                 repairer: {work: 3, carry: 3, move: 3},
                 builder: {work: 5, carry: 5, move: 5},
-                outputer: {carry: 10, move: 5},
+                outputer: {carry: 16, move: 8},
                 harvest_linker: {work: 7, carry: 1, move: 1},
-                center_transfer: {carry: 8, move: 1},
+                center_transfer: {carry: 16, move: 1},
                 miner: {work: 10, carry: 10, move: 10},
                 maintainer: {carry: 16, move: 8},
                 boosted_upgrader: {work: 10, carry: 2, move: 5},
@@ -143,6 +145,9 @@ var spawn1 = {
                 wall_breaker: {work: 25, move: 25},
                 controller: {claim: 1, move: 1},
                 extender: {work: 15, carry: 20, move: 15}, 
+                power_attacker: {move: 20, attack: 20},
+                power_healer: {heal: 25, move: 25},
+                power_retriever: {carry: 32, move: 16},
             },
             E35S52: {
                 harvester: {work: 5, move: 1},
@@ -151,12 +156,12 @@ var spawn1 = {
                 upgrader: {work: 10, move: 2, carry: 2},
                 repairer: {work: 2, carry: 2, move: 2},
                 builder: {work: 5, carry: 5, move: 5},
-                outputer: {carry: 10, move: 5},
+                outputer: {carry: 20, move: 10},
                 harvest_linker: {work: 7, carry: 1, move: 1},
                 center_transfer: {carry: 8, move: 1},
                 miner: {work: 5, carry: 5, move: 5},
                 maintainer: {carry: 16, move: 8},
-                boosted_upgrader: {work: 20, carry: 2, move: 10},
+                boosted_upgrader: {work: 20, carry: 6, move: 10},
                 manager: {carry: 10, move: 5},
             },
             E44S59: {
@@ -176,7 +181,9 @@ var spawn1 = {
             },
             E26S59: {
                 worker: {work: 4, carry: 1, move: 2},
-                builder: {work: 4, carry: 1, move: 2},
+                builder: {work: 2, carry: 1, move: 1},
+                controller: {claim: 1, move: 1},
+                extender: {work: 3, move: 3, carry: 3}
             },
             test: {
                 attacker: {move: 2},
