@@ -135,7 +135,7 @@ var spawn1 = {
                 repairer: {work: 3, carry: 3, move: 3},
                 builder: {work: 5, carry: 5, move: 5},
                 outputer: {carry: 16, move: 8},
-                harvest_linker: {work: 7, carry: 1, move: 1},
+                harvest_linker: {work: 12, carry: 3, move: 6},
                 center_transfer: {carry: 16, move: 1},
                 miner: {work: 10, carry: 10, move: 10},
                 maintainer: {carry: 16, move: 8},

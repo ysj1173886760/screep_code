@@ -51,6 +51,15 @@ var power_creep = {
             }
         }
 
+        if (!creep.memory.roomname) {
+            creep.memory.roomname = creep.room.name
+        }
+
+        if (creep.room.name != creep.memory.roomname) {
+            creep.goTo(new RoomPosition(25, 25, creep.memory.roomname), 20)
+            return;
+        }
+
         if (creep.ticksToLive < 200) {
             let spawn = Game.getObjectById(creep.memory.spawn);
             if (spawn) {

@@ -28,7 +28,7 @@ var deposit_harvester = {
         }
 
         if (creep.memory.harvesting) {
-            let flag = Game.flags[`deposit ${creep.memory.roomname}`];
+            let flag = Game.flags[`${creep.memory.extraInfo.deposit}`];
             if (!flag) {
                 return;
             }
