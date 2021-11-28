@@ -18,7 +18,7 @@ module.exports = {
         }
     },
     run: function(creep) {
-        if (creep.memory.transfer && creep.store[RESOURCE_ENERGY] == 0) {
+        if (creep.memory.transfer && creep.store.getFreeCapacity() == 0) {
             creep.memory.transfer = false;
         }
 
@@ -78,7 +78,7 @@ module.exports = {
             return;
         }
 
-        if (creep.memory.stage == 'transfer' && creep.store.getUsedCapacity() == 0) {
+        if (creep.memory.stage == 'transfer' && creep.store.getUsedCapacity(creep.room.memory.center_task.type) == 0) {
             creep.room.memory.center_task.amount -= creep.memory.amount;
             if (creep.room.memory.center_task.amount <= 0) {
                 if (creep.room.memory.center_task.callback != undefined) {
@@ -118,12 +118,12 @@ module.exports = {
             }
         }
 
-        if (creep.memory.stage == 'withdraw' && creep.store.getUsedCapacity() != 0) {
+        if (creep.memory.stage == 'withdraw' && creep.store.getUsedCapacity(creep.room.memory.center_task.type) != 0) {
             creep.memory.stage = 'transfer';
-            creep.memory.amount = creep.store.getUsedCapacity();
+            creep.memory.amount = creep.store.getUsedCapacity(creep.room.memory.center_task.type);
         }
 
-        if (creep.memory.stage == 'withdraw' && creep.store.getUsedCapacity() == 0) {
+        if (creep.memory.stage == 'withdraw' && creep.store.getUsedCapacity(creep.room.memory.center_task.type) == 0) {
             let target = Game.getObjectById(creep.room.memory.center_task.from);
 
             let amount = Math.min(creep.store.getFreeCapacity(), creep.room.memory.center_task.amount);
@@ -141,11 +141,13 @@ module.exports = {
                 creep.room.memory.center_task = undefined;
                 creep.memory.stage = 'wait';
                 return;
-            } 
+            } else if (ret == ERR_FULL) {
+                creep.exTransferAll(creep.room.storage);
+            }
             return;
         }
 
-        if (creep.memory.stage == 'transfer' && creep.store.getUsedCapacity() != 0) {
+        if (creep.memory.stage == 'transfer' && creep.store.getUsedCapacity(creep.room.memory.center_task.type) != 0) {
             let target = Game.getObjectById(creep.room.memory.center_task.to);
             let ret = creep.transfer(target, creep.room.memory.center_task.type);
             if (ret == ERR_NOT_IN_RANGE) {

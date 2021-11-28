@@ -485,6 +485,18 @@ function setPowerCreep(roomname, value) {
     console.log('setting power creep');
 }
 
+function resetLabMission(roomname) {
+    let room = Game.rooms[roomname];
+    if (!room) {
+        return;
+    }
+    
+    for (let lab in room.memory.labController.missionControl) {
+        room.memory.labController.missionControl[lab] = false;
+    }
+    return true;
+}
+
 module.exports = {
     getStructureByFlag,
     getConstructionSite,
@@ -527,5 +539,6 @@ module.exports = {
     deleteRole,
     removeObserveRoom,
     setPowerCreep,
-    setBoostPower
+    setBoostPower,
+    resetLabMission
 }

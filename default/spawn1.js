@@ -185,6 +185,10 @@ var spawn1 = {
                 controller: {claim: 1, move: 1},
                 extender: {work: 3, move: 3, carry: 3}
             },
+            E19S59: {
+                worker: {work: 1, carry: 1, move: 1},
+                builder: {work: 1, carry: 1, move: 1}  
+            },
             test: {
                 attacker: {move: 2},
                 healer: {move: 2}

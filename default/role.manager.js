@@ -125,16 +125,16 @@ var manager = {
             creep.memory.stage = 'withdraw';
         }
 
-        if (creep.memory.stage == 'withdraw' && creep.store.getUsedCapacity() != 0) {
+        if (creep.memory.stage == 'withdraw' && creep.store.getUsedCapacity(creep.room.memory.manager_task.type) != 0) {
             creep.memory.stage = 'transfer';
-            creep.memory.amount = creep.store.getUsedCapacity();
+            creep.memory.amount = creep.store.getUsedCapacity(creep.room.memory.manager_task.type);
             let target = Game.getObjectById(creep.room.memory.manager_task.to);
             if (target && !creep.pos.inRangeTo(target, 1)) {
                 creep.goTo(target.pos, 1);
             }
         }
 
-        if (creep.memory.stage == 'withdraw' && creep.store.getUsedCapacity() == 0) {
+        if (creep.memory.stage == 'withdraw' && creep.store.getUsedCapacity(creep.room.memory.manager_task.type) == 0) {
             // don't do any mission when the creep is going to die
             if (creep.ticksToLive < 20) {
                 creep.suicide();
@@ -167,11 +167,13 @@ var manager = {
                 if (target && !creep.pos.inRangeTo(target, 1)) {
                     creep.goTo(target.pos, 1);
                 }
+            } else if (ret == ERR_FULL) {
+                creep.exTransferAll(creep.room.storage)
             }
             return;
         }
 
-        if (creep.memory.stage == 'transfer' && creep.store.getUsedCapacity() == 0) {
+        if (creep.memory.stage == 'transfer' && creep.store.getUsedCapacity(creep.room.memory.manager_task.type) == 0) {
             creep.room.memory.manager_task.amount -= creep.memory.amount;
             if (creep.room.memory.manager_task.amount == 0) {
                 if (creep.room.memory.manager_task.callback != undefined) {
@@ -207,7 +209,7 @@ var manager = {
             return;
         }
 
-        if (creep.memory.stage == 'transfer' && creep.store.getUsedCapacity() != 0) {
+        if (creep.memory.stage == 'transfer' && creep.store.getUsedCapacity(creep.room.memory.manager_task.type) != 0) {
             let target = Game.getObjectById(creep.room.memory.manager_task.to);
             let ret = creep.transfer(target, creep.room.memory.manager_task.type);
             if (ret == ERR_NOT_IN_RANGE) {

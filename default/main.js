@@ -102,7 +102,8 @@ var {
     deleteRole,
     removeObserveRoom,
     setPowerCreep,
-    setBoostPower
+    setBoostPower,
+    resetLabMission,
 } = require('utils');
 
 var {
@@ -350,3 +351,4 @@ global.G_deleteRole = deleteRole;
 global.G_removeObserveRoom = removeObserveRoom;
 global.G_setPowerCreep = setPowerCreep;
 global.G_setBoostPower = setBoostPower;
+global.G_resetLabMission = resetLabMission;
