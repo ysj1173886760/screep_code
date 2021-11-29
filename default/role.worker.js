@@ -18,6 +18,7 @@ module.exports = {
 
             // } else {
                 // first fill the structures
+                creep.memory.standed = false;
                 let target = creep.room.find(FIND_MY_STRUCTURES, {
                     filter: (s) => {
                         return ((s.structureType == STRUCTURE_SPAWN || 
@@ -49,6 +50,7 @@ module.exports = {
 
             let resource = Game.getObjectById(creep.memory.working_source);
             if (resource) {
+                creep.memory.standed = true;
                 creep.exHarvest(resource);
             }
         }

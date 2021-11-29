@@ -1157,7 +1157,13 @@ function defendController(room) {
                     (containBodyPart(c, 'attack') || containBodyPart(c, 'ranged_attack'));
         }
     });
-    if (target.length > 0) {
+    let wall = room.find(FIND_STRUCTURES, {
+        filter: (s) => {
+            return s.hits <= 50000;
+        }
+    });
+
+    if (target.length > 0 && wall.length > 0) {
         if (room.safeMode == undefined) {
             room.controller.activateSafeMode();
             Game.notify(`warning, ${target[0].owner.username} is attacking you, generating safemode`);
@@ -1426,6 +1432,19 @@ function terminalController(room) {
             });
             console.log(`send mission ${resourceType} ${amount}`);
             return;
+        }
+    }
+
+    if (room.memory.energyRoom != undefined) {
+        if (storage.store[RESOURCE_ENERGY] > 100000 && terminal.cooldown == 0 && terminal.store[RESOURCE_ENERGY] >= 20000) {
+            let ret = terminal.send(RESOURCE_ENERGY, 10000, room.memory.energyRoom);
+            if (ret == OK) {
+                console.log(`send energy from ${room.name} to ${room.memory.energyRoom} success`);
+                return;
+            } else {
+                console.log(`${ret} failed to send energy from ${room.name} to ${room.memory.energyRoom}`);
+                return;
+            }
         }
     }
 }

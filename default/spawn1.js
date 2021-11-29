@@ -85,7 +85,7 @@ var spawn1 = {
                 scout: {move: 1},
                 controller: {claim: 1, move: 1},
                 extender: {work: 15, carry: 20, move: 15}, 
-                harvest_linker: {work: 15, carry: 3, move: 8},
+                harvest_linker: {work: 20, carry: 4, move: 10},
                 center_transfer: {carry: 30, move: 1},
                 manager: {carry: 20, move: 10},
                 miner: {work: 10, carry: 10, move: 10},
@@ -159,7 +159,7 @@ var spawn1 = {
                 outputer: {carry: 20, move: 10},
                 harvest_linker: {work: 7, carry: 1, move: 1},
                 center_transfer: {carry: 8, move: 1},
-                miner: {work: 5, carry: 5, move: 5},
+                miner: {work: 10, carry: 10, move: 10},
                 maintainer: {carry: 16, move: 8},
                 boosted_upgrader: {work: 20, carry: 6, move: 10},
                 manager: {carry: 10, move: 5},
@@ -173,8 +173,8 @@ var spawn1 = {
                 builder: {work: 5, carry: 5, move: 5},
                 outputer: {carry: 10, move: 5},
                 harvest_linker: {work: 7, carry: 1, move: 1},
-                center_transfer: {carry: 8, move: 1},
-                miner: {work: 5, carry: 5, move: 5},
+                center_transfer: {carry: 16, move: 1},
+                miner: {work: 10, carry: 10, move: 10},
                 maintainer: {carry: 16, move: 8},
                 boosted_upgrader: {work: 10, carry: 2, move: 5},
                 manager: {carry: 10, move: 5},
@@ -186,8 +186,11 @@ var spawn1 = {
                 extender: {work: 3, move: 3, carry: 3}
             },
             E19S59: {
-                worker: {work: 1, carry: 1, move: 1},
-                builder: {work: 1, carry: 1, move: 1}  
+                worker: {work: 3, carry: 3, move: 3},
+                builder: {work: 3, carry: 3, move: 3},
+                harvester: {work: 5, move: 1},
+                transfer: {carry: 10, move: 5},
+                upgrader: {work: 5, move: 3, carry: 1},
             },
             test: {
                 attacker: {move: 2},

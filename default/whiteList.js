@@ -1,6 +1,7 @@
 var whiteList = [
     'biuuuuu',
-    'superbitch'
+    'superbitch',
+    'OneWayIsWar',
 ];
 
 module.exports = {
