@@ -225,7 +225,7 @@ function boostPowerController(room) {
         let orders = Game.market.getAllOrders({type: ORDER_SELL, resourceType: RESOURCE_POWER});
         orders.sort((a, b) => (a.price - b.price));
 
-        if (orders.length && orders[0].price < 50) {
+        if (orders.length && orders[0].price < 60) {
             let amount = Math.min(orders[0].amount, 3000);
             Game.market.deal(orders[0].id, amount, room.name);
             console.log(`${room.name}, buying ${amount} power for ${orders[0].price}`);
@@ -318,7 +318,7 @@ function labReactionController(room) {
     let amountNeeded = 2000;
 
     if (room.memory.labController.stage == 'check') {
-        console.log('lab checking');
+        console.log(`${room.name} lab checking`);
         let storage = room.storage;
         if (storage.store[res1] < 3000) {
             room.memory.labController.enabled = false;
@@ -1210,6 +1210,10 @@ function interRoomTransmissionController(room) {
     }
 
     if (task.stage == 'check') {
+        if (task.to == undefined) {
+            room.memory.current_transmission_task = undefined;
+            return;
+        }
         if (task.type == 'energy') {
             let cost = Game.market.calcTransactionCost(task.amount, task.from, task.to)
             if (terminal.store[task.type] > task.amount + cost) {

@@ -6,6 +6,7 @@ var {
 var extender = {
     // @ts-ignore
     run: function(creep) {
+
         if (creep.memory.harvesting && creep.store.getFreeCapacity() == 0) {
             creep.memory.harvesting = false;
         }

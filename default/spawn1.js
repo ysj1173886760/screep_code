@@ -105,7 +105,7 @@ var spawn1 = {
                 builder: {work: 4, carry: 4, move: 4},
                 repairer: {work: 2, carry: 2, move: 2},
                 transfer: {carry: 10, move: 5},
-                center_transfer: {carry: 8, move: 1},
+                center_transfer: {carry: 16, move: 1},
                 harvest_linker: {work: 7, carry: 1, move: 1},
                 maintainer: {carry: 20, move: 10},
                 upgrader: {work: 1, carry: 1, move: 1},
@@ -155,10 +155,10 @@ var spawn1 = {
                 transfer: {carry: 8, move: 4},
                 upgrader: {work: 10, move: 2, carry: 2},
                 repairer: {work: 2, carry: 2, move: 2},
-                builder: {work: 5, carry: 5, move: 5},
+                builder: {work: 10, carry: 10, move: 10},
                 outputer: {carry: 20, move: 10},
                 harvest_linker: {work: 7, carry: 1, move: 1},
-                center_transfer: {carry: 8, move: 1},
+                center_transfer: {carry: 16, move: 1},
                 miner: {work: 10, carry: 10, move: 10},
                 maintainer: {carry: 16, move: 8},
                 boosted_upgrader: {work: 20, carry: 6, move: 10},
@@ -190,7 +190,14 @@ var spawn1 = {
                 builder: {work: 3, carry: 3, move: 3},
                 harvester: {work: 5, move: 1},
                 transfer: {carry: 10, move: 5},
-                upgrader: {work: 5, move: 3, carry: 1},
+                upgrader: {work: 10, move: 5, carry: 1},
+                outputer: {carry: 10, move: 5},
+                controller: {claim: 1, move: 5},
+                extender: {work: 5, move: 5, carry: 5}
+            },
+            E11S59: {
+                worker: {work: 1, move: 1, carry: 1},
+                builder: {work: 1, move: 1, carry: 1}
             },
             test: {
                 attacker: {move: 2},
