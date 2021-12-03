@@ -3,10 +3,6 @@
  * @param {Room} room 
  */
 function powerCreepController(room) {
-    if (room.controller.level < 8) {
-        return;
-    }
-
     if (room.memory.powerCreepController == undefined) {
         room.memory.powerCreepController = {
             enabled: false,

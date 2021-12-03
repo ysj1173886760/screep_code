@@ -61,6 +61,11 @@ var power_creep = {
         }
 
         if (creep.ticksToLive < 200) {
+            if (creep.room.name != creep.memory.roomname) {
+                creep.goTo(new RoomPosition(25, 25, creep.memory.roomname), 20);
+                return;
+            }
+
             let spawn = Game.getObjectById(creep.memory.spawn);
             if (spawn) {
                 if (!creep.pos.inRangeTo(spawn, 1)) {
@@ -98,6 +103,9 @@ var power_creep = {
                 return;
             }
 
+            let flag = Game.flags[`center ${creep.room.name}`];
+            creep.goTo(flag.pos, 5)
+
             for (let power_id in creep.powers) {
                 let power = creep.powers[power_id];
                 if (power.cooldown > 0) {
@@ -117,14 +125,59 @@ var power_creep = {
                         continue;
                     }
                     creep.room.memory.powerCreepController[power_id].tasks.shift();
+                    creep.memory.task.room = creep.memory.roomname
                     creep.memory.stage = 'work';
                     console.log(`POWERCREEP: accept mission, using ${creep.memory.task.type} to ${creep.memory.task.target}`);
                     break;
                 }
             }
+
+            if (creep.memory.task == undefined) {
+                // take care of neighbour
+                if (creep.memory.neighbour == undefined) {
+                    creep.memory.neighbour = []
+                }
+                for (let roomname in creep.memory.neighbour) {
+                    let neighbour = Game.rooms[roomname]
+                    if (!neighbour) {
+                        continue;
+                    }
+
+                    for (let power_id in creep.powers) {
+                        let power = creep.powers[power_id];
+                        if (power.cooldown > 0) {
+                            continue;
+                        }
+
+                        if (neighbour.memory.powerCreepController[power_id] == undefined) {
+                            continue;
+                        }
+
+                        if (neighbour.memory.powerCreepController[power_id].tasks && 
+                            neighbour.memory.powerCreepController[power_id].tasks.length > 0) {
+                            creep.memory.task = creep.room.memory.powerCreepController[power_id].tasks[0];
+                            let cost = this.costTable[creep.memory.task.type];
+                            if (creep.store[RESOURCE_OPS] < cost && creep.room.storage.store[RESOURCE_OPS] < cost) {
+                                creep.memory.task = undefined;
+                                continue;
+                            }
+                            neighbour.memory.powerCreepController[power_id].tasks.shift();
+                            creep.memory.task.room = roomname
+                            creep.memory.stage = 'work';
+                            console.log(`POWERCREEP: accept mission, using ${creep.memory.task.type} to ${creep.memory.task.target}`);
+                            break;
+                        }
+                    }
+                }
+            }
         }
 
         if (creep.memory.stage == 'work') {
+            if (creep.room.name != creep.memory.task.room) {
+                creep.goTo(new RoomPosition(25, 25, creep.memory.task.room), 20);
+                return;
+            }
+
             let cost = this.costTable[creep.memory.task.type];
             if (creep.store[RESOURCE_OPS] < cost) {
                 creep.exWithdraw(creep.room.storage, RESOURCE_OPS);

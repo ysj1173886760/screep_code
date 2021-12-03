@@ -59,7 +59,8 @@ var {
     powerSquadController,
     observerController,
     resourceDetector,
-    boostPowerController
+    boostPowerController,
+    controllerMaintainer
 } = require('overlord');
 
 var {
@@ -219,6 +220,7 @@ module.exports.loop = function() {
             towerController(room);
             powerCreepController(room);
             boostPowerController(room);
+            controllerMaintainer(room);
         }
     }
     

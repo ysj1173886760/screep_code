@@ -473,10 +473,6 @@ function setPowerCreep(roomname, value) {
         return;
     }
 
-    if (room.controller.level < 8) {
-        return;
-    }
-
     if (!room.memory.powerCreepController) {
         return;
     }

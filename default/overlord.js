@@ -2081,6 +2081,22 @@ function resourceDetector(room) {
     }
 }
 
+
+function controllerMaintainer(room) {
+    if (room.controller.level < 8) {
+        return;
+    }
+
+    if (!room.memory.controllerMaintainer || Game.time - room.memory.controllerMaintainer > 1000) {
+        if (room.controller.ticksToDowngrade < 100000) {
+            roomSpawn('upgrader', room.name, false, 10, {});
+            console.log(`${room.name} sending upgrader`)
+        }
+        room.memory.controllerMaintainer = Game.time
+    }
+    
+}
+
 module.exports = {
     reserveController,
     buildController,
@@ -2098,7 +2114,8 @@ module.exports = {
     observerController,
     powerSquadController,
     resourceDetector,
-    boostPowerController
+    boostPowerController,
+    controllerMaintainer
 };
 
 // let task = {

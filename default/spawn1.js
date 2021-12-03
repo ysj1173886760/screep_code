@@ -191,13 +191,16 @@ var spawn1 = {
                 harvester: {work: 5, move: 1},
                 transfer: {carry: 10, move: 5},
                 upgrader: {work: 10, move: 5, carry: 1},
-                outputer: {carry: 10, move: 5},
+                outputer: {carry: 16, move: 8},
                 controller: {claim: 1, move: 5},
                 extender: {work: 5, move: 5, carry: 5}
             },
             E11S59: {
                 worker: {work: 1, move: 1, carry: 1},
-                builder: {work: 1, move: 1, carry: 1}
+                builder: {work: 3, move: 2, carry: 3},
+                harvester: {work: 5, move: 1},
+                transfer: {carry: 6, move: 3},
+                upgrader: {work: 4, move: 1, carry: 1}
             },
             test: {
                 attacker: {move: 2},
