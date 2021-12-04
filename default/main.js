@@ -35,6 +35,7 @@ var power_healer = require('role.power_healer');
 var power_retriever = require('role.power_retriever');
 var wall_breaker = require('role.wall_breaker');
 var slaimer = require('role.slaimer');
+var thief = require('role.thief')
 
 var power_creep = require('power_creep');
 
@@ -60,7 +61,8 @@ var {
     observerController,
     resourceDetector,
     boostPowerController,
-    controllerMaintainer
+    controllerMaintainer,
+    resourceMaintainer
 } = require('overlord');
 
 var {
@@ -105,6 +107,9 @@ var {
     setPowerCreep,
     setBoostPower,
     resetLabMission,
+    roomSell,
+    addResourceEntry,
+    removeResourceEntry,
 } = require('utils');
 
 var {
@@ -131,6 +136,11 @@ module.exports.loop = function() {
             delete Memory.creeps[name];
             console.log('delete creep: ', name);
         }
+    }
+
+    if (!Memory.cleanOrderCountdown || Game.time - Memory.cleanOrderCountdown > 1000) {
+        Memory.cleanOrderCountdown = Game.time;
+        deleteOrder()
     }
 
     //['E37S58', 'E37S59', 'E38S59', 'E38S60', 'E39S60', 'E40S60', 'E41S60' ,'E42S60', 'E43S60', 'E44S60', 'E45S60', 'E45S59']
@@ -221,6 +231,7 @@ module.exports.loop = function() {
             powerCreepController(room);
             boostPowerController(room);
             controllerMaintainer(room);
+            resourceMaintainer(room);
         }
     }
     
@@ -277,6 +288,7 @@ module.exports.loop = function() {
         power_retriever: power_retriever,
         wall_breaker: wall_breaker,
         slaimer: slaimer,
+        thief: thief,
 
         // war
         attacker: warrior,
@@ -354,3 +366,6 @@ global.G_removeObserveRoom = removeObserveRoom;
 global.G_setPowerCreep = setPowerCreep;
 global.G_setBoostPower = setBoostPower;
 global.G_resetLabMission = resetLabMission;
+global.G_roomSell = roomSell;
+global.G_addResourceEntry = addResourceEntry;
+global.G_removeResourceEntry = removeResourceEntry;

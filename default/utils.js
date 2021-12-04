@@ -199,6 +199,30 @@ function roomSend(from, to, resourceType, amount) {
     console.log("mission sended");
 }
 
+function roomSell(roomname, orderId, amount) {
+    let room = Game.rooms[roomname];
+    if (!room || !room.terminal) {
+        return;
+    }
+
+    let order = Game.market.getOrderById(orderId);
+    if (!order) {
+        return;
+    }
+    if (!order.active) {
+        return;
+    }
+    
+    amount = Math.min(amount, order.totalAmount);
+    resourceType = order.type;
+    room.memory.transmission_queue.push({
+        amount: amount,
+        type: resourceType,
+        orderId: orderId,
+        dealing: true
+    })
+}
+
 function enableLab(roomname) {
     let room = Game.rooms[roomname];
     if (!room) {
@@ -493,6 +517,33 @@ function resetLabMission(roomname) {
     return true;
 }
 
+function addResourceEntry(roomname, resourceType, amount) {
+    let room = Game.rooms[roomname];
+    if (!room) {
+        return;
+    }
+
+    room.memory.resourceMaintainer.entrys.push({
+        type: resourceType,
+        amount: amount
+    })
+}
+
+function removeResourceEntry(roomname, resourceType) {
+    let room = Game.rooms[roomname];
+    if (!room) {
+        return;
+    }
+
+    for (let i = 0; i < room.memory.resourceMaintainer.entrys.length; i++) {
+        if (room.memory.resourceMaintainer.entrys[i].type == resourceType) {
+            room.memory.resourceMaintainer.entrys.splice(i, 1);
+            console.log('delete success');
+            return;
+        }
+    }
+}
+
 module.exports = {
     getStructureByFlag,
     getConstructionSite,
@@ -536,5 +587,8 @@ module.exports = {
     removeObserveRoom,
     setPowerCreep,
     setBoostPower,
-    resetLabMission
+    resetLabMission,
+    roomSell,
+    addResourceEntry,
+    removeResourceEntry
 }

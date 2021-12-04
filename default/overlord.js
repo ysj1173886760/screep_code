@@ -233,6 +233,43 @@ function boostPowerController(room) {
     }
 }
 
+function resourceMaintainer(room) {
+    if (room.memory.resourceMaintainer == undefined) {
+        room.memory.resourceMaintainer = {
+            countdown: Game.time,
+            entrys: []
+        }
+    }
+
+    if (Game.time - room.memory.resourceMaintainer.countdown < 50) {
+        return;
+    }
+
+    room.memory.resourceMaintainer.countdown = Game.time;
+
+    let terminal = room.terminal;
+    let storage = room.storage;
+
+    for (entry of room.memory.resourceMaintainer.entrys) {
+        if (terminal.store[entry.type] + storage.store[entry.type] < entry.amount) {
+            let history = Game.market.getHistory(entry.type)
+            maxxPrice = history[0].avgPrice + 0.5 * history[0].stddevPrice
+            let orders = Game.market.getAllOrders({type: ORDER_SELL, resourceType: entry.type});
+            orders.sort((a, b) => (a.price - b.price));
+
+            if (orders.length && orders[0].price < maxxPrice) {
+                let amount = Math.min(orders[0].amount, 3000);
+                let res = Game.market.deal(orders[0].id, amount, room.name);
+                room.memory.resourceMaintainer.countdown = Game.time + 50;
+                if (res == OK) {
+                    console.log(`${room.name}, buying ${amount} ${entry.type} for ${orders[0].price}`);
+                    break;
+                }
+            }
+        }
+    }
+}
+
 const boostingCountdown = 2000;
 const reloadCountdown = 100;
 const labControllerCountdown = 5;
@@ -321,17 +358,17 @@ function labReactionController(room) {
         console.log(`${room.name} lab checking`);
         let storage = room.storage;
         if (storage.store[res1] < 3000) {
-            room.memory.labController.enabled = false;
+            // room.memory.labController.enabled = false;
             return;
         }
 
         if (storage.store[res2] < 3000) {
-            room.memory.labController.enabled = false;
+            // room.memory.labController.enabled = false;
             return;
         }
 
         if (storage.store[RESOURCE_ENERGY] < 50000) {
-            room.memory.labController.enabled = false;
+            // room.memory.labController.enabled = false;
             return;
         }
 
@@ -1703,7 +1740,7 @@ function powerSpawnController(room) {
         }
 
         if (storage.store[RESOURCE_POWER] < 100 || storage.store[RESOURCE_ENERGY] < 50000) {
-            room.memory.powerSpawnController.enabled = false;
+            // room.memory.powerSpawnController.enabled = false;
             return;
         }
 
@@ -2115,7 +2152,8 @@ module.exports = {
     powerSquadController,
     resourceDetector,
     boostPowerController,
-    controllerMaintainer
+    controllerMaintainer,
+    resourceMaintainer
 };
 
 // let task = {
