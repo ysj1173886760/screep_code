@@ -15,8 +15,9 @@ var roleBuilder = {
             return;
         }
 
-        creep.memory.standed = false;
+        
         if (creep.memory.building) {
+            creep.memory.standed = true;
             let target = creep.room.find(FIND_CONSTRUCTION_SITES);
 
             if (target.length) {
@@ -27,6 +28,7 @@ var roleBuilder = {
             creep.exUpgradeController();
 
         } else {
+            creep.memory.standed = false;
             if (creep.room.storage && creep.room.storage.store[RESOURCE_ENERGY] > 1000) {
                 creep.exWithdraw(creep.room.storage, RESOURCE_ENERGY);
                 return;

@@ -62,7 +62,8 @@ var {
     resourceDetector,
     boostPowerController,
     controllerMaintainer,
-    resourceMaintainer
+    resourceMaintainer,
+    resourceShareController
 } = require('overlord');
 
 var {
@@ -232,6 +233,7 @@ module.exports.loop = function() {
             boostPowerController(room);
             controllerMaintainer(room);
             resourceMaintainer(room);
+            resourceShareController(room);
         }
     }
     

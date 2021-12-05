@@ -1,6 +1,6 @@
 const { getStructureByFlag, containBodyPart } = require("utils");
 const { whiteList } = require("whiteList");
-const { roomSpawn } = require("./utils");
+const { roomSpawn, roomSend } = require("./utils");
 const { reactionTable } = require("./reactionTable")
 
 function setDistantCreeps(roomname, target_room, value) {
@@ -241,7 +241,7 @@ function resourceMaintainer(room) {
         }
     }
 
-    if (Game.time - room.memory.resourceMaintainer.countdown < 50) {
+    if (Game.time - room.memory.resourceMaintainer.countdown < 20) {
         return;
     }
 
@@ -260,10 +260,12 @@ function resourceMaintainer(room) {
             if (orders.length && orders[0].price < maxxPrice) {
                 let amount = Math.min(orders[0].amount, 3000);
                 let res = Game.market.deal(orders[0].id, amount, room.name);
-                room.memory.resourceMaintainer.countdown = Game.time + 50;
+                room.memory.resourceMaintainer.countdown = Game.time + 20;
                 if (res == OK) {
                     console.log(`${room.name}, buying ${amount} ${entry.type} for ${orders[0].price}`);
                     break;
+                } else {
+                    console.log(`${res} ${room.name} failed to buy`);
                 }
             }
         }
@@ -367,10 +369,10 @@ function labReactionController(room) {
             return;
         }
 
-        if (storage.store[RESOURCE_ENERGY] < 50000) {
+        // if (storage.store[RESOURCE_ENERGY] < 10000) {
             // room.memory.labController.enabled = false;
-            return;
-        }
+            // return;
+        // }
 
         let lab1 = Game.getObjectById(room.memory.labController.lab1);
         let lab2 = Game.getObjectById(room.memory.labController.lab2);
@@ -1551,6 +1553,10 @@ function factoryController(room) {
     }
     room.memory.factoryController.countdown = 10;
 
+    if (room.storage.store[RESOURCE_ENERGY] < 50000) {
+        return;
+    }
+
     if (room.memory.factoryController.stage == 'wait') {
         if (room.memory.factoryController.missionQueue.length) {
             room.memory.factoryController.currentMission = room.memory.factoryController.missionQueue[0];
@@ -2096,7 +2102,7 @@ function resourceDetector(room) {
 
             for (let i = 0; i < pw.length; i++) {
                 let powerbank = pw[i];
-                if (powerbank.power < 2000) {
+                if (powerbank.power < 1500) {
                     continue;
                 }
                 if (powerbank.ticksToDecay < 2000) {
@@ -2134,6 +2140,38 @@ function controllerMaintainer(room) {
     
 }
 
+function resourceShareController(room) {
+    if (Memory.resourceBus == undefined) {
+        Memory.resourceBus = []
+    }
+
+    if (room.controller.level < 7) {
+        return;
+    }
+
+    if (room.memory.resourceShareController == undefined) {
+        room.memory.resourceShareController = {
+            countdown: Game.time
+        }
+    }
+
+    if (Game.time - room.memory.resourceShareController.countdown < 10) {
+        return;
+    }
+
+    let storage = room.storage;
+    let terminal = room.terminal;
+    room.memory.resourceShareController.countdown = Game.time;
+    for (let i = 0; i < Memory.resourceBus.length; i++) {
+        let entry = Memory.resourceBus[i];
+        if (storage.store[entry.type] > entry.amount) {
+            roomSend(room.name, entry.roomname, entry.type, entry.amount);
+            room.memory.resourceShareController.splice(i, 1);
+            return;
+        }
+    }
+}
+
 module.exports = {
     reserveController,
     buildController,
@@ -2153,7 +2191,8 @@ module.exports = {
     resourceDetector,
     boostPowerController,
     controllerMaintainer,
-    resourceMaintainer
+    resourceMaintainer,
+    resourceShareController
 };
 
 // let task = {

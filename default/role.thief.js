@@ -27,7 +27,7 @@ var roleThief = {
                 creep.memory.isNeeded = false;
                 creep.memory.transfering = true;
             }
-            creep.withdraw(target, RESOURCE_ENERGY)
+            creep.exWithdraw(target, RESOURCE_ENERGY)
         }
     }
 }
