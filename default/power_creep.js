@@ -29,6 +29,10 @@ var power_creep = {
         [PWR_OPERATE_POWER]: function(room, args) {
             room.memory.powerCreepController[PWR_OPERATE_POWER].powerSpawns[args.id].missionSended = false;
             console.log(`doing power creep operate power callback ${args.id}`);
+        },
+        [PWR_OPERATE_FACTORY]: function(room, args) {
+            room.memory.factoryController.missionSended = false;
+            console.log(`doing power creep operate factory callback`);
         }
     },
     /**

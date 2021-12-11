@@ -136,7 +136,7 @@ var reactionTable = {
 
     reductant: {
         material: [
-            {type: 'G', amount: 500},
+            {type: 'H', amount: 500},
             {type: 'energy', amount: 200},
         ],
         amount: 100
@@ -144,7 +144,7 @@ var reactionTable = {
 
     purifier: {
         material: [
-            {type: 'G', amount: 500},
+            {type: 'X', amount: 500},
             {type: 'energy', amount: 200},
         ],
         amount: 100

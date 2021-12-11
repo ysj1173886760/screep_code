@@ -1210,6 +1210,14 @@ function defendController(room) {
     }
 }
 
+function doCallback(task) {
+    if (task.callback) {
+        let target_room = Game.rooms[task.to];
+        target_room.memory.interRoomResourceMaintainer.entrys[task.type].missionSended = false;
+        console.log(`doing ${target_room.name} callback`);
+    }
+}
+
 function interRoomTransmissionController(room) {
     if (room.memory.transmission_queue == undefined) {
         room.memory.transmission_queue = new Array();
@@ -1296,10 +1304,12 @@ function interRoomTransmissionController(room) {
                     let ret = terminal.send(task.type, task.amount, task.to);
                     if (ret == OK) {
                         console.log(`send ${task.amount} ${task.type} from ${task.from} to ${task.to} success`);
+                        doCallback(room.memory.current_transmission_task);
                         room.memory.current_transmission_task = undefined;
                         return;
                     } else {
                         console.log(`${ret} failed to send ${task.amount} ${task.type} from ${task.from} to ${task.to}`);
+                        doCallback(room.memory.current_transmission_task);
                         room.memory.current_transmission_task = undefined;
                         return;
                     }
@@ -1353,10 +1363,12 @@ function interRoomTransmissionController(room) {
                     let ret = terminal.send(task.type, task.amount, task.to);
                     if (ret == OK) {
                         console.log(`send ${task.amount} ${task.type} from ${task.from} to ${task.to} success`);
+                        doCallback(room.memory.current_transmission_task);
                         room.memory.current_transmission_task = undefined;
                         return;
                     } else {
                         console.log(`${ret} failed to send ${task.amount} ${task.type} from ${task.from} to ${task.to}`);
+                        doCallback(room.memory.current_transmission_task);
                         room.memory.current_transmission_task = undefined;
                         return;
                     }
@@ -1380,10 +1392,12 @@ function interRoomTransmissionController(room) {
                     let ret = terminal.send(task.type, task.amount, task.to);
                     if (ret == OK) {
                         console.log(`send ${task.amount} ${task.type} from ${task.from} to ${task.to} success`);
+                        doCallback(room.memory.current_transmission_task);
                         room.memory.current_transmission_task = undefined;
                         return;
                     } else {
                         console.log(`${ret} failed to send ${task.amount} ${task.type} from ${task.from} to ${task.to}`);
+                        doCallback(room.memory.current_transmission_task);
                         room.memory.current_transmission_task = undefined;
                         return;
                     }
@@ -1673,7 +1687,19 @@ function factoryController(room) {
                 room.memory.factoryController.countdown = 1;
                 return;
             }
-            factory.produce(type);
+            let ret = factory.produce(type);
+            if (ret == ERR_INVALID_TARGET && !room.memory.factoryController.missionSended) {
+                room.memory.powerCreepController[PWR_OPERATE_FACTORY].tasks.push({
+                    target: factory.id,
+                    type: PWR_OPERATE_FACTORY,
+                    callback: {
+                        args: {}
+                    }
+                });
+                room.memory.factoryController.missionSended = true;
+            } else if (ret == ERR_NOT_ENOUGH_RESOURCES) {
+                room.memory.factoryController.stage = 'check';
+            }
         }
     }
 
@@ -1745,7 +1771,7 @@ function powerSpawnController(room) {
             }
         }
 
-        if (storage.store[RESOURCE_POWER] < 100 || storage.store[RESOURCE_ENERGY] < 50000) {
+        if (storage.store[RESOURCE_POWER] < 100 || storage.store[RESOURCE_ENERGY] < 150000) {
             // room.memory.powerSpawnController.enabled = false;
             return;
         }
@@ -1834,7 +1860,7 @@ function powerSpawnController(room) {
 
         let res = powerSpawn.processPower();
         let storage = room.storage;
-        if (!room.memory.powerSpawnController.requestEnergy && powerSpawn.store[RESOURCE_ENERGY] < 2500 && storage.store[RESOURCE_ENERGY] > 5000) {
+        if (!room.memory.powerSpawnController.requestEnergy && powerSpawn.store[RESOURCE_ENERGY] < 2500 && storage.store[RESOURCE_ENERGY] > 150000) {
             let task = {
                 from: storage.id,
                 to: powerSpawn.id,
@@ -2072,6 +2098,63 @@ function runPowerSquad(room, squad) {
 
 }
 
+function detectPowerBank(room, target_room) {
+    let pw = target_room.find(FIND_STRUCTURES, {
+        filter: (s) => {
+            return s.structureType == STRUCTURE_POWER_BANK;
+        }
+    });
+    if (pw.length) {
+        if (Memory.powerSquad == undefined) {
+            return;
+        }
+
+        for (let i = 0; i < pw.length; i++) {
+            let powerbank = pw[i];
+            if (powerbank.power < 1500) {
+                continue;
+            }
+            if (powerbank.ticksToDecay < 2000) {
+                continue;
+            }
+            if (Memory.powerSquad[powerbank.id] == undefined && Memory.powerSquadNum[room.name] < 2) {
+                Memory.powerSquadNum[room.name]++;
+                Memory.powerSquad[powerbank.id] = {
+                    starttime: Game.time,
+                    roomname: room.name,
+                    powerbank: powerbank.id,
+                    stage: 'init',
+                }
+                powerbank.pos.createFlag(powerbank.id);
+                console.log(`find powerbank in ${target_room.name}`);
+            }
+        }
+    }
+}
+
+function detectDeposit(room, target_room) {
+    let depo = target_room.find(FIND_DEPOSITS);
+
+    if (depo.length) {
+        if (Memory.deposit_harvesters == undefined) {
+            Memory.deposit_harvesters = {};
+        }
+
+        for (let i = 0; i < depo.length; i++) {
+            let deposit = depo[i];
+            if (deposit.lastCooldown > 200) {
+                continue;
+            }
+
+            if (Memory.deposit_harvesters[deposit.id] == undefined) {
+                Memory.deposit_harvesters[deposit.id] = true;
+                roomSpawn('deposit_harvester', room.name, true, 150, {working_deposit: deposit.id, working_room: target_room.name});
+                console.log(`find deposit in ${target_room.name}`);
+            }
+        }
+    }
+}
+
 function resourceDetector(room) {
     if (room.memory.observerController == undefined) {
         return;
@@ -2090,37 +2173,8 @@ function resourceDetector(room) {
             return;
         }
 
-        let pw = target_room.find(FIND_STRUCTURES, {
-            filter: (s) => {
-                return s.structureType == STRUCTURE_POWER_BANK;
-            }
-        });
-        if (pw.length) {
-            if (Memory.powerSquad == undefined) {
-                return;
-            }
-
-            for (let i = 0; i < pw.length; i++) {
-                let powerbank = pw[i];
-                if (powerbank.power < 1500) {
-                    continue;
-                }
-                if (powerbank.ticksToDecay < 2000) {
-                    continue;
-                }
-                if (Memory.powerSquad[powerbank.id] == undefined && Memory.powerSquadNum[room.name] < 2) {
-                    Memory.powerSquadNum[room.name]++;
-                    Memory.powerSquad[powerbank.id] = {
-                        starttime: Game.time,
-                        roomname: room.name,
-                        powerbank: powerbank.id,
-                        stage: 'init',
-                    }
-                    powerbank.pos.createFlag(powerbank.id);
-                    console.log(`find powerbank in ${target_room.name}`);
-                }
-            }
-        }
+        detectPowerBank(room, target_room);
+        detectDeposit(room, target_room);
     }
 }
 
@@ -2140,6 +2194,35 @@ function controllerMaintainer(room) {
     
 }
 
+function interRoomResourceMaintainer(room) {
+    if (room.memory.interRoomResourceMaintainer == undefined) {
+        room.memory.interRoomResourceMaintainer = {
+            entrys: {},
+            countdown: Game.time
+        }
+    }
+
+    if (Game.time - room.memory.interRoomResourceMaintainer.countdown < 10) {
+        return;
+    }
+    room.memory.interRoomResourceMaintainer.countdown = Game.time;
+
+    let storage = room.storage;
+    let terminal = room.terminal;
+    for (let resourceType in room.memory.interRoomResourceMaintainer.entrys) {
+        let entry = room.memory.interRoomResourceMaintainer.entrys[resourceType];
+        if (storage.store[resourceType] + terminal.store[resourceType] < entry.amount && entry.missionSended == false) {
+            Memory.resourceBus.push({
+                type: resourceType,
+                amount: entry.amount,
+                roomname: room.name,
+                callback: true
+            });
+            room.memory.interRoomResourceMaintainer.entrys[resourceType].missionSended = true;
+        }
+    }
+}
+
 function resourceShareController(room) {
     if (Memory.resourceBus == undefined) {
         Memory.resourceBus = []
@@ -2155,6 +2238,10 @@ function resourceShareController(room) {
         }
     }
 
+    if (room.memory.current_transmission_task != undefined) {
+        return;
+    }
+
     if (Game.time - room.memory.resourceShareController.countdown < 10) {
         return;
     }
@@ -2165,8 +2252,19 @@ function resourceShareController(room) {
     for (let i = 0; i < Memory.resourceBus.length; i++) {
         let entry = Memory.resourceBus[i];
         if (storage.store[entry.type] > entry.amount) {
-            roomSend(room.name, entry.roomname, entry.type, entry.amount);
-            room.memory.resourceShareController.splice(i, 1);
+            if (room.memory.interRoomResourceMaintainer.entrys[entry.type] != undefined &&
+                room.memory.interRoomResourceMaintainer.entrys[entry.type].amount + entry.amount > storage.store[entry.type]) {
+                continue;
+            }
+            room.memory.transmission_queue.push({
+                from: room.name,
+                to: entry.roomname,
+                type: entry.type,
+                amount: entry.amount,
+                callback: true
+            });
+            console.log("mission sended");
+            Memory.resourceBus.splice(i, 1);
             return;
         }
     }
@@ -2192,7 +2290,8 @@ module.exports = {
     boostPowerController,
     controllerMaintainer,
     resourceMaintainer,
-    resourceShareController
+    resourceShareController,
+    interRoomResourceMaintainer
 };
 
 // let task = {

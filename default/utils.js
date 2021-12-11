@@ -544,6 +544,27 @@ function removeResourceEntry(roomname, resourceType) {
     }
 }
 
+function addSharedResourceEntry(roomname, resourceType, amount) {
+    let room = Game.rooms[roomname];
+    if (!room) {
+        return;
+    }
+
+    room.memory.interRoomResourceMaintainer.entrys[resourceType] = {
+        amount: amount,
+        missionSended: false
+    };
+}
+
+function removeSharedResourceEntry(roomname, resourceType) {
+    let room = Game.rooms[roomname];
+    if (!room) {
+        return;
+    }
+
+    room.memory.interRoomResourceMaintainer.entrys[resourceType] = undefined;
+}
+
 module.exports = {
     getStructureByFlag,
     getConstructionSite,
@@ -590,5 +611,7 @@ module.exports = {
     resetLabMission,
     roomSell,
     addResourceEntry,
-    removeResourceEntry
+    removeResourceEntry,
+    addSharedResourceEntry,
+    removeSharedResourceEntry
 }

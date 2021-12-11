@@ -11,6 +11,20 @@ module.exports = {
             creep.memory.harvesting = true;
         }
 
+        if (creep.memory.bodyPart == undefined) {
+            creep.memory.bodyPart = creep.getActiveBodyparts(WORK);
+        }
+
+        if (creep.memory.link == undefined) {
+            let flag = Game.flags[`container ${creep.memory.extraInfo.working_location} ${creep.room.name}`];
+            let target = flag.pos.findClosestByRange(FIND_STRUCTURES, {
+                filter: (s) => {
+                    return s.structureType == STRUCTURE_LINK;
+                }
+            })
+            creep.memory.link = target.id;
+        }
+
         creep.memory.standed = true;
         if (creep.memory.harvesting) {
             if (creep.memory.positioned && creep.memory.working_source != undefined) {
@@ -21,7 +35,14 @@ module.exports = {
                 }
 
                 let resource = Game.getObjectById(creep.memory.working_source);
-                creep.exHarvest(resource);
+
+                // if (creep.store.getFreeCapacity(RESOURCE_ENERGY) <= 2 * creep.memory.bodyPart) {
+                //     let link = Game.getObjectById(creep.memory.link);
+                //     if (link) {
+                //         creep.exTransfer(link, RESOURCE_ENERGY);
+                //     }
+                // }
+                creep.harvest(resource);
                 return;
             }
 
@@ -40,16 +61,8 @@ module.exports = {
             target = flag.pos.findClosestByRange(FIND_SOURCES);
             creep.memory.working_source = target.id;
             creep.memory.container = getStructureByFlag(flag, STRUCTURE_CONTAINER).id;
+
         } else {
-            if (creep.memory.link == undefined) {
-                let flag = Game.flags[`container ${creep.memory.extraInfo.working_location} ${creep.room.name}`];
-                let target = flag.pos.findClosestByRange(FIND_STRUCTURES, {
-                    filter: (s) => {
-                        return s.structureType == STRUCTURE_LINK;
-                    }
-                })
-                creep.memory.link = target.id;
-            }
             let link = Game.getObjectById(creep.memory.link);
             creep.exTransfer(link, RESOURCE_ENERGY);
         }

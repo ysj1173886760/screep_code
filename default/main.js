@@ -63,7 +63,8 @@ var {
     boostPowerController,
     controllerMaintainer,
     resourceMaintainer,
-    resourceShareController
+    resourceShareController,
+    interRoomResourceMaintainer
 } = require('overlord');
 
 var {
@@ -111,6 +112,8 @@ var {
     roomSell,
     addResourceEntry,
     removeResourceEntry,
+    addSharedResourceEntry,
+    removeSharedResourceEntry
 } = require('utils');
 
 var {
@@ -118,7 +121,49 @@ var {
 } = require('powerCreepController');
 
 const profiler = require('screeps-profiler');
-// profiler.enable();
+profiler.enable();
+
+const roleArray = {
+    worker: worker,
+    harvester: harvester,
+    transfer: transfer,
+    builder: builder,
+    repairer: repairer,
+    distant_worker: distant_worker,
+    upgrader: upgrader,
+    distant_harvester: distant_harvester,
+    distant_transfer: distant_transfer,
+    extender: extender,
+    claimer: claimer,
+    defender: defender,
+    outputer: outputer,
+    controller: controller,
+    rebuilder: rebuilder,
+    distant_linker: distant_linker,
+    center_transfer: center_transfer,
+    miner: miner,
+    distant_repairer: distant_repairer,
+    harvest_linker: harvest_linker,
+    waller: waller,
+    maintainer: maintainer,
+    manager: manager,
+    scout: scout,
+    boosted_upgrader: boosted_upgrader,
+    assaulter: assaulter,
+    superWarrior: superWarrior,
+    deposit_harvester: deposit_harvester,
+    ruin_transfer: ruin_transfer,
+    power_attacker: power_attacker,
+    power_healer: power_healer,
+    power_retriever: power_retriever,
+    wall_breaker: wall_breaker,
+    slaimer: slaimer,
+    thief: thief,
+
+    // war
+    attacker: warrior,
+    healer: warrior
+};
 
 module.exports.loop = function() {
     profiler.wrap(function() {
@@ -234,6 +279,7 @@ module.exports.loop = function() {
             controllerMaintainer(room);
             resourceMaintainer(room);
             resourceShareController(room);
+            interRoomResourceMaintainer(room);
         }
     }
     
@@ -255,47 +301,6 @@ module.exports.loop = function() {
     // }
 
 
-    const roleArray = {
-        worker: worker,
-        harvester: harvester,
-        transfer: transfer,
-        builder: builder,
-        repairer: repairer,
-        distant_worker: distant_worker,
-        upgrader: upgrader,
-        distant_harvester: distant_harvester,
-        distant_transfer: distant_transfer,
-        extender: extender,
-        claimer: claimer,
-        defender: defender,
-        outputer: outputer,
-        controller: controller,
-        rebuilder: rebuilder,
-        distant_linker: distant_linker,
-        center_transfer: center_transfer,
-        miner: miner,
-        distant_repairer: distant_repairer,
-        harvest_linker: harvest_linker,
-        waller: waller,
-        maintainer: maintainer,
-        manager: manager,
-        scout: scout,
-        boosted_upgrader: boosted_upgrader,
-        assaulter: assaulter,
-        superWarrior: superWarrior,
-        deposit_harvester: deposit_harvester,
-        ruin_transfer: ruin_transfer,
-        power_attacker: power_attacker,
-        power_healer: power_healer,
-        power_retriever: power_retriever,
-        wall_breaker: wall_breaker,
-        slaimer: slaimer,
-        thief: thief,
-
-        // war
-        attacker: warrior,
-        healer: warrior
-    };
 
     for (let name in Game.powerCreeps) {
         let creep = Game.powerCreeps[name];
@@ -371,3 +376,5 @@ global.G_resetLabMission = resetLabMission;
 global.G_roomSell = roomSell;
 global.G_addResourceEntry = addResourceEntry;
 global.G_removeResourceEntry = removeResourceEntry;
+global.G_addSharedResourceEntry = addSharedResourceEntry;
+global.G_removeSharedResourceEntry = removeSharedResourceEntry;

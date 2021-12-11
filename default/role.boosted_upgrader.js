@@ -55,7 +55,17 @@ var boosted_upgrader = {
         if (!creep.memory.upgrading && creep.store.getFreeCapacity() == 0) {
             creep.memory.upgrading = true;
         }
+
+        if (creep.memory.bodyPart == undefined) {
+            creep.memory.bodyPart = creep.getActiveBodyparts(WORK);
+        }
         
+        if (creep.memory.container == undefined) {
+            let flag = Game.flags[`upgrade_container ${creep.room.name}`];
+            let target = getStructureByFlag(flag, STRUCTURE_CONTAINER);
+            creep.memory.container = target.id;
+        }
+
         creep.memory.standed = true;
         if (creep.memory.upgrading) {
             if (creep.memory.extraInfo.range != undefined) {
@@ -65,14 +75,17 @@ var boosted_upgrader = {
                     return;
                 }
             }
+
+            if (creep.store[RESOURCE_ENERGY] <= creep.memory.bodyPart) {
+                let target = Game.getObjectById(creep.memory.container);
+                if (target) {
+                    creep.exWithdraw(target, RESOURCE_ENERGY);
+                }
+            }
+
             creep.exUpgradeController();
 
         } else {
-            if (creep.memory.container == undefined) {
-                let flag = Game.flags[`upgrade_container ${creep.room.name}`];
-                let target = getStructureByFlag(flag, STRUCTURE_CONTAINER);
-                creep.memory.container = target.id;
-            }
 
             let target = Game.getObjectById(creep.memory.container);
 

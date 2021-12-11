@@ -22,34 +22,27 @@ var deposit_harvester = {
             creep.memory.startTime = Game.time;
         }
 
-
         if (creep.memory.time && creep.ticksToLive < creep.memory.time + 30) {
             creep.memory.harvesting = false;
         }
 
         if (creep.memory.harvesting) {
-            let flag = Game.flags[`${creep.memory.extraInfo.deposit}`];
-            if (!flag) {
-                return;
-            }
-            if (creep.room.name != flag.pos.roomName) {
-                creep.goTo(new RoomPosition(25, 25, flag.pos.roomName), 20);
+            if (creep.room.name != creep.memory.extraInfo.working_room) {
+                creep.goTo(new RoomPosition(25, 25, creep.memory.extraInfo.working_room), 20);
                 return;
             }
             
-            if (creep.memory.working_source == undefined) {
-                let target = creep.room.lookForAt(LOOK_DEPOSITS, flag.pos.x, flag.pos.y);
-                if (target.length > 0) {
-                    creep.memory.working_source = target[0].id;
-                }
-            }
-
-            let source = Game.getObjectById(creep.memory.working_source);
+            let source = Game.getObjectById(creep.memory.extraInfo.working_deposit);
             if (source) {
-                if (source.lastCooldown > 100) {
+                if (source.lastCooldown > 200) {
                     if (creep.memory.isNeeded) {
                         creep.memory.isNeeded = false;
                     }
+
+                    if (Memory.deposit_harvesters[creep.memory.extraInfo.working_deposit] != undefined) {
+                        Memory.deposit_harvesters[creep.memory.extraInfo.working_deposit] = undefined;
+                    }
+
                 } else if (source.lastCooldown > 50) {
                     if (creep.memory.extraInfo.needBoost) {
                         creep.memory.extraInfo.needBoost = false;

@@ -155,6 +155,10 @@ function operatePowerSpawn(room) {
             continue;
         }
 
+        if (room.storage.store[RESOURCE_ENERGY] < 150000) {
+            continue;
+        }
+
         if ((!powerSpawn.effects || !powerSpawn.effects.find((e) => (e.effect == PWR_OPERATE_POWER && e.ticksRemaining > 30))) && 
             room.memory.powerCreepController[PWR_OPERATE_POWER].powerSpawns[id].missionSended == false) {
             // send mission
