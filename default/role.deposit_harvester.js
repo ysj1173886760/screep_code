@@ -16,7 +16,12 @@ var deposit_harvester = {
 
         if (!creep.memory.harvesting && creep.store.getUsedCapacity() == 0) {
             creep.memory.harvesting = true;
+            if (creep.memory.time && creep.ticksToLive < creep.memory.time) {
+                creep.suicide();
+                return;
+            }
         }
+
 
         if (creep.memory.startTime == undefined) {
             creep.memory.startTime = Game.time;
