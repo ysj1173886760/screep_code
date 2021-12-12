@@ -16,7 +16,7 @@ function powerCreepController(room) {
     regenSource(room);
     operateLab(room);
     operatePowerSpawn(room);
-
+    operateFactory(room);
 }
 
 function regenSource(room) {
@@ -116,6 +116,14 @@ function operateLab(room) {
                 }
             });
             room.memory.powerCreepController[PWR_OPERATE_LAB].labs[id].missionSended = true;
+        }
+    }
+}
+
+function operateFactory(room) {
+    if (room.memory.powerCreepController[PWR_OPERATE_FACTORY] == undefined) {
+        room.memory.powerCreepController[PWR_OPERATE_FACTORY] = {
+            tasks: [],
         }
     }
 }

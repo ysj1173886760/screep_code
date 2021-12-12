@@ -64,7 +64,8 @@ var {
     controllerMaintainer,
     resourceMaintainer,
     resourceShareController,
-    interRoomResourceMaintainer
+    interRoomResourceMaintainer,
+    goodsController
 } = require('overlord');
 
 var {
@@ -113,7 +114,8 @@ var {
     addResourceEntry,
     removeResourceEntry,
     addSharedResourceEntry,
-    removeSharedResourceEntry
+    removeSharedResourceEntry,
+    addGoodsMission
 } = require('utils');
 
 var {
@@ -121,7 +123,7 @@ var {
 } = require('powerCreepController');
 
 const profiler = require('screeps-profiler');
-profiler.enable();
+// profiler.enable();
 
 const roleArray = {
     worker: worker,
@@ -280,6 +282,7 @@ module.exports.loop = function() {
             resourceMaintainer(room);
             resourceShareController(room);
             interRoomResourceMaintainer(room);
+            goodsController(room);
         }
     }
     
@@ -378,3 +381,4 @@ global.G_addResourceEntry = addResourceEntry;
 global.G_removeResourceEntry = removeResourceEntry;
 global.G_addSharedResourceEntry = addSharedResourceEntry;
 global.G_removeSharedResourceEntry = removeSharedResourceEntry;
+global.G_addGoodsMission = addGoodsMission;

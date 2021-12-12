@@ -28,7 +28,7 @@ var power_retriever = {
                     creep.memory.transfered = true;
                 }
             } else {
-                creep.goTo(creep.room.storage, 1);
+                creep.goTo(creep.room.storage.pos, 1);
             }
         } else {
             if (creep.memory.transfered) {

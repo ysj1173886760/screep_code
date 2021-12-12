@@ -565,6 +565,18 @@ function removeSharedResourceEntry(roomname, resourceType) {
     room.memory.interRoomResourceMaintainer.entrys[resourceType] = undefined;
 }
 
+function addGoodsMission(roomname, resourceType, amount) {
+    let room = Game.rooms[roomname];
+    if (!room) {
+        return;
+    }
+
+    room.memory.goodsController.tasks.push({
+        amount: amount,
+        type: resourceType
+    });
+}
+
 module.exports = {
     getStructureByFlag,
     getConstructionSite,
@@ -613,5 +625,6 @@ module.exports = {
     addResourceEntry,
     removeResourceEntry,
     addSharedResourceEntry,
-    removeSharedResourceEntry
+    removeSharedResourceEntry,
+    addGoodsMission
 }

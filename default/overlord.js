@@ -1,6 +1,6 @@
 const { getStructureByFlag, containBodyPart } = require("utils");
 const { whiteList } = require("whiteList");
-const { roomSpawn, roomSend } = require("./utils");
+const { roomSpawn, roomSend, addFactoryMission } = require("./utils");
 const { reactionTable } = require("./reactionTable")
 
 function setDistantCreeps(roomname, target_room, value) {
@@ -1210,11 +1210,27 @@ function defendController(room) {
     }
 }
 
+callbacks = {
+    'resourceShare': function(args) {
+        let target_room = Game.rooms[args.room];
+        target_room.memory.interRoomResourceMaintainer.entrys[args.type].missionSended = false;
+        console.log(`doing ${target_room.name} resourceShare callback`);
+    },
+
+    'goodsControl': function(args) {
+
+    },
+
+    'factoryControl': function(args) {
+        let room = Game.rooms[args.room];
+        room.memory.goodsController.stage = 'done';
+        console.log(`doing ${room.name} factoryControl callback`);
+    }
+}
+
 function doCallback(task) {
     if (task.callback) {
-        let target_room = Game.rooms[task.to];
-        target_room.memory.interRoomResourceMaintainer.entrys[task.type].missionSended = false;
-        console.log(`doing ${target_room.name} callback`);
+        callbacks[task.callback.type](task.callback.args);
     }
 }
 
@@ -1671,6 +1687,7 @@ function factoryController(room) {
         }
 
         room.memory.factoryController.stage = 'work';
+        console.log(`FACTORY ${room.name} preparation is done`);
     }
 
     if (room.memory.factoryController.stage == 'work') {
@@ -1688,7 +1705,11 @@ function factoryController(room) {
                 return;
             }
             let ret = factory.produce(type);
-            if (ret == ERR_INVALID_TARGET && !room.memory.factoryController.missionSended) {
+            if ((ret == ERR_INVALID_TARGET || ret == ERR_BUSY) && !room.memory.factoryController.missionSended) {
+                if (!room.memory.powerCreepController[PWR_OPERATE_FACTORY]) {
+                    room.memory.factoryController.stage = 'wait';
+                    return;
+                }
                 room.memory.powerCreepController[PWR_OPERATE_FACTORY].tasks.push({
                     target: factory.id,
                     type: PWR_OPERATE_FACTORY,
@@ -1725,6 +1746,7 @@ function factoryController(room) {
         if (room.memory.factoryController.currentMission.amount <= 0) {
             console.log('FACTORY: mission complete');
             room.memory.factoryController.stage = 'wait';
+            doCallback(room.memory.factoryController.currentMission);
             return;
         } else {
             room.memory.factoryController.stage = 'check';
@@ -1735,8 +1757,106 @@ function factoryController(room) {
 
     if (room.memory.factoryController.stage == 'failed') {
         console.log('FACTORY: failed to proceed');
+        doCallback(room.memory.factoryController.currentMission);
         room.memory.factoryController.stage = 'wait';
     }
+}
+
+function goodsController(room) {
+    if (room.memory.goodsController == undefined) {
+        room.memory.goodsController = {
+            countdown: Game.time,
+            tasks: [],
+            current_mission: undefined,
+            stage: 'wait',
+        }
+    }
+
+    if (Game.time - room.memory.goodsController.countdown < 1) {
+        return;
+    }
+    room.memory.goodsController.countdown = Game.time;
+
+    if (room.memory.goodsController.stage == 'wait') {
+        if (room.memory.goodsController.tasks.length > 0) {
+            room.memory.goodsController.current_mission = room.memory.goodsController.tasks[0];
+            room.memory.goodsController.tasks.shift();
+            room.memory.goodsController.stage = 'init';
+        }
+    }
+
+    if (room.memory.goodsController.stage == 'init') {
+        let current_mission = room.memory.goodsController.current_mission;
+        if (current_mission.amount <= 0) {
+            room.memory.goodsController.stage = 'failed';
+        }
+
+        if (reactionTable[current_mission.type] == undefined) {
+            console.log(`FACTORY::can not find ${current_mission.type}`);
+            room.memory.goodsController.stage = 'failed';
+            return;
+        }
+
+        room.memory.goodsController.current_mission.material = reactionTable[current_mission.type].material;
+        room.memory.goodsController.stage = 'send_mission'
+    }
+
+    if (room.memory.goodsController.stage == 'send_mission') {
+        let current_mission = room.memory.goodsController.current_mission;
+        let amount = Math.ceil(current_mission.amount / reactionTable[current_mission.type].amount);
+        let storage = room.storage;
+        for (let res of current_mission.material) {
+            if (storage.store[res.type] < res.amount * amount) {
+                console.log(`FACTORY requesting ${res.type} ${res.amount * amount - storage.store[res.type]}`);
+                Memory.resourceBus.push({
+                    type: res.type,
+                    amount: res.amount * amount - storage.store[res.type],
+                    roomname: room.name,
+                });
+            }
+        }
+        room.memory.goodsController.stage = 'wait_resource'
+    }
+
+    if (room.memory.goodsController.stage == 'wait_resource') {
+        let current_mission = room.memory.goodsController.current_mission;
+        let amount = Math.ceil(current_mission.amount / reactionTable[current_mission.type].amount);
+        let storage = room.storage;
+        for (let res of current_mission.material) {
+            if (storage.store[res.type] < res.amount * amount) {
+                return;
+            }
+        }
+        
+        room.memory.factoryController.missionQueue.push({
+            type: current_mission.type,
+            amount: current_mission.amount,
+            callback: {
+                type: 'factoryControl',
+                args: {
+                    room: room.name
+                }
+            }
+        });
+        console.log(`FACTORY: add mission ${current_mission.type} ${current_mission.amount}`);
+
+        room.memory.goodsController.stage = 'work';
+    }
+
+    if (room.memory.goodsController.stage == 'work') {
+        // do nothing and wait
+    }
+
+    if (room.memory.goodsController.stage == 'done') {
+        console.log(`factory mission complete`);
+        room.memory.goodsController.stage = 'wait';
+    }
+
+    if (room.memory.goodsController.stage == 'failed') {
+        room.memory.goodsController.stage = 'wait';
+        room.memory.goodsController.current_mission = undefined;
+    }
+
 }
 
 function powerSpawnController(room) {
@@ -2076,7 +2196,7 @@ function runPowerSquad(room, squad) {
         }
 
         if (powerbank.power <= 4800) {
-            if (powerbank.hits < 1000000) {
+            if (powerbank.hits < 9000000) {
                 let num = Math.ceil(powerbank.power / 1600);
                 for (let i = 0; i < num; i++) {
                     roomSpawn('power_retriever', room.name, false, 1, {powerbank: squad.powerbank});
@@ -2085,7 +2205,7 @@ function runPowerSquad(room, squad) {
                 squad.stage = 'done';
             }
         } else {
-            if (powerbank.hits < 1400000) {
+            if (powerbank.hits < 1300000) {
                 let num = Math.ceil(powerbank.power / 1600);
                 for (let i = 0; i < num; i++) {
                     roomSpawn('power_retriever', room.name, false, 1, {powerbank: squad.powerbank});
@@ -2216,7 +2336,13 @@ function interRoomResourceMaintainer(room) {
                 type: resourceType,
                 amount: entry.amount,
                 roomname: room.name,
-                callback: true
+                callback: {
+                    type: 'resourceShare',
+                    args: {
+                        room: entry.roomname,
+                        type: entry.type
+                    }
+                }
             });
             room.memory.interRoomResourceMaintainer.entrys[resourceType].missionSended = true;
         }
@@ -2261,7 +2387,7 @@ function resourceShareController(room) {
                 to: entry.roomname,
                 type: entry.type,
                 amount: entry.amount,
-                callback: true
+                callback: entry.callback
             });
             console.log("mission sended");
             Memory.resourceBus.splice(i, 1);
@@ -2291,7 +2417,8 @@ module.exports = {
     controllerMaintainer,
     resourceMaintainer,
     resourceShareController,
-    interRoomResourceMaintainer
+    interRoomResourceMaintainer,
+    goodsController
 };
 
 // let task = {

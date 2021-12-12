@@ -19,7 +19,11 @@ module.exports = {
 
             let source = Game.getObjectById(creep.memory.working_source);
             if (source && source.mineralAmount) {
-                creep.exHarvest(source);
+                if (!creep.pos.isNearTo(source)) {
+                    creep.goTo(source.pos, 1);
+                } else if (source.cooldown == 0){
+                    creep.harvest(source);
+                }
             } else {
                 if (creep.memory.isNeeded) {
                     creep.memory.isNeeded = false;
