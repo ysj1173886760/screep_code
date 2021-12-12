@@ -36,13 +36,15 @@ module.exports = {
 
                 let resource = Game.getObjectById(creep.memory.working_source);
 
-                // if (creep.store.getFreeCapacity(RESOURCE_ENERGY) <= 2 * creep.memory.bodyPart) {
-                //     let link = Game.getObjectById(creep.memory.link);
-                //     if (link) {
-                //         creep.exTransfer(link, RESOURCE_ENERGY);
-                //     }
-                // }
-                creep.harvest(resource);
+                if (creep.store.getFreeCapacity(RESOURCE_ENERGY) <= 2 * creep.memory.bodyPart) {
+                    let link = Game.getObjectById(creep.memory.link);
+                    if (link) {
+                        creep.exTransfer(link, RESOURCE_ENERGY);
+                    }
+                }
+                if (resource.energy > 0) {
+                    creep.harvest(resource);
+                }
                 return;
             }
 

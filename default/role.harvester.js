@@ -28,7 +28,9 @@ var roleHarvester = {
             if (creep.memory.harvesting) {
                 if (creep.memory.positioned && creep.memory.working_source != undefined) {
                     let resource = Game.getObjectById(creep.memory.working_source);
-                    creep.exHarvest(resource);
+                    if (resource.energy > 0) {
+                        creep.harvest(resource);
+                    }
                     return;
                 }
 
@@ -61,7 +63,9 @@ var roleHarvester = {
         } else {
             if (creep.memory.positioned && creep.memory.working_source != undefined) {
                 let resource = Game.getObjectById(creep.memory.working_source);
-                creep.exHarvest(resource);
+                if (resource.energy > 0) {
+                    creep.harvest(resource);
+                }
                 return;
             }
 

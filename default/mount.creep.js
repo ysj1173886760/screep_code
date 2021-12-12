@@ -536,12 +536,12 @@ const creepExtension = {
             this.memory.crossLevel = 10;
         }
 
-        const frontPos = this.pos.directionToPos(direction);
+        let frontPos = this.pos.directionToPos(direction);
         if (!frontPos) {
             return ERR_NOT_FOUND;
         }
 
-        const frontCreep = (frontPos.lookFor(LOOK_CREEPS)[0] || frontPos.lookFor(LOOK_POWER_CREEPS)[0]);
+        let frontCreep = (frontPos.lookFor(LOOK_CREEPS)[0] || frontPos.lookFor(LOOK_POWER_CREEPS)[0]);
         if (!frontCreep) {
             return ERR_NOT_FOUND;
         }

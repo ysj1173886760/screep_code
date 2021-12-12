@@ -52,7 +52,9 @@ var deposit_harvester = {
                     if (creep.memory.time == undefined) {
                         creep.memory.time = Game.time - creep.memory.startTime;
                     }
-                    creep.exHarvest(source);
+                    if (source.cooldown == 0) {
+                        creep.harvest(source);
+                    }
                 } else {
                     creep.goTo(source.pos, 1);
                 }

@@ -22,7 +22,14 @@ var power_retriever = {
                 return;
             }
 
-            creep.exTransferAll(creep.room.storage);
+            if (creep.pos.inRangeTo(creep.room.storage, 1)) {
+                let ret = creep.transfer(creep.room.storage, RESOURCE_POWER);
+                if (ret == OK) {
+                    creep.memory.transfered = true;
+                }
+            } else {
+                creep.goTo(creep.room.storage, 1);
+            }
         } else {
             if (creep.memory.transfered) {
                 creep.suicide();

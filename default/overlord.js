@@ -1993,7 +1993,7 @@ function observerController(room) {
     if (room.memory.observerController.countdown > 0) {
         return;
     }
-    room.memory.observerController.countdown = 10;
+    room.memory.observerController.countdown = 20;
 
     if (room.memory.observerController.observing_room.length == 0) {
         return;
