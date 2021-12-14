@@ -1279,7 +1279,7 @@ function interRoomTransmissionController(room) {
         }
         if (task.type == 'energy') {
             let cost = Game.market.calcTransactionCost(task.amount, task.from, task.to)
-            if (terminal.store[task.type] > task.amount + cost) {
+            if (terminal.store[task.type] >= task.amount + cost) {
                 if (!task.dealing) {
                     let ret = terminal.send(task.type, task.amount, task.to);
                     if (ret == OK) {
@@ -1315,7 +1315,7 @@ function interRoomTransmissionController(room) {
             }
         } else {
             let cost = Game.market.calcTransactionCost(task.amount, task.from, task.to)
-            if (terminal.store[task.type] > task.amount && terminal.store[RESOURCE_ENERGY] > cost) {
+            if (terminal.store[task.type] >= task.amount && terminal.store[RESOURCE_ENERGY] >= cost) {
                 if (!task.dealing) {
                     let ret = terminal.send(task.type, task.amount, task.to);
                     if (ret == OK) {
@@ -1342,7 +1342,7 @@ function interRoomTransmissionController(room) {
                     }
                 }
             } else {
-                if (storage.store[task.type] > task.amount) {
+                if (storage.store[task.type] >= task.amount) {
                     // send task
                     if (terminal.store[task.type] < task.amount) {
                         room.memory.center_task_queue.push({
@@ -2205,7 +2205,7 @@ function runPowerSquad(room, squad) {
                 squad.stage = 'done';
             }
         } else {
-            if (powerbank.hits < 1300000) {
+            if (powerbank.hits < 1100000) {
                 let num = Math.ceil(powerbank.power / 1600);
                 for (let i = 0; i < num; i++) {
                     roomSpawn('power_retriever', room.name, false, 1, {powerbank: squad.powerbank});
@@ -2253,6 +2253,13 @@ function detectPowerBank(room, target_room) {
 }
 
 function detectDeposit(room, target_room) {
+    if (Memory.depoHarvesterNum == undefined) {
+        Memory.depoHarvesterNum = {};
+    }
+    if (Memory.depoHarvesterNum[room.name] == undefined) {
+        Memory.depoHarvesterNum[room.name] = 0;
+    }
+
     let depo = target_room.find(FIND_DEPOSITS);
 
     if (depo.length) {
@@ -2266,8 +2273,9 @@ function detectDeposit(room, target_room) {
                 continue;
             }
 
-            if (Memory.deposit_harvesters[deposit.id] == undefined) {
+            if (Memory.depoHarvesterNum[room.name] < 4 && Memory.deposit_harvesters[deposit.id] == undefined) {
                 Memory.deposit_harvesters[deposit.id] = true;
+                Memory.depoHarvesterNum[room.name]++;
                 roomSpawn('deposit_harvester', room.name, true, 150, {working_deposit: deposit.id, working_room: target_room.name});
                 console.log(`find deposit in ${target_room.name}`);
             }
@@ -2377,7 +2385,7 @@ function resourceShareController(room) {
     room.memory.resourceShareController.countdown = Game.time;
     for (let i = 0; i < Memory.resourceBus.length; i++) {
         let entry = Memory.resourceBus[i];
-        if (storage.store[entry.type] > entry.amount) {
+        if (storage.store[entry.type] >= entry.amount) {
             if (room.memory.interRoomResourceMaintainer.entrys[entry.type] != undefined &&
                 room.memory.interRoomResourceMaintainer.entrys[entry.type].amount + entry.amount > storage.store[entry.type]) {
                 continue;

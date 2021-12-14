@@ -46,6 +46,7 @@ var deposit_harvester = {
 
                     if (Memory.deposit_harvesters[creep.memory.extraInfo.working_deposit] != undefined) {
                         Memory.deposit_harvesters[creep.memory.extraInfo.working_deposit] = undefined;
+                        Memory.depoHarvesterNum[creep.memory.roomname]--;
                     }
 
                 } else if (source.lastCooldown > 50) {

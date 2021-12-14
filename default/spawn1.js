@@ -200,7 +200,7 @@ var spawn1 = {
                 center_transfer: {carry: 8, move: 1},
                 harvest_linker: {work: 6, move: 1, carry: 1},
                 maintainer: {carry: 16, move: 8},
-                boosted_upgrader: {work: 20, carry: 10, move: 10},
+                boosted_upgrader: {work: 15, carry: 10, move: 8},
                 manager: {carry: 10, move: 5},
             },
             E11S59: {
