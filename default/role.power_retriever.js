@@ -60,7 +60,11 @@ var power_retriever = {
                 return;
             }
 
-            target = creep.room.find(FIND_DROPPED_RESOURCES);
+            target = creep.room.find(FIND_DROPPED_RESOURCES, {
+                filter: (r) => {
+                    return r.resourceType == RESOURCE_POWER;
+                }
+            });
             if (target.length > 0) {
                 creep.exPickup(target[0]);
                 return;
