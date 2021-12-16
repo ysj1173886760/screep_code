@@ -5,10 +5,6 @@ var deposit_harvester = {
             return;
         }
 
-        creep.memory.isNeeded = false;
-        creep.suicide();
-        return;
-
         if (!creep.memory.boosted && creep.memory.extraInfo.needBoost) {
             creep.boostMe();
             return;

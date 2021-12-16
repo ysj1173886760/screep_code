@@ -2259,7 +2259,6 @@ function detectDeposit(room, target_room) {
     if (Memory.depoHarvesterNum[room.name] == undefined) {
         Memory.depoHarvesterNum[room.name] = 0;
     }
-    return;
 
     let depo = target_room.find(FIND_DEPOSITS);
 

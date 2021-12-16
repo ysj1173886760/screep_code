@@ -211,7 +211,7 @@ var spawn1 = {
                 upgrader: {work: 10, move: 5, carry: 1},
                 controller: {claim: 1, move: 5},
                 extender: {work: 5, move: 5, carry: 5},
-                outputer: {carry: 16, move: 8},
+                outputer: {carry: 20, move: 10},
                 miner: {work: 5, move: 5, carry: 5},
                 center_transfer: {carry: 8, move: 1},
                 harvest_linker: {work: 6, move: 1, carry: 1},
