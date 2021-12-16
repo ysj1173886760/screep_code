@@ -2259,6 +2259,7 @@ function detectDeposit(room, target_room) {
     if (Memory.depoHarvesterNum[room.name] == undefined) {
         Memory.depoHarvesterNum[room.name] = 0;
     }
+    return;
 
     let depo = target_room.find(FIND_DEPOSITS);
 
@@ -2269,7 +2270,7 @@ function detectDeposit(room, target_room) {
 
         for (let i = 0; i < depo.length; i++) {
             let deposit = depo[i];
-            if (deposit.lastCooldown > 200) {
+            if (deposit.lastCooldown > 100) {
                 continue;
             }
 

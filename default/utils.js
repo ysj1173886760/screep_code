@@ -114,6 +114,19 @@ function removeRole(roomname, role) {
     }
 }
 
+function removeRoleAll(roomname, role) {
+    let room = Game.rooms[roomname];
+    let queue = room.memory.spawn_queue;
+    for (let j = 0; j < 100; j++) {
+        for (let i = 0; i < queue.length; i++) {
+            if (queue[i].role == role) {
+                room.memory.spawn_queue.splice(i, 1);
+                break;
+            }
+        }
+    }
+}
+
 function printSpawnQueue(roomname) {
     let room = Game.rooms[roomname];
     let queue = room.memory.spawn_queue;
@@ -577,6 +590,7 @@ function addGoodsMission(roomname, resourceType, amount) {
     });
 }
 
+
 module.exports = {
     getStructureByFlag,
     getConstructionSite,
@@ -626,5 +640,6 @@ module.exports = {
     removeResourceEntry,
     addSharedResourceEntry,
     removeSharedResourceEntry,
-    addGoodsMission
+    addGoodsMission,
+    removeRoleAll
 }

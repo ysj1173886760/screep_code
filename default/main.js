@@ -115,7 +115,8 @@ var {
     removeResourceEntry,
     addSharedResourceEntry,
     removeSharedResourceEntry,
-    addGoodsMission
+    addGoodsMission,
+    removeRoleAll
 } = require('utils');
 
 var {
@@ -382,3 +383,4 @@ global.G_removeResourceEntry = removeResourceEntry;
 global.G_addSharedResourceEntry = addSharedResourceEntry;
 global.G_removeSharedResourceEntry = removeSharedResourceEntry;
 global.G_addGoodsMission = addGoodsMission;
+global.G_removeRoleAll = removeRoleAll;

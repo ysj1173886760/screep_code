@@ -5,6 +5,10 @@ var deposit_harvester = {
             return;
         }
 
+        creep.memory.isNeeded = false;
+        creep.suicide();
+        return;
+
         if (!creep.memory.boosted && creep.memory.extraInfo.needBoost) {
             creep.boostMe();
             return;
@@ -39,7 +43,7 @@ var deposit_harvester = {
             
             let source = Game.getObjectById(creep.memory.extraInfo.working_deposit);
             if (source) {
-                if (source.lastCooldown > 200) {
+                if (source.lastCooldown > 100) {
                     if (creep.memory.isNeeded) {
                         creep.memory.isNeeded = false;
                     }

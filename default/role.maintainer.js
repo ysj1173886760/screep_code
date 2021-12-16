@@ -149,6 +149,7 @@ var maintainer = {
 
             if (creep.room.storage) {
                 creep.exWithdraw(creep.room.storage, RESOURCE_ENERGY);
+                creep.memory.target = null;
             }
 
         }
