@@ -125,7 +125,7 @@ var {
 } = require('powerCreepController');
 
 const profiler = require('screeps-profiler');
-profiler.enable();
+// profiler.enable();
 
 const roleArray = {
     worker: worker,
@@ -242,6 +242,7 @@ module.exports.loop = function() {
                 let res = spawn1.spawn(spawn_name, task.role, task.roomname, task.isNeeded, task.respawnTime, task.extraInfo);
                 if (res) {
                     room.memory.spawn_queue.splice(i, 1);
+                    room.memory.energyTransferMission = true;
                 }
                 break;
             }
@@ -255,6 +256,7 @@ module.exports.loop = function() {
         let res = spawn1.spawn(spawn_name, task.role, task.roomname, task.isNeeded, task.respawnTime, task.extraInfo);
         if (res) {
             room.memory.spawn_queue.shift();
+            room.memory.energyTransferMission = true;
         }
     }
 

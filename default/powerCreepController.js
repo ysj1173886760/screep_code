@@ -93,6 +93,10 @@ function operateLab(room) {
         return;
     }
 
+    if (room.memory.labController.stage != 'work') {
+        return;
+    }
+
     for (let id in room.memory.powerCreepController[PWR_OPERATE_LAB].labs) {
         let lab = Game.getObjectById(id);
         if (!lab) {
@@ -103,8 +107,7 @@ function operateLab(room) {
         }
 
         if ((!lab.effects || !lab.effects.find((e) => (e.effect == PWR_OPERATE_LAB && e.ticksRemaining > 30))) && 
-            room.memory.powerCreepController[PWR_OPERATE_LAB].labs[id].missionSended == false &&
-            lab.cooldown != 0) {
+            room.memory.powerCreepController[PWR_OPERATE_LAB].labs[id].missionSended == false) {
             // send mission
             room.memory.powerCreepController[PWR_OPERATE_LAB].tasks.push({
                 target: id,

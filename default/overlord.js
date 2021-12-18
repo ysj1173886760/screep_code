@@ -530,7 +530,7 @@ function labReactionController(room) {
         let lab2 = Game.getObjectById(room.memory.labController.lab2);
         let storage = room.storage;
 
-        if (storage.store[res1] > 1000 && storage.store[res2] > 1000) {
+        if (storage.store[res1] >= 1000 && storage.store[res2] >= 1000) {
             if (lab1.store[res1] < 1000) {
                 if (room.memory.labController.missionControl[lab1.id] == false) {
                     room.memory.task_queue.push({
@@ -599,7 +599,7 @@ function labReactionController(room) {
         }
         
         if (!res) {
-            if (storage.store[res1] > 1000 && storage.store[res2] > 1000) {
+            if (storage.store[res1] >= 1000 && storage.store[res2] >= 1000) {
                 if (lab1.store[res1] < 1000) {
                     if (room.memory.labController.missionControl[lab1.id] == false) {
                         room.memory.task_queue.push({
@@ -2425,7 +2425,8 @@ function energyMaintainController(room) {
 
         }
     });
-    if (target) {
+    if (target.length) {
+        console.log(`${room.name} sending energy transfer mission`);
         room.memory.energyTransferMission = true;
         return;
     }
@@ -2438,7 +2439,8 @@ function energyMaintainController(room) {
 
         }
     });
-    if (target) {
+    if (target.length) {
+        console.log(`${room.name} sending energy transfer mission`);
         room.memory.energyTransferMission = true;
         return;
     }

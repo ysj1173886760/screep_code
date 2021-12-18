@@ -27,9 +27,13 @@ var manager = {
             console.log(`doing powerSpawn callback ${args.type}`);
         }
     },
+
     run: function(creep) {
+        creep.memory.isNeeded = false;
         if (creep.room.memory.manager_task == undefined) {
             creep.memory.stage = 'wait';
+            creep.suicide();
+            return;
             if (creep.store.getUsedCapacity() != 0) {
                 creep.exTransferAll(creep.room.storage);
                 creep.say('transfer');
