@@ -75,7 +75,10 @@ var maintainer = {
             creep.memory.transfering = true;
         }
 
-        
+        if (!creep.room.memory.energyTransferMission) {
+            return;
+        }
+
         if (creep.memory.transfering) {
             // let terminal = creep.room.terminal;
             // if (terminal) {
@@ -124,6 +127,7 @@ var maintainer = {
             //     }
             // });
             creep.memory.crossLevel = 10;
+            creep.room.memory.energyTransferMission = false;
             // if (target.length) {
             //     creep.exTransfer(target[0], RESOURCE_ENERGY);
             //     return;

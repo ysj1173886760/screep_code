@@ -2404,6 +2404,47 @@ function resourceShareController(room) {
     }
 }
 
+function energyMaintainController(room) {
+    if (room.memory.energyMaintainController == undefined) {
+        room.memory.energyMaintainController = Game.time;
+    }
+
+    if (room.memory.energyTransferMission) {
+        return;
+    }
+
+    if (Game.time - room.memory.energyMaintainController < 10) {
+        return;
+    }
+    room.memory.energyMaintainController = Game.time;
+
+    let target = room.find(FIND_STRUCTURES, {
+        filter: (s) => {
+            return (s.structureType == STRUCTURE_TOWER) && 
+                    s.store.getFreeCapacity(RESOURCE_ENERGY) > 300;
+
+        }
+    });
+    if (target) {
+        room.memory.energyTransferMission = true;
+        return;
+    }
+
+    target = room.find(FIND_STRUCTURES, {
+        filter: (s) => {
+            return (s.structureType == STRUCTURE_EXTENSION ||
+                    s.structureType == STRUCTURE_SPAWN) && 
+                    s.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
+
+        }
+    });
+    if (target) {
+        room.memory.energyTransferMission = true;
+        return;
+    }
+    
+}
+
 module.exports = {
     reserveController,
     buildController,
@@ -2426,7 +2467,8 @@ module.exports = {
     resourceMaintainer,
     resourceShareController,
     interRoomResourceMaintainer,
-    goodsController
+    goodsController,
+    energyMaintainController
 };
 
 // let task = {

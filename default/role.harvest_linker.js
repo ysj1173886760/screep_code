@@ -55,7 +55,11 @@ module.exports = {
             let flag = Game.flags[`container ${creep.memory.extraInfo.working_location} ${creep.room.name}`];
 
             if (!creep.pos.isEqualTo(flag.pos)) {
-                creep.goTo(flag.pos, 0);
+                if (flag.pos.lookFor(LOOK_CREEPS)[0]) {
+                    return;
+                } else {
+                    creep.goTo(flag.pos, 0);
+                }
                 return;
             }
 
