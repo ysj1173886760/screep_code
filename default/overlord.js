@@ -2276,7 +2276,12 @@ function detectDeposit(room, target_room) {
             if (Memory.depoHarvesterNum[room.name] < 4 && Memory.deposit_harvesters[deposit.id] == undefined) {
                 Memory.deposit_harvesters[deposit.id] = true;
                 Memory.depoHarvesterNum[room.name]++;
-                roomSpawn('deposit_harvester', room.name, true, 150, {working_deposit: deposit.id, working_room: target_room.name});
+                roomSpawn('deposit_harvester', room.name, true, 150, {
+                    working_deposit: deposit.id,
+                    working_room: target_room.name,
+                    needBoost: true,
+                    boostResource: ['UHO2']}
+                );
                 console.log(`find deposit in ${target_room.name}`);
             }
         }

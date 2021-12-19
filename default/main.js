@@ -75,6 +75,9 @@ var {
 
 require('./mount')();
 
+require('./helper_cpuUsed');
+require('./helper_roomResource');
+
 const {
     roomSpawn,
     getRole,
@@ -344,6 +347,9 @@ module.exports.loop = function() {
         let elapsed = Game.cpu.getUsed() - startCpu;
         // console.log('Creep '+ name+' has used '+ elapsed+' CPU time');
     }
+
+    HelperCpuUsed.exec();
+
     // console.log(`total used ${Game.cpu.getUsed()}`);
 });
 }

@@ -56,6 +56,7 @@ module.exports = {
 
             if (!creep.pos.isEqualTo(flag.pos)) {
                 if (flag.pos.lookFor(LOOK_CREEPS)[0]) {
+                    creep.goTo(flag.pos, 1);
                     return;
                 } else {
                     creep.goTo(flag.pos, 0);
