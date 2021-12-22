@@ -96,6 +96,11 @@ var maintainer = {
                 creep.say('transfer');
                 return;
             }
+            let target = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 2);
+            if (target.length > 0) {
+                creep.exPickupCache(target[0], 10);
+                return;
+            }
         }
         if (!creep.room.storage) {
             return;

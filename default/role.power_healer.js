@@ -2,15 +2,18 @@ var power_healer = {
     run: function(creep) {
         // creep.memory.extraInfo.boostResource = ['XLHO2'];
         // creep.memory.extraInfo.needBoost = true;
+
+        let flag = Game.flags[`${creep.memory.extraInfo.powerbank}`];
+        if (!flag) {
+            creep.suicide();
+            return;
+        }
+
         if (!creep.memory.boosted && creep.memory.extraInfo.needBoost) {
             creep.boostMe();
             return;
         }
 
-        let flag = Game.flags[`${creep.memory.extraInfo.powerbank}`];
-        if (!flag) {
-            return;
-        }
         if (creep.hits < creep.hitsMax) {
             creep.heal(creep);
         }

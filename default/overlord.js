@@ -2418,7 +2418,7 @@ function energyMaintainController(room) {
         return;
     }
 
-    if (Game.time - room.memory.energyMaintainController < 10) {
+    if (Game.time - room.memory.energyMaintainController < 100) {
         return;
     }
     room.memory.energyMaintainController = Game.time;

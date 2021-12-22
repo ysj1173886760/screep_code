@@ -348,7 +348,7 @@ module.exports.loop = function() {
         // console.log('Creep '+ name+' has used '+ elapsed+' CPU time');
     }
 
-    HelperCpuUsed.exec();
+    // HelperCpuUsed.exec();
 
     // console.log(`total used ${Game.cpu.getUsed()}`);
 });

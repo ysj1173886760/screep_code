@@ -2,13 +2,15 @@ var power_attacker = {
     run: function(creep) {
         // creep.memory.extraInfo.boostResource = ['XUH2O'];
         // creep.memory.extraInfo.needBoost = true;
-        if (!creep.memory.boosted && creep.memory.extraInfo.needBoost) {
-            creep.boostMe();
+
+        let flag =  Game.flags[`${creep.memory.extraInfo.powerbank}`];
+        if (!flag) {
+            creep.suicide();
             return;
         }
 
-        let flag = Game.flags[`${creep.memory.extraInfo.powerbank}`];
-        if (!flag) {
+        if (!creep.memory.boosted && creep.memory.extraInfo.needBoost) {
+            creep.boostMe();
             return;
         }
 
