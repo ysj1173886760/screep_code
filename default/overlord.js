@@ -1952,6 +1952,7 @@ function powerSpawnController(room) {
                 }
             }
         }
+        room.memory.powerSpawnController.timer = Game.time;
 
         room.memory.powerSpawnController.stage = 'wait_resource';
     }
@@ -1960,6 +1961,51 @@ function powerSpawnController(room) {
         let powerSpawn = Game.getObjectById(room.memory.powerSpawnController.powerSpawn);
         if (!powerSpawn) {
             return;
+        }
+
+        if (Game.time - room.memory.powerSpawnController.timer > 1000) {
+            for (let resourceType of [RESOURCE_ENERGY, RESOURCE_POWER]) {
+                if (powerSpawn.store.getFreeCapacity(resourceType) > 0) {
+                    let task = {}
+                    if (resourceType == RESOURCE_ENERGY) {
+                        task = {
+                            from: storage.id,
+                            to: powerSpawn.id,
+                            type: RESOURCE_ENERGY,
+                            amount: powerSpawn.store.getFreeCapacity(RESOURCE_ENERGY),
+                            callback: {
+                                name: 'powerSpawnCallback',
+                                args: {
+                                    type: 'requestEnergy'
+                                }
+                            }
+                        };
+                        room.memory.powerSpawnController.requestEnergy = true;
+                    } else {
+                        task = {
+                            from: storage.id,
+                            to: powerSpawn.id,
+                            type: RESOURCE_POWER,
+                            amount: powerSpawn.store.getFreeCapacity(RESOURCE_POWER),
+                            callback: {
+                                name: 'powerSpawnCallback',
+                                args: {
+                                    type: 'requestPower'
+                                }
+                            }
+                        };
+                        room.memory.powerSpawnController.requestPower = true;
+                    }
+
+                    let flag = Game.flags[`center ${room.name}`];
+                    if (powerSpawn.pos.isNearTo(flag)) {
+                        room.memory.center_task_queue.push(task);
+                    } else {
+                        room.memory.task_queue.push(task);
+                    }
+                }
+            }
+            room.memory.powerSpawnController.timer = Game.time;
         }
 
         for (let resourceType of [RESOURCE_ENERGY, RESOURCE_POWER]) {
